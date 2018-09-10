@@ -1,0 +1,9 @@
+[package]
+name = "cant-touch-this"
+version = "0.0.1"
+authors = [
+    "Nathan Bakhuijzen <nathanbakhuijzen@gmail.com>",
+    "Tim Visée <timvisee@gmail.com>",
+]
+
+[dependencies]
