@@ -7,3 +7,4 @@ authors = [
 ]
 
 [dependencies]
+leap = { git = "https://github.com/timvisee/leap-rs.git" , version = "0.1.0" }

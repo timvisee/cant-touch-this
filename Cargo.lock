@@ -1,4 +1,39 @@
 [[package]]
 name = "cant-touch-this"
 version = "0.0.1"
+dependencies = [
+ "leap 0.1.0 (git+https://github.com/timvisee/leap-rs.git)",
+]
 
+[[package]]
+name = "cc"
+version = "1.0.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "cmake"
+version = "0.1.33"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "cc 1.0.24 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "leap"
+version = "0.1.0"
+source = "git+https://github.com/timvisee/leap-rs.git#33fd30af09dddfaf3224fe1ecb0c97a1f02b7afd"
+dependencies = [
+ "cmake 0.1.33 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "libc"
+version = "0.2.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum cc 1.0.24 (registry+https://github.com/rust-lang/crates.io-index)" = "70f2a88c2e69ceee91c209d8ef25b81fc1a65f42c7f14dfd59d1fed189e514d1"
+"checksum cmake 0.1.33 (registry+https://github.com/rust-lang/crates.io-index)" = "704fbf3bb5149daab0afb255dbea24a1f08d2f4099cedb9baab6d470d4c5eefb"
+"checksum leap 0.1.0 (git+https://github.com/timvisee/leap-rs.git)" = "<none>"
+"checksum libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)" = "76e3a3ef172f1a0b9a9ff0dd1491ae5e6c948b94479a3021819ba7d860c8645d"
