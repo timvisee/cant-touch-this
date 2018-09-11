@@ -7,7 +7,7 @@ before_script:
 - pacman -S --noconfirm git base-devel pkg-config cmake
 
   # Install aurget
-- git clone github.com/pbrisbin/aurget .aurget
+- git clone https://github.com/pbrisbin/aurget.git .aurget
 - cp .aurget/aurget ./aurget
 - rm -rf .aurget
 - chmod a+x aurget
