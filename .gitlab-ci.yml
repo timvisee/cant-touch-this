@@ -1,0 +1,12 @@
+image: "rust:latest"
+
+before_script:
+- apt-get update -yqq
+- apt-get install -yqq --no-install-recommends build-essential
+
+# Build and test the project
+test:cargo:
+  script:
+  - rustc --version && cargo --version
+  - cargo build --all --verbose
+  - cargo test --all --verbose
