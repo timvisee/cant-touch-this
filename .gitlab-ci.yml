@@ -13,7 +13,7 @@ before_script:
 - chmod a+x aurget
 
   # Install rustup and leap motion SDK
-- ./aurget -S rustup-git leap-motion-sdk
+- yes no | ./aurget -S rustup-git leap-motion-sdk
 
   # Use rust nightly
 - rustup default nightly
