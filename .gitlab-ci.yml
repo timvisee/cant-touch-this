@@ -4,7 +4,7 @@ before_script:
 - pacman -Syu --noconfirm
 
   # Install dependencies through pacman
-- pacman -S --noconfirm base-devel pkg-config cmake
+- pacman -S --noconfirm git base-devel pkg-config cmake
 
   # Install aurget
 - git clone github.com/pbrisbin/aurget .aurget
