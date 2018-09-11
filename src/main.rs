@@ -2,6 +2,7 @@
 #![plugin(rocket_codegen)]
 
 extern crate rocket;
+extern crate rocket_contrib;
 
 pub(crate) mod beautifier;
 pub(crate) mod core;
