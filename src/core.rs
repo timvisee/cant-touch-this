@@ -2,6 +2,7 @@ use beautifier::Beautifier;
 use gesture::controller::GestureController;
 use sensor::controller::SensorController;
 use store::template::TemplateStore;
+use web::server::Server;
 
 pub struct Core {
     /// The sensor controller, handling the sensor data
@@ -23,6 +24,12 @@ pub struct Core {
     ///
     /// This is used by the gesture controller to match new against.
     store: TemplateStore,
+
+
+    /// The web server
+    ///
+    /// This is used to launch a web based configuration window for the user.
+    server: Server,
 }
 
 impl Core {
@@ -35,6 +42,7 @@ impl Core {
             beautifier: Beautifier::new(),
             gesture_controller: GestureController::new(),
             store: TemplateStore::new(),
+            server: Server::new(),
         }
     }
 }
