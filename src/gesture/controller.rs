@@ -4,4 +4,10 @@
 /// TODO: this should be a state machine:
 /// TODO: build the recognition part, which compares it to a set of templates
 /// TODO: build the recording part
-pub struct GestureController { }
+pub struct GestureController {}
+
+impl GestureController {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
