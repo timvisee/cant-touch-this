@@ -1,11 +1,25 @@
-image: "rust:latest"
+image: "greyltc/archlinux"
 
 before_script:
-- apt-get update -yqq
-- apt-get install -yqq --no-install-recommends build-essential
+- pacman -Syu --noconfirm
+
+  # Install dependencies through pacman
+- pacman -S --noconfirm base-devel pkg-config cmake
+
+  # Install aurget
+- git clone github.com/pbrisbin/aurget .aurget
+- cp .aurget/aurget ./aurget
+- rm -rf .aurget
+- chmod a+x aurget
+
+  # Install rustup and leap motion SDK
+- ./aurget -S --noconfirm rustup-git leap-motion-sdk
+
+  # Use rust nightly
+- rustup default nightly
 
 # Build and test the project
-test:cargo:
+build:
   script:
   - rustc --version && cargo --version
   - cargo build --all --verbose
