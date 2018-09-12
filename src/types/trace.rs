@@ -25,7 +25,6 @@ impl PointTrace {
         // a certain degree of rotation or change. This list is the final
         // RotTrace that will be returned.
 
-
         RotTrace::new(vec![RotPoint::zero(); 1])
     }
 }
