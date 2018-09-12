@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+echo "Installing Leap Motion SDK..."
+
+# Download Leap Motion SDK from self hosted server
+wget https://u.visee.me/dl/leap-motion/Leap_Motion_SDK_Linux_2.3.1.tgz -O LeapMotionSDK.tgz
+
+# Extract the SDK, prepare the SDK directory
+tar -zxvf LeapMotionSDK.tgz
+mv ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK ./LeapSDK
+rm -rf ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK
+
+# Install SDK library files on system
+cp ./LeapSDK/include/Leap.h /usr/include/
+cp ./LeapSDK/lib/x64/libLeap.so /usr/lib/
+cp ./libleap.pc /usr/lib/pkgconfig/
+
+# Remove the extracted SDK
+rm -rf ./LeapSDK
+
+echo "Successfully installed Leap Motion SDK!"

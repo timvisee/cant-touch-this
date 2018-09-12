@@ -3,7 +3,7 @@ image: rust
 before_script:
   # Update and install dependencies
   - apt-get update -yqq
-  - apt-get install -yqq --no-install-recommends curl build-essential cmake pkg-config
+  - apt-get install -yqq --no-install-recommends wget build-essential cmake pkg-config
 
   # Use Rust nightly
   - rustup default nightly
