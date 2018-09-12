@@ -8,6 +8,7 @@ authors = [
 
 [dependencies]
 leap = { git = "https://github.com/timvisee/leap-rs.git" , version = "0.1.0" }
+nalgebra = "0.16"
 rocket = "0.3.16"
 rocket_codegen = "0.3.16"
 
