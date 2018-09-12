@@ -1,5 +1,9 @@
 image: rust
 
+stages:
+  - lint
+  - test
+
 before_script:
   # Update and install dependencies
   - apt-get update -yqq
@@ -12,8 +16,22 @@ before_script:
   # Install the Leap Motion SDK
   - ./ci/install_sdk
 
+lint:
+  stage: lint
+  before_script:
+    # Install Rust nightly with linters
+    - rustup default nightly
+    - rustup component add rustfmt-preview
+    - rustup component add clippy-preview
+    - rustc --version && cargo --version
+  script:
+    # Lint code style and clippy
+    - cargo fmt --all -- --check
+    - cargo clippy --all -- --check
+
 # Build and test the project
 build:
+  stage: test
   script:
     - cargo build --all --verbose
     - cargo test --all --verbose
