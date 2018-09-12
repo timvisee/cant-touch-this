@@ -1,0 +1,19 @@
+image: rust
+
+before_script:
+  # Update and install dependencies
+  - apt-get update -yqq
+  - apt-get install -yqq --no-install-recommends curl build-essential cmake pkg-config
+
+  # Use Rust nightly
+  - rustup default nightly
+  - rustc --version && cargo --version
+
+  # Install the Leap Motion SDK
+  - ./ci/install_sdk
+
+# Build and test the project
+build:
+  script:
+    - cargo build --all --verbose
+    - cargo test --all --verbose
