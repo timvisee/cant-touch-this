@@ -16,6 +16,16 @@ impl PointTrace {
     }
 
     pub fn to_rot_trace(&self) -> RotTrace {
+        // Loop through all points (where n amount of points need to be > 3).
+        // Calculate the difference between point n and n + 1, resulting in
+        // a vector of n - 1, size, know as j, with directions.
+
+        // Loop through all directions (where j needs to be > 2).
+        // Calculate the difference between direction j and j + 1, resulting in
+        // a certain degree of rotation or change. This list is the final
+        // RotTrace that will be returned.
+
+
         RotTrace::new(vec![RotPoint::zero(); 1])
     }
 }
