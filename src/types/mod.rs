@@ -7,4 +7,4 @@ pub mod trace;
 /// Re-exports
 pub use self::model::Model;
 pub use self::template::Template;
-pub use self::trace::{PointTrace, RotTrace, RotPoint, Point3};
+pub use self::trace::{Point3, PointTrace, RotPoint, RotTrace};
