@@ -32,16 +32,14 @@ impl PointTrace {
             .map(|v| {
                 let rotation = Rotation3::rotation_between(
                     &v[0].to_algebra_vector(),
-                    &v[1].to_algebra_vector()
+                    &v[1].to_algebra_vector(),
                 );
                 rotation.expect("Failed to determine rotation between vectors")
             }).collect();
 
         let rot_points: Vec<RotPoint> = directions
             .windows(2)
-            .map(|r| {
-                RotPoint::new(r[0].angle_to(&r[1]))
-            })
+            .map(|r| RotPoint::new(r[0].angle_to(&r[1])))
             .collect();
 
         RotTrace::new(rot_points)
@@ -154,7 +152,7 @@ mod tests {
             Point3::new(1.0, 1.0, 1.0),
             Point3::new(5.0, 5.0, 5.0),
         ];
-        
+
         let rotation = vec![RotPoint::new(0.0)];
 
         let point_trace = PointTrace::new(points);
