@@ -3,6 +3,7 @@
 
 extern crate leap;
 extern crate rocket;
+extern crate rocket_contrib;
 
 #[cfg(test)]
 #[macro_use]
