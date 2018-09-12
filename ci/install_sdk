@@ -8,10 +8,10 @@ echo "Installing Leap Motion SDK..."
 cd "$( cd "$(dirname "$0")" ; pwd -P )"
 
 # Download Leap Motion SDK from self hosted server
-wget https://u.visee.me/dl/leap-motion/Leap_Motion_SDK_Linux_2.3.1.tgz -O LeapMotionSDK.tgz
+curl https://u.visee.me/dl/leap-motion/Leap_Motion_SDK_Linux_2.3.1.tgz -o LeapMotionSDK.tgz
 
 # Extract the SDK, prepare the SDK directory
-tar -zxvf LeapMotionSDK.tgz
+tar -zxf LeapMotionSDK.tgz
 mv ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK ./LeapSDK
 rm -rf ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK
 
