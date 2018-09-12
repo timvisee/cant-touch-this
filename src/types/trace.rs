@@ -1,6 +1,8 @@
 use leap::vector::Vector;
+use nalgebra::base::Vector3;
+use nalgebra::geometry::Rotation3;
 
-/// The maximum number of points allowed in a trait.
+/// The maximum number of points allowed in a trace.
 ///
 /// TODO: dynamically define this, based on the longest recorded trace template.
 pub const TRACE_MAX_POINTS: usize = 100;
@@ -22,9 +24,25 @@ impl PointTrace {
         PointTrace { points: vec![] }
     }
 
-    /// Convert this point trace into a rotatoinal trace.
+    /// Convert this point trace into a rotational trace.
     pub fn to_rot_trace(&self) -> RotTrace {
-        RotTrace::empty()
+        let directions: Vec<Rotation3<f64>> = self
+            .points
+            .windows(2)
+            .map(|v| {
+                let rotation = Rotation3::rotation_between(
+                    &v[0].to_algebra_vector(),
+                    &v[1].to_algebra_vector(),
+                );
+                rotation.expect("Failed to determine rotation between vectors")
+            }).collect();
+
+        let rot_points: Vec<RotPoint> = directions
+            .windows(2)
+            .map(|r| RotPoint::new(r[0].angle_to(&r[1])))
+            .collect();
+
+        RotTrace::new(rot_points)
     }
 
     /// Add a new point to the trace.
@@ -111,6 +129,10 @@ impl Point3 {
             z: v.z().into(),
         }
     }
+
+    pub fn to_algebra_vector(&self) -> Vector3<f64> {
+        Vector3::new(self.x, self.y, self.z)
+    }
 }
 
 impl From<Vector> for Point3 {
@@ -127,15 +149,15 @@ mod tests {
     fn point_to_rot_trace() {
         let points = vec![
             Point3::new(0.0, 0.0, 0.0),
-            Point3::new(0.0, 1.0, 0.0),
-            Point3::new(0.0, 2.0, 0.0),
+            Point3::new(1.0, 1.0, 1.0),
+            Point3::new(5.0, 5.0, 5.0),
         ];
 
-        let rots = vec![RotPoint::new(0.0), RotPoint::new(0.0)];
+        let rotation = vec![RotPoint::new(0.0)];
 
         let point_trace = PointTrace::new(points);
-        let rot_trace = RotTrace::new(rots);
+        let rotation_trace = RotTrace::new(rotation);
 
-        assert_eq!(point_trace.to_rot_trace(), rot_trace);
+        assert_eq!(point_trace.to_rot_trace(), rotation_trace);
     }
 }

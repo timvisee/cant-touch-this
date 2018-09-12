@@ -61,7 +61,8 @@ impl LeapListener for SensorListener {
         // Add the current position to the sensor trace
         if let Some(ref trace) = self.trace {
             // TODO: use the proper point here, not a dummy zero point
-            trace.lock()
+            trace
+                .lock()
                 .expect("failed to lock sensor trace, cannot extend")
                 .push(Point3::zero());
         }
