@@ -4,6 +4,10 @@
 extern crate leap;
 extern crate rocket;
 
+#[cfg(test)]
+#[macro_use]
+extern crate pretty_assertions;
+
 pub(crate) mod beautifier;
 pub(crate) mod core;
 pub(crate) mod gesture;

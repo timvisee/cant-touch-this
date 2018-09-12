@@ -1,7 +1,4 @@
-use leap::{
-    Controller as LeapController,
-    Listener as LeapListener,
-};
+use leap::{Controller as LeapController, Listener as LeapListener};
 
 /// Structure representing a motion sensor.
 pub struct Sensor {
