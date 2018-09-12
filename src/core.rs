@@ -25,7 +25,6 @@ pub struct Core {
     /// This is used by the gesture controller to match new against.
     store: TemplateStore,
 
-
     /// The web server
     ///
     /// This is used to launch a web based configuration window for the user.

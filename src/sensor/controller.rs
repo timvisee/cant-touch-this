@@ -1,5 +1,5 @@
 /// This thing should manage controllers, fethcing points
-pub struct SensorController { }
+pub struct SensorController {}
 
 impl SensorController {
     /// Construct a sensor controller.
