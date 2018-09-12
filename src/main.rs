@@ -2,6 +2,7 @@
 #![plugin(rocket_codegen)]
 
 extern crate leap;
+extern crate nalgebra;
 extern crate rocket;
 extern crate rocket_contrib;
 
