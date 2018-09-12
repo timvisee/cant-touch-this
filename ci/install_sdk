@@ -16,7 +16,7 @@ mv ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK ./LeapSDK
 rm -rf ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK
 
 # Install SDK library files on system
-cp ./LeapSDK/include/Leap.h /usr/include/
+cp ./LeapSDK/include/Leap*.h /usr/include/
 cp ./LeapSDK/lib/x64/libLeap.so /usr/lib/
 cp ./libleap.pc /usr/lib/pkgconfig/
 
