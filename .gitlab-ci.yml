@@ -7,6 +7,7 @@ before_script:
 
   # Use Rust nightly
   - rustup default nightly
+  - rustc --version && cargo --version
 
   # Install the Leap Motion SDK
   - ./ci/install_sdk
@@ -14,6 +15,5 @@ before_script:
 # Build and test the project
 build:
   script:
-    - rustc --version && cargo --version
     - cargo build --all --verbose
     - cargo test --all --verbose
