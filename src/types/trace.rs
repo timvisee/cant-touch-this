@@ -26,11 +26,13 @@ impl PointTrace {
 
     /// Convert this point trace into a rotational trace.
     pub fn to_rot_trace(&self) -> RotTrace {
-
-        let directions: Vec<Point3> = self.points.windows(2).map(|x| {
-            // TODO: Calculate the direction between point n and n + 1.
-            x[0]
-        }).collect();
+        let directions: Vec<Point3> = self
+            .points
+            .windows(2)
+            .map(|x| {
+                // TODO: Calculate the direction between point n and n + 1.
+                x[0]
+            }).collect();
 
         println!("{:#?}", directions);
 
