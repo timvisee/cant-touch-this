@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use rocket;
 use rocket_contrib::Template;
+use std::collections::HashMap;
 
 pub struct Server {}
 

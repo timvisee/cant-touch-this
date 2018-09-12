@@ -8,15 +8,11 @@ pub struct PointTrace {
 
 impl PointTrace {
     pub fn new(v: Vec<Point3>) -> PointTrace {
-        PointTrace {
-            points: v,
-        }
+        PointTrace { points: v }
     }
 
     pub fn empty() -> PointTrace {
-        PointTrace {
-            points: vec![],
-        }
+        PointTrace { points: vec![] }
     }
 
     pub fn to_rot_trace(&self) -> RotTrace {
@@ -32,15 +28,11 @@ pub struct RotTrace {
 
 impl RotTrace {
     pub fn new(v: Vec<RotPoint>) -> RotTrace {
-        RotTrace {
-            points: v,
-        }
+        RotTrace { points: v }
     }
 
     pub fn empty() -> RotTrace {
-        RotTrace {
-            points: vec![],
-        }
+        RotTrace { points: vec![] }
     }
 }
 
@@ -74,11 +66,7 @@ pub struct Point3 {
 
 impl Point3 {
     pub fn new(x: f64, y: f64, z: f64) -> Point3 {
-        Point3 {
-            x,
-            y,
-            z,
-        }
+        Point3 { x, y, z }
     }
 
     pub fn zero() -> Point3 {
@@ -116,10 +104,7 @@ mod tests {
             Point3::new(0.0, 2.0, 0.0),
         ];
 
-        let rots = vec![
-            RotPoint::new(0.0),
-            RotPoint::new(0.0),
-        ];
+        let rots = vec![RotPoint::new(0.0), RotPoint::new(0.0)];
 
         let point_trace = PointTrace::new(points);
         let rot_trace = RotTrace::new(rots);
