@@ -16,7 +16,7 @@ impl PointTrace {
     }
 
     pub fn to_rot_trace(&self) -> RotTrace {
-        RotTrace::empty()
+        RotTrace::new(vec![RotPoint::zero(); 1])
     }
 }
 
@@ -104,7 +104,7 @@ mod tests {
             Point3::new(0.0, 2.0, 0.0),
         ];
 
-        let rots = vec![RotPoint::new(0.0), RotPoint::new(0.0)];
+        let rots = vec![RotPoint::new(0.0)];
 
         let point_trace = PointTrace::new(points);
         let rot_trace = RotTrace::new(rots);
