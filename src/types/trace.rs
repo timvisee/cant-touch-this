@@ -1,6 +1,8 @@
 use leap::vector::Vector;
+use nalgebra::base::Vector3;
+use nalgebra::geometry::Rotation3;
 
-/// The maximum number of points allowed in a trait.
+/// The maximum number of points allowed in a trace.
 ///
 /// TODO: dynamically define this, based on the longest recorded trace template.
 pub const TRACE_MAX_POINTS: usize = 100;
@@ -22,11 +24,15 @@ impl PointTrace {
         PointTrace { points: vec![] }
     }
 
-    /// Convert this point trace into a rotatoinal trace.
+    /// Convert this point trace into a rotational trace.
     pub fn to_rot_trace(&self) -> RotTrace {
-        // Loop through all points (where n amount of points need to be > 3).
-        // Calculate the difference between point n and n + 1, resulting in
-        // a vector of n - 1, size, know as j, with directions.
+
+        let directions: Vec<Point3> = self.points.windows(2).map(|x| {
+            // TODO: Calculate the direction between point n and n + 1.
+            x[0]
+        }).collect();
+
+        println!("{:#?}", directions);
 
         // Loop through all directions (where j needs to be > 2).
         // Calculate the difference between direction j and j + 1, resulting in
@@ -119,6 +125,10 @@ impl Point3 {
             y: v.y().into(),
             z: v.z().into(),
         }
+    }
+
+    pub fn to_algebra_vector(&self) -> Vector3<f64> {
+        Vector3::new(self.x, self.y, self.z)
     }
 }
 
