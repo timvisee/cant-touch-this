@@ -26,7 +26,10 @@ impl SensorListener {
 
 impl LeapListener for SensorListener {
     fn on_frame(&mut self, controller: &LeapController) {
-        println!("Got update from Leap Motion sensor: {} FPS", controller.frame().current_fps());
+        println!(
+            "Got update from Leap Motion sensor: {} FPS",
+            controller.frame().current_fps()
+        );
     }
 
     fn on_connect(&mut self, _: &LeapController) {
