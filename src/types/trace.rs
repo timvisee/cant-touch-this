@@ -1,5 +1,10 @@
 use leap::vector::Vector;
 
+/// The maximum number of points allowed in a trait.
+///
+/// TODO: dynamically define this, based on the longest recorded trace template.
+pub const TRACE_MAX_POINTS: usize = 100;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
     /// The trace points.
@@ -7,16 +12,38 @@ pub struct PointTrace {
 }
 
 impl PointTrace {
+    /// Construct a point trace with the given points.
     pub fn new(v: Vec<Point3>) -> PointTrace {
         PointTrace { points: v }
     }
 
+    /// Construct an emtpy point trace.
     pub fn empty() -> PointTrace {
         PointTrace { points: vec![] }
     }
 
+    /// Convert this point trace into a rotatoinal trace.
     pub fn to_rot_trace(&self) -> RotTrace {
         RotTrace::empty()
+    }
+
+    /// Add a new point to the trace.
+    pub fn push(&mut self, point: Point3) {
+        self.points.push(point);
+        self.truncate();
+    }
+
+    /// Truncate the trace to the maximum allowed points.
+    ///
+    /// This removes the oldest points from the trace to fit `TRACE_MAX_POINTS`.
+    /// If the maximum isn't reached yet, invoking this does nothing.
+    ///
+    /// TODO: do not apply this when recording a trace, as it may have any length.
+    fn truncate(&mut self) {
+        if self.points.len() > TRACE_MAX_POINTS {
+            let truncate = self.points.len() - TRACE_MAX_POINTS;
+            self.points.drain(..truncate);
+        }
     }
 }
 
