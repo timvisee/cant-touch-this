@@ -26,22 +26,25 @@ impl PointTrace {
 
     /// Convert this point trace into a rotational trace.
     pub fn to_rot_trace(&self) -> RotTrace {
-        let directions: Vec<Point3> = self
+        let directions: Vec<Rotation3<f64>> = self
             .points
             .windows(2)
-            .map(|x| {
-                // TODO: Calculate the direction between point n and n + 1.
-                x[0]
+            .map(|v| {
+                let rotation = Rotation3::rotation_between(
+                    &v[0].to_algebra_vector(),
+                    &v[1].to_algebra_vector()
+                );
+                rotation.expect("Failed to determine rotation between vectors")
             }).collect();
 
-        println!("{:#?}", directions);
+        let rot_points: Vec<RotPoint> = directions
+            .windows(2)
+            .map(|r| {
+                RotPoint::new(r[0].angle_to(&r[1]))
+            })
+            .collect();
 
-        // Loop through all directions (where j needs to be > 2).
-        // Calculate the difference between direction j and j + 1, resulting in
-        // a certain degree of rotation or change. This list is the final
-        // RotTrace that will be returned.
-
-        RotTrace::new(vec![RotPoint::zero(); 1])
+        RotTrace::new(rot_points)
     }
 
     /// Add a new point to the trace.
@@ -148,15 +151,15 @@ mod tests {
     fn point_to_rot_trace() {
         let points = vec![
             Point3::new(0.0, 0.0, 0.0),
-            Point3::new(0.0, 1.0, 0.0),
-            Point3::new(0.0, 2.0, 0.0),
+            Point3::new(1.0, 1.0, 1.0),
+            Point3::new(5.0, 5.0, 5.0),
         ];
-
-        let rots = vec![RotPoint::new(0.0)];
+        
+        let rotation = vec![RotPoint::new(0.0)];
 
         let point_trace = PointTrace::new(points);
-        let rot_trace = RotTrace::new(rots);
+        let rotation_trace = RotTrace::new(rotation);
 
-        assert_eq!(point_trace.to_rot_trace(), rot_trace);
+        assert_eq!(point_trace.to_rot_trace(), rotation_trace);
     }
 }
