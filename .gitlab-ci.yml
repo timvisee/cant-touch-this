@@ -30,7 +30,7 @@ clippy:
   stage: lint
   script:
     - rustup component add clippy-preview
-    - cargo clippy --all -- --check
+    - cargo clippy --all
 
 # Build and test the project
 build:
