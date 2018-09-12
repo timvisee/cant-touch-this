@@ -28,12 +28,8 @@ fmt:
 
 clippy:
   stage: lint
-  before_script:
-    # Install Rust nightly with clippy
-    - rustup default nightly
-    - rustup component add clippy-preview
-    - rustc --version && cargo --version
   script:
+    - rustup component add clippy-preview
     - cargo clippy --all -- --check
 
 # Build and test the project
