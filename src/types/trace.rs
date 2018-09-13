@@ -92,7 +92,6 @@ impl fmt::Display for PointTrace {
     }
 }
 
-
 impl fmt::Display for RotTrace {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for p in &self.points {

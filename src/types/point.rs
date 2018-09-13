@@ -33,7 +33,7 @@ impl Point3 {
         }
     }
 
-    pub fn from_leap(v: Vector) -> Point3 {
+    pub fn from_leap(v: &Vector) -> Point3 {
         Point3 {
             x: v.x().into(),
             y: v.y().into(),
@@ -70,6 +70,6 @@ impl fmt::Display for RotPoint {
 
 impl From<Vector> for Point3 {
     fn from(v: Vector) -> Self {
-        Point3::from_leap(v)
+        Point3::from_leap(&v)
     }
 }
