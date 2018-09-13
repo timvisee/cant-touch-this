@@ -2,6 +2,7 @@ use beautifier::Beautifier;
 use gesture::controller::GestureController;
 use sensor::controller::SensorController;
 use store::template::TemplateStore;
+#[cfg(feature = "web")]
 use web::server::Server;
 
 pub struct Core {
@@ -28,7 +29,8 @@ pub struct Core {
     /// The web server
     ///
     /// This is used to launch a web based configuration window for the user.
-    server: Server,
+    #[cfg(feature = "web")]
+    pub server: Server,
 }
 
 impl Core {
@@ -41,6 +43,7 @@ impl Core {
             beautifier: Beautifier::new(),
             gesture_controller: GestureController::new(),
             store: TemplateStore::new(),
+            #[cfg(feature = "web")]
             server: Server::new(),
         }
     }
