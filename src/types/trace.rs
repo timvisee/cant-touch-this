@@ -114,7 +114,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn point_to_rot_trace() {
+    fn point_to_rot_trace_straight() {
         let points = vec![
             Point3::new(0.0, 0.0, 0.0),
             Point3::new(1.0, 1.0, 1.0),
@@ -129,7 +129,25 @@ mod tests {
         let point_trace = PointTrace::new(points);
         let rotation_trace = RotTrace::new(rotation);
 
-        println!("{}", rotation_trace);
+        assert_eq!(point_trace.to_rot_trace(), rotation_trace);
+    }
+
+    #[test]
+    fn point_to_rot_trace_curve() {
+        let points = vec![
+            Point3::new(0.0, 0.0, 0.0),
+            Point3::new(0.0, 0.0, 5.0),
+            Point3::new(0.0, 5.0, 5.0),
+            Point3::new(0.0, 5.0, 0.0),
+            Point3::new(0.0, 0.0, 0.0),
+        ];
+
+        let rotation = vec![RotPoint::new(0.0); 3];
+
+        let point_trace = PointTrace::new(points);
+        let rotation_trace = RotTrace::new(rotation);
+
+        println!("{}", point_trace.to_rot_trace());
 
         assert_eq!(point_trace.to_rot_trace(), rotation_trace);
     }
