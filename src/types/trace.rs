@@ -1,6 +1,8 @@
-use leap::vector::Vector;
-use nalgebra::base::Vector3;
+use std::fmt;
+
 use nalgebra::geometry::Rotation3;
+
+use types::{Point3, RotPoint};
 
 /// The maximum number of points allowed in a trace.
 ///
@@ -11,6 +13,12 @@ pub const TRACE_MAX_POINTS: usize = 100;
 pub struct PointTrace {
     /// The trace points.
     points: Vec<Point3>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct RotTrace {
+    /// The rotation at each point.
+    points: Vec<RotPoint>,
 }
 
 impl PointTrace {
@@ -65,12 +73,6 @@ impl PointTrace {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct RotTrace {
-    /// The rotation at each point.
-    points: Vec<RotPoint>,
-}
-
 impl RotTrace {
     pub fn new(v: Vec<RotPoint>) -> RotTrace {
         RotTrace { points: v }
@@ -81,63 +83,22 @@ impl RotTrace {
     }
 }
 
-/// A rotational point.
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct RotPoint(f64);
-
-impl RotPoint {
-    pub fn new(f: f64) -> RotPoint {
-        RotPoint(f)
-    }
-
-    pub fn zero() -> RotPoint {
-        RotPoint(0.0)
-    }
-}
-
-/// A point in 3D space.
-// TODO: replace with leap library construct, or a more generic
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Point3 {
-    /// The X coordinate.
-    x: f64,
-
-    /// The Y coordinate.
-    y: f64,
-
-    /// The Z coordinate.
-    z: f64,
-}
-
-impl Point3 {
-    pub fn new(x: f64, y: f64, z: f64) -> Point3 {
-        Point3 { x, y, z }
-    }
-
-    pub fn zero() -> Point3 {
-        Point3 {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
+impl fmt::Display for PointTrace {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for p in &self.points {
+            write!(f, "{}", p)?;
         }
-    }
-
-    pub fn from_leap(v: Vector) -> Point3 {
-        Point3 {
-            x: v.x().into(),
-            y: v.y().into(),
-            z: v.z().into(),
-        }
-    }
-
-    pub fn to_algebra_vector(&self) -> Vector3<f64> {
-        Vector3::new(self.x, self.y, self.z)
+        Ok(())
     }
 }
 
-impl From<Vector> for Point3 {
-    fn from(v: Vector) -> Self {
-        Point3::from_leap(v)
+
+impl fmt::Display for RotTrace {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for p in &self.points {
+            write!(f, "{}", p)?;
+        }
+        Ok(())
     }
 }
 
@@ -150,13 +111,18 @@ mod tests {
         let points = vec![
             Point3::new(0.0, 0.0, 0.0),
             Point3::new(1.0, 1.0, 1.0),
+            Point3::new(2.0, 2.0, 2.0),
+            Point3::new(3.0, 3.0, 3.0),
+            Point3::new(4.0, 4.0, 4.0),
             Point3::new(5.0, 5.0, 5.0),
         ];
 
-        let rotation = vec![RotPoint::new(0.0)];
+        let rotation = vec![RotPoint::new(0.0); 4];
 
         let point_trace = PointTrace::new(points);
         let rotation_trace = RotTrace::new(rotation);
+
+        println!("{}", rotation_trace);
 
         assert_eq!(point_trace.to_rot_trace(), rotation_trace);
     }
