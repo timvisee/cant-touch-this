@@ -85,19 +85,27 @@ impl RotTrace {
 
 impl fmt::Display for PointTrace {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for p in &self.points {
-            write!(f, "{}", p)?;
-        }
-        Ok(())
+        let p = self
+            .points
+            .iter()
+            .map(|p| format!("{}", p))
+            .collect::<Vec<_>>()
+            .join(", ");
+
+        write!(f, "{}", p)
     }
 }
 
 impl fmt::Display for RotTrace {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for p in &self.points {
-            write!(f, "{}", p)?;
-        }
-        Ok(())
+        let p = self
+            .points
+            .iter()
+            .map(|p| format!("{}", p))
+            .collect::<Vec<_>>()
+            .join(", ");
+
+        write!(f, "{}", p)
     }
 }
 
