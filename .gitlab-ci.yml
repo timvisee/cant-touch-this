@@ -31,10 +31,13 @@ clippy:
   script:
     - rustup component add clippy-preview
     - cargo clippy --all
+    - cargo clippy --all --features web
 
 # Build and test the project
 build:
   stage: test
   script:
     - cargo build --all --verbose
+    - cargo build --all --features web --verbose
     - cargo test --all --verbose
+    - cargo test --all --features web --verbose
