@@ -6,6 +6,12 @@ authors = [
     "Tim Visée <timvisee@gmail.com>",
 ]
 
+[features]
+default = []
+
+# Include a web configuration utility
+web = []
+
 [dependencies]
 leap = { git = "https://github.com/timvisee/leap-rs.git" , version = "0.1.0" }
 nalgebra = "0.16"

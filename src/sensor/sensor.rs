@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 
-use leap::{Controller as LeapController, Listener as LeapListener};
+use leap::{Controller as LeapController, FingerType, Listener as LeapListener};
 
 use types::{point::Point3, trace::PointTrace};
 
@@ -58,13 +58,26 @@ impl LeapListener for SensorListener {
             controller.frame().current_fps()
         );
 
-        // Add the current position to the sensor trace
+        // Add the extended index finger position to the trace
         if let Some(ref trace) = self.trace {
-            // TODO: use the proper point here, not a dummy zero point
-            trace
-                .lock()
-                .expect("failed to lock sensor trace, cannot extend")
-                .push(Point3::zero());
+            // Get the extended index fingers
+            let fingers = controller
+                .frame()
+                .fingers()
+                .extended()
+                .finger_type(FingerType::Index);
+
+            // Add the tip points to the trace
+            for finger in fingers.iter() {
+                let tip = finger.stabilized_tip_position();
+
+                println!("Point: {} , {} , {}", tip.x(), tip.y(), tip.z());
+
+                trace
+                    .lock()
+                    .expect("failed to lock sensor trace, cannot extend")
+                    .push(tip.into());
+            }
         }
     }
 

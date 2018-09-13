@@ -4,6 +4,7 @@
 extern crate leap;
 extern crate nalgebra;
 extern crate rocket;
+#[cfg(feature = "web")]
 extern crate rocket_contrib;
 
 #[cfg(test)]
@@ -16,6 +17,7 @@ pub(crate) mod gesture;
 pub(crate) mod sensor;
 pub(crate) mod store;
 pub(crate) mod types;
+#[cfg(feature = "web")]
 pub(crate) mod web;
 
 use core::Core;
@@ -25,6 +27,10 @@ fn main() {
 
     // Initialize the core
     let core = Core::new();
+
+    // Start the web server
+    #[cfg(feature = "web")]
+    core.server.start();
 
     println!("Done");
 }

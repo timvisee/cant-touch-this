@@ -74,7 +74,7 @@ name = "cant-touch-this"
 version = "0.0.1"
 dependencies = [
  "leap 0.1.0 (git+https://github.com/timvisee/leap-rs.git)",
- "nalgebra 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nalgebra 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pretty_assertions 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_codegen 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -270,7 +270,7 @@ dependencies = [
 [[package]]
 name = "leap"
 version = "0.1.0"
-source = "git+https://github.com/timvisee/leap-rs.git#33fd30af09dddfaf3224fe1ecb0c97a1f02b7afd"
+source = "git+https://github.com/timvisee/leap-rs.git#781233ae4f12fe43420d071f5b0ae3fe0d5c322a"
 dependencies = [
  "cmake 0.1.33 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -338,7 +338,7 @@ dependencies = [
 
 [[package]]
 name = "nalgebra"
-version = "0.16.0"
+version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "alga 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -761,7 +761,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum memchr 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a3b4142ab8738a78c51896f704f83c11df047ff1bda9a92a661aa6361552d93d"
 "checksum memoffset 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "0f9dc261e2b62d7a622bf416ea3c5245cdd5d9a7fcc428c0d06804dfce1775b3"
 "checksum mime 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "ba626b8a6de5da682e1caa06bdb42a335aee5a84db8e5046a3e8ab17ba0a3ae0"
-"checksum nalgebra 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)" = "4534bc88a178e411e634e1e44e7f2ad6e9bf062ea539f40e579bd49ef2fad056"
+"checksum nalgebra 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)" = "93499be6c6ac5a8f3315a682e8e43cabd748f73c5f3ffde936b8588ccc1c2f03"
 "checksum nodrop 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)" = "9a2228dca57108069a5262f2ed8bd2e82496d2e074a06d1ccc7ce1687b6ae0a2"
 "checksum num-complex 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "68de83578789e0fbda3fa923035be83cf8bfd3b30ccfdecd5aa89bf8601f408e"
 "checksum num-traits 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)" = "630de1ef5cc79d0cdd78b7e33b81f083cbfe90de0f4b2b2f07f905867c70e9fe"
