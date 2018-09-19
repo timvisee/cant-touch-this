@@ -1,5 +1,7 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
+// TODO: remove this after developing
+#![allow(unused)]
 
 extern crate leap;
 extern crate nalgebra;

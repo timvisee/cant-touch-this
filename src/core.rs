@@ -8,6 +8,8 @@ use store::template::TemplateStore;
 #[cfg(feature = "web")]
 use web::server::Server;
 
+/// The application core with a global state.
+#[allow(dead_code)]
 pub struct Core {
     /// The sensor controller, handling the sensor data
     ///

@@ -8,7 +8,7 @@ pub struct Fragment {
     raw: PointTrace,
 
     /// The processed trace used for recognition.
-    processed: RotTrace,
+    _processed: RotTrace,
 }
 
 impl Fragment {
@@ -16,17 +16,17 @@ impl Fragment {
     pub fn new() -> Self {
         Fragment {
             raw: PointTrace::empty(),
-            processed: RotTrace::empty(),
+            _processed: RotTrace::empty(),
         }
     }
 
     /// Get a mutable reference to the raw point trace in this fragment.
-    pub fn raw(&mut self) -> &mut PointTrace {
+    pub fn _raw(&mut self) -> &mut PointTrace {
         &mut self.raw
     }
 
     /// Get a mutable reference to the processed point trace in this frament.
-    pub fn processed(&mut self) -> &mut RotTrace {
-        &mut self.processed
+    pub fn _processed(&mut self) -> &mut RotTrace {
+        &mut self._processed
     }
 }
