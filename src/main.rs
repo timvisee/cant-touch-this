@@ -14,6 +14,7 @@ extern crate pretty_assertions;
 pub(crate) mod beautifier;
 pub(crate) mod core;
 pub(crate) mod gesture;
+pub(crate) mod fragment;
 pub(crate) mod sensor;
 pub(crate) mod store;
 pub(crate) mod types;
