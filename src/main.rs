@@ -1,6 +1,9 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+// TODO: remove this after developing
+#![allow(unused)]
+
 extern crate leap;
 extern crate nalgebra;
 extern crate rocket;
@@ -27,7 +30,6 @@ fn main() {
     println!("Can't touch this");
 
     // Initialize the core
-    #[allow(unused_variables)]
     let core = Core::new();
 
     // Start the web server
