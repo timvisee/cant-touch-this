@@ -3,8 +3,8 @@ use std::sync::{Arc, Mutex};
 
 use leap::HandList as SensorHandList;
 
-use fragment::FragmentManager;
 use super::Hand;
+use fragment::FragmentManager;
 
 /// A hand manager.
 pub struct HandManager {

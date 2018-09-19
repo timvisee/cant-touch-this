@@ -69,10 +69,7 @@ impl LeapListener for SensorListener {
 
         // Process hands frame data in hands manager if set
         if let Some(hands) = &self.hands {
-            hands.process_sensor_hand_list(
-                frame.hands(),
-                self.fragment_manager.clone(),
-            );
+            hands.process_sensor_hand_list(frame.hands(), self.fragment_manager.clone());
         }
 
         // // Add the extended index finger position to the trace
