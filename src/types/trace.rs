@@ -1,6 +1,6 @@
 use std::fmt;
 
-use nalgebra::geometry::Rotation3;
+use nalgebra::geometry::{Point3 as NPoint3, Rotation3};
 
 use types::{Point3, RotPoint};
 
@@ -30,6 +30,29 @@ impl PointTrace {
     /// Construct an emtpy point trace.
     pub fn empty() -> PointTrace {
         PointTrace { points: vec![] }
+    }
+
+    /// Given a list of points, calculate the rotation/angle the edges between
+    /// points in radians.
+    ///
+    /// In order to make reliable calculations the first two points are dropped
+    /// in the result. If a list of less than 3 points is given, an emtpy result
+    /// is returned.
+    pub fn calc_point_angles(&self) -> RotTrace {
+        let rot_points = self
+            .points
+            .iter()
+            .map(|p| NPoint3::new(p.x, p.y, p.z))
+            .collect::<Vec<_>>()
+            .windows(2)
+            .map(|p| p[1] - p[0])
+            .collect::<Vec<_>>()
+            .windows(2)
+            .map(|p| p[0].angle(&p[1]))
+            .map(|p| RotPoint::new(p))
+            .collect();
+
+        RotTrace::new(rot_points)
     }
 
     /// Convert this point trace into a rotational trace.
@@ -114,41 +137,43 @@ mod tests {
     use super::*;
 
     #[test]
-    fn point_to_rot_trace_straight() {
-        let points = vec![
-            Point3::new(0.0, 0.0, 0.0),
-            Point3::new(1.0, 1.0, 1.0),
-            Point3::new(2.0, 2.0, 2.0),
-            Point3::new(3.0, 3.0, 3.0),
-            Point3::new(4.0, 4.0, 4.0),
-            Point3::new(5.0, 5.0, 5.0),
-        ];
+    fn none() {
+        let zero = PointTrace::empty();
+        let one = PointTrace::new(vec![Point3::zero(); 1]);
+        let two = PointTrace::new(vec![Point3::zero(); 2]);
 
-        let rotation = vec![RotPoint::new(0.0); 4];
-
-        let point_trace = PointTrace::new(points);
-        let rotation_trace = RotTrace::new(rotation);
-
-        assert_eq!(point_trace.to_rot_trace(), rotation_trace);
+        assert_eq!(zero.calc_point_angles(), RotTrace::empty());
+        assert_eq!(one.calc_point_angles(), RotTrace::empty());
+        assert_eq!(two.calc_point_angles(), RotTrace::empty());
     }
 
     #[test]
-    fn point_to_rot_trace_curve() {
-        let points = vec![
+    fn straight() {
+        let points = PointTrace::new(vec![
             Point3::new(0.0, 0.0, 0.0),
-            Point3::new(0.0, 0.0, 5.0),
-            Point3::new(0.0, 5.0, 5.0),
+            Point3::new(1.0, 1.0, 1.0),
+            Point3::new(5.0, 5.0, 5.0),
+        ]);
+
+        let expected = RotTrace::new(vec![RotPoint::zero(); 1]);
+
+        assert_eq!(points.calc_point_angles(), expected);
+    }
+
+    #[test]
+    fn corner() {
+        let points = PointTrace::new(vec![
+            Point3::new(0.0, 0.0, 0.0),
             Point3::new(0.0, 5.0, 0.0),
+            Point3::new(0.0, 5.0, 5.0),
+            Point3::new(0.0, 0.0, 5.0),
+            Point3::new(-5.0, 0.0, 5.0),
+            Point3::new(-5.0, 0.0, 0.0),
             Point3::new(0.0, 0.0, 0.0),
-        ];
+        ]);
 
-        let rotation = vec![RotPoint::new(0.0); 3];
+        let expected = RotTrace::new(vec![RotPoint::new(90_f64.to_radians()); 5]);
 
-        let point_trace = PointTrace::new(points);
-        let rotation_trace = RotTrace::new(rotation);
-
-        println!("{}", point_trace.to_rot_trace());
-
-        assert_eq!(point_trace.to_rot_trace(), rotation_trace);
+        assert_eq!(points.calc_point_angles(), expected)
     }
 }

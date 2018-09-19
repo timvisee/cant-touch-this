@@ -7,13 +7,13 @@ use nalgebra::base::Vector3;
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Point3 {
     /// The X coordinate.
-    x: f64,
+    pub x: f64,
 
     /// The Y coordinate.
-    y: f64,
+    pub y: f64,
 
     /// The Z coordinate.
-    z: f64,
+    pub z: f64,
 }
 
 /// A rotational point.
