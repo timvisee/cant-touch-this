@@ -1,9 +1,6 @@
 use std::collections::HashMap;
 
-use leap::{
-    FingerType,
-    Hand as SensorHand,
-};
+use leap::{FingerType, Hand as SensorHand};
 
 use super::Fragment;
 

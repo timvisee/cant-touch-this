@@ -51,12 +51,10 @@ impl HandManager {
         // Loop through all hands
         for sensor_hand in hand_list.iter() {
             // Obtain our hand or create a new one
-            let hand = self
-                .get(sensor_hand.id())
-                .unwrap_or_else(|| {
-                    // TODO: create a new hand in core, add it to local hand manager
-                    self.add(sensor_hand.id(), Hand::new())
-                });
+            let hand = self.get(sensor_hand.id()).unwrap_or_else(|| {
+                // TODO: create a new hand in core, add it to local hand manager
+                self.add(sensor_hand.id(), Hand::new())
+            });
 
             // Process the sensor hand
             hand.lock()
