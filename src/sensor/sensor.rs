@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use leap::{Controller as LeapController, FingerType, Listener as LeapListener};
 
-use fragment::{Hand, HandManager};
+use fragment::{FragmentManager, Hand, HandManager};
 use types::{Point3, PointTrace};
 
 /// Structure representing a motion sensor.
@@ -37,12 +37,18 @@ pub struct SensorListener {
     /// A hand manager, which keeps a list of all hands that have recently been tracked by the
     /// sensor, so these are easily accessible when new data arrives.
     hands: Option<Arc<HandManager>>,
+
+    /// The global fragment manager.
+    fragment_manager: Arc<FragmentManager>,
 }
 
 impl SensorListener {
     /// Construct a new sensor listener.
-    pub fn new() -> Self {
-        Self { hands: None }
+    pub fn new(fragment_manager: Arc<FragmentManager>) -> Self {
+        Self {
+            hands: None,
+            fragment_manager,
+        }
     }
 
     /// Set the hand manager this listener is working with.
@@ -63,7 +69,7 @@ impl LeapListener for SensorListener {
 
         // Process hands frame data in hands manager if set
         if let Some(hands) = &self.hands {
-            hands.process_sensor_hand_list(frame.hands());
+            hands.process_sensor_hand_list(frame.hands(), self.fragment_manager.clone());
         }
 
         // // Add the extended index finger position to the trace

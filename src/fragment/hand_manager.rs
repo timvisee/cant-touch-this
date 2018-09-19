@@ -4,6 +4,7 @@ use std::sync::{Arc, Mutex};
 use leap::HandList as SensorHandList;
 
 use super::Hand;
+use fragment::FragmentManager;
 
 /// A hand manager.
 pub struct HandManager {
@@ -25,15 +26,11 @@ impl HandManager {
     /// Add the given hand with the given ID to the internal list of hands.
     ///
     /// Note: if a hand with this ID already exists, it is replaced.
-    pub fn add(&self, id: i32, hand: Hand) -> Arc<Mutex<Hand>> {
-        // Wrap the hand, and add it to the list
-        let hand = Arc::new(Mutex::new(hand));
+    pub fn add(&self, id: i32, hand: Arc<Mutex<Hand>>) {
         self.hands
             .lock()
             .expect("failed to lock hands in frament manager, for adding a new hand")
-            .insert(id, hand.clone());
-
-        hand
+            .insert(id, hand);
     }
 
     /// Get a hand from the list.
@@ -47,13 +44,19 @@ impl HandManager {
     }
 
     /// Process a hand list frame from the sensor.
-    pub fn process_sensor_hand_list(&self, hand_list: SensorHandList) {
+    pub fn process_sensor_hand_list(
+        &self,
+        hand_list: SensorHandList,
+        fragment_manager: Arc<FragmentManager>,
+    ) {
         // Loop through all hands
         for sensor_hand in hand_list.iter() {
             // Obtain our hand or create a new one
             let hand = self.get(sensor_hand.id()).unwrap_or_else(|| {
-                // TODO: create a new hand in core, add it to local hand manager
-                self.add(sensor_hand.id(), Hand::new())
+                // Create hand in global fragment manager, add it to this manager
+                let hand = fragment_manager.create_hand(sensor_hand.id());
+                self.add(sensor_hand.id(), hand.clone());
+                hand
             });
 
             // Process the sensor hand

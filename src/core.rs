@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use beautifier::Beautifier;
 use fragment::FragmentManager;
 use gesture::GestureController;
@@ -13,7 +15,7 @@ pub struct Core {
     sensor_controller: SensorController,
 
     /// The fragment manager, keeping track of trace fragments.
-    fragment_manager: FragmentManager,
+    fragment_manager: Arc<FragmentManager>,
 
     /// The sensor data beautifier
     ///
@@ -42,9 +44,12 @@ impl Core {
     pub fn new() -> Core {
         println!("Initializing core...");
 
+        // Build the fragment manager
+        let fragment_manager = Arc::new(FragmentManager::new());
+
         Core {
-            sensor_controller: SensorController::new(),
-            fragment_manager: FragmentManager::new(),
+            sensor_controller: SensorController::new(fragment_manager.clone()),
+            fragment_manager,
             beautifier: Beautifier::new(),
             gesture_controller: GestureController::new(),
             store: TemplateStore::new(),
