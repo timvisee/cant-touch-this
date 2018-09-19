@@ -172,7 +172,7 @@ mod tests {
             Point3::new(0.0, 0.0, 0.0),
         ]);
 
-        let expected = RotTrace::new(vec![RotPoint::new(90_f64.to_radians()); 5]);
+        let expected = RotTrace::new(vec![RotPoint::from_degrees(90.0); 5]);
 
         assert_eq!(points.calc_point_angles(), expected)
     }
