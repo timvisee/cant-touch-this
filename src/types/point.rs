@@ -1,7 +1,10 @@
 use std::fmt;
 
 use leap::vector::Vector;
-use nalgebra::base::Vector3;
+use nalgebra::{
+    base::Vector3,
+    geometry::Point3 as NPoint3,
+};
 
 /// A point in 3D space.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -41,8 +44,9 @@ impl Point3 {
         }
     }
 
-    pub fn to_algebra_vector(&self) -> Vector3<f64> {
-        Vector3::new(self.x, self.y, self.z)
+    /// Convert this point to a `nalgebra` `Point3` used for special calculations.
+    pub fn to_npoint(&self) -> NPoint3<f64> {
+        NPoint3::new(self.x, self.y, self.z)
     }
 }
 

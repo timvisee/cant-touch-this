@@ -27,6 +27,7 @@ fn main() {
     println!("Can't touch this");
 
     // Initialize the core
+    #[allow(unused_variables)]
     let core = Core::new();
 
     // Start the web server

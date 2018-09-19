@@ -1,21 +1,20 @@
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
-use leap::{Controller as LeapController, FingerType, Listener as LeapListener};
+use leap::{Controller as LeapController, Listener as LeapListener};
 
-use fragment::{FragmentManager, Hand, HandManager};
-use types::{Point3, PointTrace};
+use fragment::{FragmentManager, HandManager};
 
 /// Structure representing a motion sensor.
 pub struct Sensor {
     /// The Leap Motion controller instance.
-    controller: LeapController,
+    _controller: LeapController,
 }
 
 impl Sensor {
     /// Construct a new sensor with the given listener.
-    pub fn new(mut listener: SensorListener) -> Self {
+    pub fn new(listener: SensorListener) -> Self {
         Self {
-            controller: LeapController::with_listener(listener),
+            _controller: LeapController::with_listener(listener),
         }
     }
 }

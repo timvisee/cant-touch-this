@@ -9,7 +9,7 @@ pub struct SensorController {
     /// The leap motion sensor.
     ///
     /// This will be extended in the future for supporting multiple sensors
-    sensor: Sensor,
+    _sensor: Sensor,
 }
 
 impl SensorController {
@@ -19,7 +19,7 @@ impl SensorController {
     /// a refrence to it must be given.
     pub fn new(fragment_manager: Arc<FragmentManager>) -> Self {
         Self {
-            sensor: Sensor::new(SensorListener::new(fragment_manager)),
+            _sensor: Sensor::new(SensorListener::new(fragment_manager)),
         }
     }
 }
