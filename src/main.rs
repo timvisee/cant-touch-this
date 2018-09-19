@@ -1,6 +1,5 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
-
 // TODO: remove this after developing
 #![allow(unused)]
 

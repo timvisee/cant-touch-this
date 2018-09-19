@@ -1,10 +1,7 @@
 use std::fmt;
 
 use leap::vector::Vector;
-use nalgebra::{
-    base::Vector3,
-    geometry::Point3 as NPoint3,
-};
+use nalgebra::{base::Vector3, geometry::Point3 as NPoint3};
 
 /// A point in 3D space.
 #[derive(Copy, Clone, Debug, PartialEq)]
