@@ -1,4 +1,6 @@
-use types::{PointTrace, RotTrace};
+use types::{Point3, PointTrace, RotTrace};
+
+use leap::Finger as SensorFinger;
 
 /// A fragment.
 // TODO: keep track of the last update time
@@ -28,5 +30,11 @@ impl Fragment {
     /// Get a mutable reference to the processed point trace in this frament.
     pub fn processed(&mut self) -> &mut RotTrace {
         &mut self.processed
+    }
+
+    /// Insert data from fingerType into Fragment
+    pub fn process_sensor_finger(&mut self, finger: SensorFinger) {
+        self.raw.push(Point3::from(finger.stabilized_tip_position()))
+        // convert raw trace to rot trace?
     }
 }

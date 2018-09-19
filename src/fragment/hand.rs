@@ -21,5 +21,8 @@ impl Hand {
     /// Process a sensor hand frame from the sensor.
     pub fn process_sensor_hand(&mut self, hand: SensorHand) {
         // TODO: for each finger, update the traces and recalculate
+        for (i, (fingerType, fragment)) in self.fingers.iter().enumerate() {
+            fragment.process_sensor_finger(hand.fingers().get(i).unwrap())
+        }
     }
 }
