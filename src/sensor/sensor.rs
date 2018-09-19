@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use leap::{Controller as LeapController, FingerType, Listener as LeapListener};
 
-use types::{Point3, PointTrace};
+use types::trace::PointTrace;
 
 /// Structure representing a motion sensor.
 pub struct Sensor {
