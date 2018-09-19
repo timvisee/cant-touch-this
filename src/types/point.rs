@@ -54,6 +54,10 @@ impl RotPoint {
     pub fn zero() -> RotPoint {
         RotPoint(0.0)
     }
+
+    pub fn from_degrees(degrees: f64) -> RotPoint {
+        RotPoint(degrees.to_radians())
+    }
 }
 
 impl fmt::Display for Point3 {
