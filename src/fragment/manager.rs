@@ -3,28 +3,30 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use super::Hand;
+use super::{Hand, HandManager};
 
 /// A fragment manager.
 pub struct FragmentManager {
-    /// A hashmap with hands, grouped by their hand ID obtained from the sensor.
-    hands: Mutex<HashMap<i32, Arc<Mutex<Hand>>>>,
+    /// The hand manager, tracked by the fragment manager.
+    hand: HandManager,
 }
 
 impl FragmentManager {
     /// Construct a new empty fragment manager.
     pub fn new() -> Self {
         FragmentManager {
-            hands: Mutex::new(HashMap::new()),
+            hand: HandManager::new(),
         }
     }
 
     /// Add a hand with the given hand ID.
-    /// If a hand with the given ID already exists, it is returned instead.
-    pub fn add_hand(&self, id: i32) -> Arc<Mutex<Hand>> {
-        self.hands
+    ///
+    /// Note: if a hand with the given ID already exists, it is returned instead.
+    pub fn create_hand(&self, id: i32) -> Arc<Mutex<Hand>> {
+        self.hand
+            .raw_mutex()
             .lock()
-            .expect("failed to lock hands in frament manager, for adding a new hand")
+            .expect("failed to lock hands manager to add a new hand")
             .entry(id)
             .or_insert_with(|| Arc::new(Mutex::new(Hand::new())))
             .clone()

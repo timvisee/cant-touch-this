@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 
-use leap::FingerType;
+use leap::{
+    FingerType,
+    Hand as SensorHand,
+};
 
 use super::Fragment;
 
@@ -16,5 +19,10 @@ impl Hand {
         Hand {
             fingers: HashMap::new(),
         }
+    }
+
+    /// Process a sensor hand frame from the sensor.
+    pub fn process_sensor_hand(&mut self, hand: SensorHand) {
+        // TODO: for each finger, update the traces and recalculate
     }
 }
