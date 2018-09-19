@@ -13,7 +13,7 @@ default = []
 web = []
 
 [dependencies]
-leap = { git = "https://github.com/timvisee/leap-rs.git", rev = "c5fd870", version = "0.1.0" }
+leap = { git = "https://github.com/timvisee/leap-rs.git", rev = "3205901", version = "0.1.0" }
 nalgebra = "0.16"
 rocket = "0.3.16"
 rocket_codegen = "0.3.16"

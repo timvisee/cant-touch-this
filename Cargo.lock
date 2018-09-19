@@ -73,7 +73,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "cant-touch-this"
 version = "0.0.1"
 dependencies = [
- "leap 0.1.0 (git+https://github.com/timvisee/leap-rs.git?rev=c5fd870)",
+ "leap 0.1.0 (git+https://github.com/timvisee/leap-rs.git?rev=3205901)",
  "nalgebra 0.16.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pretty_assertions 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -270,7 +270,7 @@ dependencies = [
 [[package]]
 name = "leap"
 version = "0.1.0"
-source = "git+https://github.com/timvisee/leap-rs.git?rev=c5fd870#c5fd870f5ee164a7434a1b3350d9095fc7275969"
+source = "git+https://github.com/timvisee/leap-rs.git?rev=3205901#3205901f0cb597192382830116943562bf995cd5"
 dependencies = [
  "cmake 0.1.33 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -751,7 +751,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum language-tags 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a91d884b6667cd606bb5a69aa0c99ba811a115fc68915e7056ec08a46e93199a"
 "checksum lazy_static 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)" = "76f033c7ad61445c5b347c7382dd1237847eb1bce590fe50365dcb33d546be73"
 "checksum lazy_static 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ca488b89a5657b0a2ecd45b95609b3e848cf1755da332a0da46e2b2b1cb371a7"
-"checksum leap 0.1.0 (git+https://github.com/timvisee/leap-rs.git?rev=c5fd870)" = "<none>"
+"checksum leap 0.1.0 (git+https://github.com/timvisee/leap-rs.git?rev=3205901)" = "<none>"
 "checksum libc 0.2.43 (registry+https://github.com/rust-lang/crates.io-index)" = "76e3a3ef172f1a0b9a9ff0dd1491ae5e6c948b94479a3021819ba7d860c8645d"
 "checksum libm 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "03c0bb6d5ce1b5cc6fd0578ec1cbc18c9d88b5b591a5c7c1d6c6175e266a0819"
 "checksum log 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)" = "e19e8d5c34a3e0e2223db8e060f9e8264aeeb5c5fc64a4ee9965c062211c024b"
