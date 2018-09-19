@@ -1,0 +1,75 @@
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+
+use leap::HandList as SensorHandList;
+
+use super::Hand;
+
+/// A hand manager.
+pub struct HandManager {
+    /// A hashmap with hands, grouped by their hand ID obtained from the sensor.
+    ///
+    /// The hashmap and the hands itself are wrapped in a mutex to allow using and mutating these
+    /// constructs from any contect by the use of locking.
+    hands: Mutex<HashMap<i32, Arc<Mutex<Hand>>>>,
+}
+
+impl HandManager {
+    /// Construct a new empty hand manager.
+    pub fn new() -> Self {
+        HandManager {
+            hands: Mutex::new(HashMap::new()),
+        }
+    }
+
+    /// Add the given hand with the given ID to the internal list of hands.
+    ///
+    /// Note: if a hand with this ID already exists, it is replaced.
+    pub fn add(&self, id: i32, hand: Hand) -> Arc<Mutex<Hand>> {
+        // Wrap the hand, and add it to the list
+        let hand = Arc::new(Mutex::new(hand));
+        self.hands
+            .lock()
+            .expect("failed to lock hands in frament manager, for adding a new hand")
+            .insert(id, hand.clone());
+
+        hand
+    }
+
+    /// Get a hand from the list.
+    /// If no hand exists with this ID, `None` is returned instead.
+    pub fn get(&self, id: i32) -> Option<Arc<Mutex<Hand>>> {
+        self.hands
+            .lock()
+            .expect("failed to lock hands in fragment manager, for obtaining a hand")
+            .get(&id)
+            .cloned()
+    }
+
+    /// Process a hand list frame from the sensor.
+    pub fn process_sensor_hand_list(&self, hand_list: SensorHandList) {
+        // Loop through all hands
+        for sensor_hand in hand_list.iter() {
+            // Obtain our hand or create a new one
+            let hand = self.get(sensor_hand.id()).unwrap_or_else(|| {
+                // TODO: create a new hand in core, add it to local hand manager
+                self.add(sensor_hand.id(), Hand::new())
+            });
+
+            // Process the sensor hand
+            hand.lock()
+                .expect("failed to unlock hand for updating traces")
+                .process_sensor_hand(sensor_hand);
+        }
+    }
+
+    /// Get the mutex holding the raw hands.
+    /// This may be useful for externally managing the hands hashmap.
+    pub fn raw_mutex<'a>(&'a self) -> &'a Mutex<HashMap<i32, Arc<Mutex<Hand>>>> {
+        &self.hands
+    }
+
+    // TODO: create a method for garbage collecting hands that haven't been updated in a while,
+    //       this should be called from all contexts the manager is used, preferreably in some
+    //       automated fashion
+}

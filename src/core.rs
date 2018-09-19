@@ -1,6 +1,7 @@
 use beautifier::Beautifier;
-use gesture::controller::GestureController;
-use sensor::controller::SensorController;
+use fragment::FragmentManager;
+use gesture::GestureController;
+use sensor::SensorController;
 use store::template::TemplateStore;
 #[cfg(feature = "web")]
 use web::server::Server;
@@ -10,6 +11,9 @@ pub struct Core {
     ///
     /// This produces 3D point traces.
     sensor_controller: SensorController,
+
+    /// The fragment manager, keeping track of trace fragments.
+    fragment_manager: FragmentManager,
 
     /// The sensor data beautifier
     ///
@@ -40,6 +44,7 @@ impl Core {
 
         Core {
             sensor_controller: SensorController::new(),
+            fragment_manager: FragmentManager::new(),
             beautifier: Beautifier::new(),
             gesture_controller: GestureController::new(),
             store: TemplateStore::new(),
