@@ -35,6 +35,6 @@ impl Fragment {
     /// Insert data from fingerType into Fragment
     pub fn process_sensor_finger(&mut self, finger: SensorFinger) {
         self.raw.push(Point3::from(finger.stabilized_tip_position()))
-        // convert raw trace to rot trace?
+        // TODO: Convert raw: PointTrace to processed: RotTrace?
     }
 }
