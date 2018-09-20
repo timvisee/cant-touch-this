@@ -15,7 +15,7 @@ pub struct PointTrace {
     points: Vec<Point3>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct RotTrace {
     /// The rotation at each point.
     points: Vec<RotPoint>,
