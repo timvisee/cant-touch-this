@@ -8,6 +8,10 @@ extern crate nalgebra;
 extern crate rocket;
 #[cfg(feature = "web")]
 extern crate rocket_contrib;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate toml;
 
 #[cfg(test)]
 #[macro_use]
