@@ -35,9 +35,8 @@ impl TemplateStore {
         }
 
         // Load, deserialize and set the list of templates
-        self.templates = toml::from_str(
-            &fs::read_to_string(path)?,
-        ).expect("failed to deserialize templates from loaded file");
+        self.templates = toml::from_str(&fs::read_to_string(path)?)
+            .expect("failed to deserialize templates from loaded file");
 
         Ok(())
     }
