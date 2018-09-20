@@ -31,13 +31,13 @@ impl TemplateStore {
 
         // Ensure a file exists
         if !path.is_file() {
+            eprintln!("Could not load templates, file does not exist");
             return Ok(());
         }
 
         // Load, deserialize and set the list of templates
-        self.templates = toml::from_str(
-            &fs::read_to_string(path)?,
-        ).expect("failed to deserialize templates from loaded file");
+        self.templates = toml::from_str(&fs::read_to_string(path)?)
+            .expect("failed to deserialize templates from loaded file");
 
         Ok(())
     }

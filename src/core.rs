@@ -60,10 +60,20 @@ impl Core {
         }
     }
 
-    /// Start the web server.
-    #[cfg(feature = "web")]
-    pub fn start_server(&self) {
+    /// Start the core.
+    pub fn start(&mut self) {
+        // Load the templates
+        self.store.load();
+
+        // Start the web server
+        #[cfg(feature = "web")]
         self.server.start();
+    }
+
+    /// Stop the core.
+    pub fn stop(&mut self) {
+        // Save the templates
+        self.store.save();
     }
 }
 
