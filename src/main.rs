@@ -23,17 +23,17 @@ pub(crate) mod types;
 #[cfg(feature = "web")]
 pub(crate) mod web;
 
-use core::Core;
+use core::CoreHandle;
 
 fn main() {
     println!("Can't touch this");
 
-    // Initialize the core
-    let core = Core::new();
+    // Initialize the core, create a handle
+    let core = CoreHandle::new();
 
     // Start the web server
     #[cfg(feature = "web")]
-    core.start_server();
+    core.core().start_server();
 
     println!("Done");
 }

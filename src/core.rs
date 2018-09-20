@@ -66,3 +66,25 @@ impl Core {
         self.server.start();
     }
 }
+
+/// A handle holding a reference to the core.
+pub struct CoreHandle {
+    handle: Arc<Core>,
+}
+
+impl CoreHandle {
+    /// Construct and initialize a core, return a handle.
+    pub fn new() -> Self {
+        Self::from(Arc::new(Core::new()))
+    }
+
+    /// Construct a new handle from the given Core wrapped in an Arc.
+    pub fn from(handle: Arc<Core>) -> Self {
+        CoreHandle { handle }
+    }
+
+    /// Get a reference to the core.
+    pub fn core(&self) -> &Core {
+        self.handle.as_ref()
+    }
+}
