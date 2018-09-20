@@ -10,7 +10,7 @@ pub struct Fragment {
     raw: PointTrace,
 
     /// The processed trace used for recognition.
-    _processed: RotTrace,
+    processed: RotTrace,
 }
 
 impl Fragment {
@@ -18,7 +18,7 @@ impl Fragment {
     pub fn new() -> Self {
         Fragment {
             raw: PointTrace::empty(),
-            _processed: RotTrace::empty(),
+            processed: RotTrace::empty(),
         }
     }
 
@@ -29,13 +29,15 @@ impl Fragment {
 
     /// Get a mutable reference to the processed point trace in this frament.
     pub fn _processed(&mut self) -> &mut RotTrace {
-        &mut self._processed
+        &mut self.processed
     }
 
     /// Insert data from fingerType into Fragment
     pub fn process_sensor_finger(&mut self, finger: SensorFinger) {
         self.raw
-            .push(Point3::from(finger.stabilized_tip_position()))
-        // TODO: Convert raw: PointTrace to processed: RotTrace?
+            .push(Point3::from(finger.stabilized_tip_position()));
+        // TODO: Implement method to append RotPoints to a RotTrace, instead
+        // of creating an entire new RotTrace every time.
+        self.processed = self.raw.to_rot_trace()
     }
 }
