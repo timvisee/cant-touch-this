@@ -39,5 +39,7 @@ impl Fragment {
         // TODO: Implement method to append RotPoints to a RotTrace, instead
         // of creating an entire new RotTrace every time.
         self.processed = self.raw.to_rot_trace()
+
+        // self.processed.push(RotPoint)
     }
 }
