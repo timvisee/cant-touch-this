@@ -31,6 +31,7 @@ impl TemplateStore {
 
         // Ensure a file exists
         if !path.is_file() {
+            eprintln!("Could not load templates, file does not exist");
             return Ok(());
         }
 
