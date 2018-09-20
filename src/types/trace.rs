@@ -63,7 +63,7 @@ impl PointTrace {
     }
 
     /// Add a new point to the trace.
-    pub fn _push(&mut self, point: Point3) {
+    pub fn push(&mut self, point: Point3) {
         self.points.push(point);
         self.truncate();
     }
