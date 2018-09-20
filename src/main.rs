@@ -33,7 +33,7 @@ fn main() {
 
     // Start the web server
     #[cfg(feature = "web")]
-    core.server.start();
+    core.start_server();
 
     println!("Done");
 }

@@ -38,7 +38,7 @@ pub struct Core {
     ///
     /// This is used to launch a web based configuration window for the user.
     #[cfg(feature = "web")]
-    pub server: Server,
+    server: Server,
 }
 
 impl Core {
@@ -58,5 +58,11 @@ impl Core {
             #[cfg(feature = "web")]
             server: Server::new(),
         }
+    }
+
+    /// Start the web server.
+    #[cfg(feature = "web")]
+    pub fn start_server(&self) {
+        self.server.start();
     }
 }
