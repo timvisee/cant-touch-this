@@ -5,6 +5,7 @@ use leap::Finger as SensorFinger;
 /// A fragment.
 // TODO: keep track of the last update time
 // TODO: keep track on what data has been recognized
+#[derive(Debug)]
 pub struct Fragment {
     /// The raw trace, from the sensor.
     raw: PointTrace,
@@ -32,14 +33,18 @@ impl Fragment {
         &mut self.processed
     }
 
+    // TODO: Implement method to append RotPoints to a RotTrace, instead
+    // of creating an entire new RotTrace every time.
+    //self.processed = self.raw.to_rot_trace()
+
     /// Insert data from fingerType into Fragment
     pub fn process_sensor_finger(&mut self, finger: SensorFinger) {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
-        // TODO: Implement method to append RotPoints to a RotTrace, instead
-        // of creating an entire new RotTrace every time.
-        self.processed = self.raw.to_rot_trace()
 
-        // self.processed.push(RotPoint)
+        // Convert the raw trace to the processed trace
+        // Take the last 3 points from the raw trace
+        // Convert the 3 Points to a RotPoint
+        // append the processed list with the RotPoint
     }
 }

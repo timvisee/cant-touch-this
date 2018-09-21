@@ -20,9 +20,11 @@ impl Hand {
 
     /// Process a sensor hand frame from the sensor.
     pub fn process_sensor_hand(&mut self, hand: SensorHand) {
-        for (i, (_, mut fragment)) in self.fingers.iter_mut().enumerate() {
-            // TODO: Remove .unwrap()
-            fragment.process_sensor_finger(hand.fingers().get(i).unwrap())
+        for f in hand.fingers().iter() {
+            self.fingers
+                .entry(f.type_enum())
+                .or_insert_with(|| Fragment::new())
+                .process_sensor_finger(f);
         }
     }
 }
