@@ -9,11 +9,11 @@ pub struct Template {
 impl Template {
     /// Get the template name.
     pub fn name(&self) -> &str {
-        self.name
+        &self.name
     }
 
     /// Get the template model.
     pub fn model(&self) -> &Model {
-        self.model
+        &self.model
     }
 }

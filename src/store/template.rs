@@ -58,7 +58,7 @@ impl TemplateStore {
     /// to see whether there is a gesture match.
     pub fn detect_gesture(&self, other: &Model) {
         // Loop through each template
-        for template in self.templates {
+        for template in &self.templates {
             // Get the model to compare against
             let model = template.model();
 
