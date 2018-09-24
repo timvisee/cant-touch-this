@@ -1,3 +1,4 @@
+use std::cmp::max;
 use std::fmt;
 
 use nalgebra::geometry::Point3 as NPoint3;
@@ -51,24 +52,27 @@ impl PointTrace {
             .collect()
     }
 
-    pub fn calc_three_points(&self) -> Option<f64> {
-        if self.points.len() > 2 {
-            let x = self.points.split_at(self.points.len() - 3).1;
-
-            return x
-                .iter()
-                .map(|p| p.to_npoint())
-                .collect::<Vec<_>>()
-                .windows(2)
-                .map(|p| p[1] - p[0])
-                .collect::<Vec<_>>()
-                .windows(2)
-                .map(|p| p[0].angle(&p[1]))
-                .collect::<Vec<f64>>()
-                .get(0)
-                .cloned();
-        }
-        None
+    /// Given a list of points (wrapped by this trace), calculate the last rotation/angle between
+    /// the last two edges of the points, in radians.
+    ///
+    /// This function is similar to `calc_rot_points`, but only calculates the last rotational
+    /// point instead of all known. This may be used for incremental rotation trace creation.
+    ///
+    /// At least three points need to be in this list in order to return the last rotation.
+    /// If that isn't the case, `None` is returned instead.
+    pub fn calc_last_rot_point(&self) -> Option<f64> {
+        self.points
+            .split_at(max(self.points.len(), 3) - 3)
+            .1
+            .iter()
+            .map(|p| p.to_npoint())
+            .collect::<Vec<_>>()
+            .windows(2)
+            .map(|p| p[1] - p[0])
+            .collect::<Vec<_>>()
+            .windows(2)
+            .map(|p| p[0].angle(&p[1]))
+            .next()
     }
 
     /// Convert this point trace into a rotational trace.
@@ -155,6 +159,9 @@ mod tests {
         assert_eq!(zero.to_rot_trace(), RotTrace::empty());
         assert_eq!(one.to_rot_trace(), RotTrace::empty());
         assert_eq!(two.to_rot_trace(), RotTrace::empty());
+        assert!(zero.calc_last_rot_point().is_none());
+        assert!(one.calc_last_rot_point().is_none());
+        assert!(two.calc_last_rot_point().is_none());
     }
 
     #[test]
@@ -168,6 +175,7 @@ mod tests {
         let expected = RotTrace::new(vec![RotPoint::zero(); 1]);
 
         assert_eq!(points.to_rot_trace(), expected);
+        assert_eq!(points.calc_last_rot_point(), Some(0.0));
     }
 
     #[test]
@@ -184,6 +192,7 @@ mod tests {
 
         let expected = RotTrace::new(vec![RotPoint::from_degrees(90.0); 5]);
 
-        assert_eq!(points.to_rot_trace(), expected)
+        assert_eq!(points.to_rot_trace(), expected);
+        assert_eq!(points.calc_last_rot_point(), Some(90_f64.to_radians()));
     }
 }

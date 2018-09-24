@@ -42,7 +42,7 @@ impl Fragment {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
 
-        if let Some(x) = self.raw.calc_three_points() {
+        if let Some(x) = self.raw.calc_last_rot_point() {
             self.processed.push(x);
         }
 
