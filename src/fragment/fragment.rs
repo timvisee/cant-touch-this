@@ -42,6 +42,10 @@ impl Fragment {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
 
+        if let Some(x) = self.raw.calc_three_points() {
+            self.processed.push(x);
+        }
+
         // Convert the raw trace to the processed trace
         // Take the last 3 points from the raw trace
         // Convert the 3 Points to a RotPoint

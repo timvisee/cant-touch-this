@@ -51,7 +51,7 @@ impl PointTrace {
             .collect()
     }
 
-    fn calc_three_points(&self) -> Option<f64> {
+    pub fn calc_three_points(&self) -> Option<f64> {
         if self.points.len() > 2 {
             let x = self.points.split_at(self.points.len() - 3).1;
 
@@ -109,6 +109,10 @@ impl RotTrace {
 
     pub fn empty() -> RotTrace {
         RotTrace { points: vec![] }
+    }
+
+    pub fn push(&mut self, point: f64) {
+        self.points.push(RotPoint::new(point));
     }
 }
 
