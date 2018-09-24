@@ -21,10 +21,12 @@ pub struct Point3 {
 pub struct RotPoint(f64);
 
 impl Point3 {
+    /// Create a new Point3 using three `f64`'s.
     pub fn new(x: f64, y: f64, z: f64) -> Point3 {
         Point3 { x, y, z }
     }
 
+    /// Create a new Point3 with all coordinates set to `0.0`.
     pub fn zero() -> Point3 {
         Point3 {
             x: 0.0,
@@ -33,6 +35,7 @@ impl Point3 {
         }
     }
 
+    /// Create a new Point3 using a `&leap::vector::Vector`.
     pub fn from_leap(v: &Vector) -> Point3 {
         Point3 {
             x: v.x().into(),
@@ -41,7 +44,8 @@ impl Point3 {
         }
     }
 
-    /// Convert this point to a `nalgebra` `Point3` used for special calculations.
+    /// Convert this point to a `nalgebra` `Point3` used for special
+    /// calculations.
     pub fn to_npoint(&self) -> NPoint3<f64> {
         NPoint3::new(self.x, self.y, self.z)
     }
