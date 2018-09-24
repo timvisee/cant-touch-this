@@ -51,6 +51,25 @@ impl PointTrace {
             .collect()
     }
 
+
+    fn calc_three_points(&self) -> Option<f64> {
+        if self.points.len() > 2 {
+            let x = self.points.split_at(self.points.len() - 3).1;
+
+            return x
+                .iter()
+                .map(|p| p.to_npoint())
+                .collect::<Vec<_>>()
+                .windows(2)
+                .map(|p| p[1] - p[0])
+                .collect::<Vec<_>>()
+                .windows(2)
+                .map(|p| p[0].angle(&p[1]))
+                .collect::<Vec<f64>>().get(0).cloned();
+        }
+        None
+    }
+
     /// Convert this point trace into a rotational trace.
     #[allow(unused)]
     pub fn to_rot_trace(&self) -> RotTrace {
