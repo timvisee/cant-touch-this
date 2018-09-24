@@ -17,7 +17,7 @@ pub struct Point3 {
 }
 
 /// A rotational point.
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct RotPoint(f64);
 
 impl Point3 {

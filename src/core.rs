@@ -38,7 +38,7 @@ pub struct Core {
     ///
     /// This is used to launch a web based configuration window for the user.
     #[cfg(feature = "web")]
-    pub server: Server,
+    server: Server,
 }
 
 impl Core {
@@ -58,5 +58,43 @@ impl Core {
             #[cfg(feature = "web")]
             server: Server::new(),
         }
+    }
+
+    /// Start the core.
+    pub fn start(&mut self) {
+        // Load the templates
+        self.store.load();
+
+        // Start the web server
+        #[cfg(feature = "web")]
+        self.server.start();
+    }
+
+    /// Stop the core.
+    pub fn stop(&mut self) {
+        // Save the templates
+        self.store.save();
+    }
+}
+
+/// A handle holding a reference to the core.
+pub struct CoreHandle {
+    handle: Arc<Core>,
+}
+
+impl CoreHandle {
+    /// Construct and initialize a core, return a handle.
+    pub fn new() -> Self {
+        Self::from(Arc::new(Core::new()))
+    }
+
+    /// Construct a new handle from the given Core wrapped in an Arc.
+    pub fn from(handle: Arc<Core>) -> Self {
+        CoreHandle { handle }
+    }
+
+    /// Get a reference to the core.
+    pub fn core(&self) -> &Core {
+        self.handle.as_ref()
     }
 }

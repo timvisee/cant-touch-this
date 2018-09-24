@@ -8,6 +8,10 @@ extern crate nalgebra;
 extern crate rocket;
 #[cfg(feature = "web")]
 extern crate rocket_contrib;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate toml;
 
 #[cfg(test)]
 #[macro_use]
@@ -28,12 +32,9 @@ use core::Core;
 fn main() {
     println!("Can't touch this");
 
-    // Initialize the core
-    let core = Core::new();
-
-    // Start the web server
-    #[cfg(feature = "web")]
-    core.server.start();
+    // Initialize the core, and start it
+    let mut core = Core::new();
+    core.start();
 
     println!("Done");
 }
