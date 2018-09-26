@@ -22,12 +22,13 @@ pub struct Core {
     /// The sensor data beautifier
     ///
     /// This beautifies 3D point traces and produces a rotation trace.
+    /// TODO: is this obsolete?
     beautifier: Beautifier,
 
     /// The gesture controller
     ///
     /// This handles gesture recognition and recording based on rotation traces.
-    gesture_controller: GestureController,
+    gesture_controller: Arc<GestureController>,
 
     /// The gesture template store
     ///
@@ -53,7 +54,7 @@ impl Core {
             sensor_controller: SensorController::new(fragment_manager.clone()),
             fragment_manager,
             beautifier: Beautifier::new(),
-            gesture_controller: GestureController::new(),
+            gesture_controller: Arc::new(GestureController::new()),
             store: TemplateStore::new(),
             #[cfg(feature = "web")]
             server: Server::new(),

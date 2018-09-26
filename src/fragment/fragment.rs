@@ -24,12 +24,12 @@ impl Fragment {
     }
 
     /// Get a mutable reference to the raw point trace in this fragment.
-    pub fn _raw(&mut self) -> &mut PointTrace {
+    pub fn raw(&mut self) -> &mut PointTrace {
         &mut self.raw
     }
 
     /// Get a mutable reference to the processed point trace in this frament.
-    pub fn _processed(&mut self) -> &mut RotTrace {
+    pub fn processed(&mut self) -> &mut RotTrace {
         &mut self.processed
     }
 
@@ -37,7 +37,8 @@ impl Fragment {
     // of creating an entire new RotTrace every time.
     //self.processed = self.raw.to_rot_trace()
 
-    /// Insert data from fingerType into Fragment
+    /// Push finger data from a sensor frame on the finger trace.
+    /// Then, process the raw data into data we can work with in real-time.
     pub fn process_sensor_finger(&mut self, finger: SensorFinger) {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
