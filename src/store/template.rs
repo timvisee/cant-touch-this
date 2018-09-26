@@ -8,6 +8,7 @@ use types::{Model, Template};
 const TEMPLATES_FILE_PATH: &str = "~/.config/cant-touch-this/templates.toml";
 
 /// Used for storing templates.
+#[derive(Debug)]
 pub struct TemplateStore {
     templates: Vec<Template>,
 }

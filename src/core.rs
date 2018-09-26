@@ -47,14 +47,17 @@ impl Core {
     pub fn new() -> Core {
         println!("Initializing core...");
 
+        // Build the gesture controller
+        let gesture_controller = Arc::new(GestureController::new());
+
         // Build the fragment manager
-        let fragment_manager = Arc::new(FragmentManager::new());
+        let fragment_manager = Arc::new(FragmentManager::new(gesture_controller.clone()));
 
         Core {
             sensor_controller: SensorController::new(fragment_manager.clone()),
             fragment_manager,
             beautifier: Beautifier::new(),
-            gesture_controller: Arc::new(GestureController::new()),
+            gesture_controller: gesture_controller,
             store: TemplateStore::new(),
             #[cfg(feature = "web")]
             server: Server::new(),
