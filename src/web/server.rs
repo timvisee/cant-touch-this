@@ -1,20 +1,32 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
+use std::{
+    collections::HashMap,
+    sync::Arc,
+};
+
 use rocket;
+use rocket_contrib::{
+    Json,
+    Template,
+    static_files::StaticFiles,
+};
 
-use rocket_contrib::{Json, Template};
-use rocket_contrib::static_files::StaticFiles;
+use gesture::GestureController;
 
-use std::collections::HashMap;
-
-pub struct Server {}
+pub struct Server {
+    /// The gesture controller used for managing recordings.
+    gesture_controller: Arc<GestureController>,
+}
 
 impl Server {
-    pub fn new() -> Server {
-        Server {}
+    /// Construct a new server with the given `gesture_controller`.
+    pub fn new(gesture_controller: Arc<GestureController>) -> Server {
+        Server { gesture_controller }
     }
 
+    /// Initialize and start the server.
     pub fn start(&self) {
         rocket::ignite()
             .mount("/", routes![index, example, start_recording])
