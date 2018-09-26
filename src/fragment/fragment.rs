@@ -33,19 +33,15 @@ impl Fragment {
         &mut self.processed
     }
 
-    // TODO: Implement method to append RotPoints to a RotTrace, instead
-    // of creating an entire new RotTrace every time.
-    //self.processed = self.raw.to_rot_trace()
-
     /// Push finger data from a sensor frame on the finger trace.
     /// Then, process the raw data into data we can work with in real-time.
     pub fn process_sensor_finger(&mut self, finger: SensorFinger) {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
 
-        // Convert the raw trace to the processed trace
-        // Take the last 3 points from the raw trace
-        // Convert the 3 Points to a RotPoint
-        // append the processed list with the RotPoint
+        // Calculate the new rotational point based on the new data, add it to the processed trace
+        if let Some(x) = self.raw.calc_last_rot_point() {
+            self.processed.push(x);
+        }
     }
 }
