@@ -35,6 +35,7 @@ fn main() {
     // Initialize the core, and start it
     let mut core = Core::new();
     core.start();
+    core.stop();
 
     println!("Done");
 }
