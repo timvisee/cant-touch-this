@@ -17,21 +17,24 @@ leap = { git = "https://github.com/timvisee/leap-rs.git", rev = "3205901", versi
 nalgebra = "0.16"
 serde = "1.0"
 serde_derive = "1.0"
-toml = "0.4.7"
+toml = "0.4"
 
 [dependencies.rocket]
+version = "0.4.0-dev"
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "633d37b"
 
 [dependencies.rocket_codegen]
+version = "0.4.0-dev"
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "633d37b"
 
 [dependencies.rocket_contrib]
+version = "0.4.0-dev"
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "633d37b"
 default_features = false
-features = ["static_files", "handlebars_templates"]
+features = ["handlebars_templates"]
 
 [dev-dependencies]
 pretty_assertions = "0.5"
