@@ -24,7 +24,7 @@ toml = "0.4"
 [dependencies.rocket_contrib]
 version = "0.4.0-dev"
 default_features = false
-features = ["handlebars_templates", "static_files"]
+features = ["handlebars_templates", "static_files", "json"]
 
 [patch.crates-io.leap]
 git = "https://github.com/timvisee/leap-rs.git"

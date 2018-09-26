@@ -9,6 +9,7 @@ extern crate nalgebra;
 extern crate rocket;
 #[cfg(feature = "web")]
 extern crate rocket_contrib;
+extern crate rocket_codegen;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
