@@ -2,7 +2,7 @@ use std::{cmp::min, fs, io::Result, path::Path, sync::Mutex};
 
 use toml;
 
-use types::{Model, Template, RotPoint, RotTrace};
+use types::{Model, RotPoint, RotTrace, Template};
 
 /// The default file path to save the templates in.
 const TEMPLATES_FILE_PATH: &str = "~/.config/cant-touch-this/templates.toml";
@@ -18,11 +18,10 @@ impl TemplateStore {
     pub fn new() -> Self {
         Self {
             // TODO: after debugging, load an emtpy list of templates instead
-            templates: Mutex::new(vec![
-                Template::new("dummy".into(), Model::new(RotTrace::new(vec![
-                    RotPoint::new(0.0); 64
-                ])))
-            ]),
+            templates: Mutex::new(vec![Template::new(
+                "dummy".into(),
+                Model::new(RotTrace::new(vec![RotPoint::new(0.0); 64])),
+            )]),
         }
     }
 
