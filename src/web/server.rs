@@ -2,8 +2,10 @@
 #![plugin(rocket_codegen)]
 
 use rocket;
-use rocket_contrib::Template;
+
+use rocket_contrib::{Json, Template};
 use rocket_contrib::static_files::StaticFiles;
+
 use std::collections::HashMap;
 
 pub struct Server {}
@@ -15,8 +17,9 @@ impl Server {
 
     pub fn start(&self) {
         rocket::ignite()
-            .mount("/", routes![index, example])
-            .mount("/", StaticFiles::from(["css", "js"]))
+            .mount("/", routes![index, example, start_recording])
+            .mount("/css", StaticFiles::from("templates/css"))
+            .mount("/js", StaticFiles::from("templates/js"))
             .attach(Template::fairing())
             .launch();
     }
