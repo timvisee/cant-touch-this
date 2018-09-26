@@ -66,7 +66,7 @@ impl Core {
     /// Start the core.
     pub fn start(&mut self) {
         // Load the templates
-        // self.store.load();
+        self.store.load();
 
         // Start the web server
         #[cfg(feature = "web")]
