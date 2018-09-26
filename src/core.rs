@@ -22,17 +22,18 @@ pub struct Core {
     /// The sensor data beautifier
     ///
     /// This beautifies 3D point traces and produces a rotation trace.
+    /// TODO: is this obsolete?
     beautifier: Beautifier,
 
     /// The gesture controller
     ///
     /// This handles gesture recognition and recording based on rotation traces.
-    gesture_controller: GestureController,
+    gesture_controller: Arc<GestureController>,
 
     /// The gesture template store
     ///
     /// This is used by the gesture controller to match new against.
-    store: TemplateStore,
+    store: Arc<TemplateStore>,
 
     /// The web server
     ///
@@ -46,15 +47,17 @@ impl Core {
     pub fn new() -> Core {
         println!("Initializing core...");
 
-        // Build the fragment manager
-        let fragment_manager = Arc::new(FragmentManager::new());
+        // Build components in order, depending on each other
+        let store = Arc::new(TemplateStore::new());
+        let gesture_controller = Arc::new(GestureController::new(store.clone()));
+        let fragment_manager = Arc::new(FragmentManager::new(gesture_controller.clone()));
 
         Core {
             sensor_controller: SensorController::new(fragment_manager.clone()),
             fragment_manager,
             beautifier: Beautifier::new(),
-            gesture_controller: GestureController::new(),
-            store: TemplateStore::new(),
+            gesture_controller,
+            store,
             #[cfg(feature = "web")]
             server: Server::new(),
         }

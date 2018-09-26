@@ -62,7 +62,7 @@ impl HandManager {
             // Process the sensor hand
             hand.lock()
                 .expect("failed to unlock hand for updating traces")
-                .process_sensor_hand(sensor_hand);
+                .process_sensor_hand(&sensor_hand);
         }
     }
 

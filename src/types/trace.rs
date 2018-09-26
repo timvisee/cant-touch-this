@@ -82,7 +82,7 @@ impl PointTrace {
         RotTrace::new(
             self.calc_rot_points()
                 .into_iter()
-                .map(|p| RotPoint::new(p))
+                .map(RotPoint::new)
                 .collect(),
         )
     }
