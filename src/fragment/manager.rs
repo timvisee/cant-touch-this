@@ -1,18 +1,23 @@
 use std::sync::{Arc, Mutex};
 
 use super::{Hand, HandManager};
+use gesture::GestureController;
 
 /// A fragment manager.
 pub struct FragmentManager {
     /// The hand manager, tracked by the fragment manager.
     hand: HandManager,
+
+    /// The gesture controller that is used for gesture detection.
+    gesture_controller: Arc<GestureController>,
 }
 
 impl FragmentManager {
     /// Construct a new empty fragment manager.
-    pub fn new() -> Self {
+    pub fn new(gesture_controller: Arc<GestureController>) -> Self {
         FragmentManager {
             hand: HandManager::new(),
+            gesture_controller,
         }
     }
 
@@ -25,7 +30,7 @@ impl FragmentManager {
             .lock()
             .expect("failed to lock hands manager to add a new hand")
             .entry(id)
-            .or_insert_with(|| Arc::new(Mutex::new(Hand::new())))
+            .or_insert_with(|| Arc::new(Mutex::new(Hand::new(self.gesture_controller.clone()))))
             .clone()
     }
 
