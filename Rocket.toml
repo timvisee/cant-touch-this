@@ -1,5 +1,5 @@
 [development]
-template_dir = "./templates"
+template_dir = "./res/templates"
 
 [production]
-template_dir = "./templates"
+template_dir = "./res/templates"
