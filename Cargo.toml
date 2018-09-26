@@ -26,6 +26,10 @@ version = "0.4.0-dev"
 default_features = false
 features = ["handlebars_templates"]
 
+[patch.crates-io.leap]
+git = "https://github.com/timvisee/leap-rs.git"
+rev = "3205901"
+
 [patch.crates-io.rocket]
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "633d37b"
@@ -37,10 +41,6 @@ rev = "633d37b"
 [patch.crates-io.rocket_contrib]
 git = "https://github.com/SergioBenitez/Rocket"
 rev = "633d37b"
-
-[patch.crates-io.leap]
-git = "https://github.com/timvisee/leap-rs.git"
-rev = "3205901"
 
 [dev-dependencies]
 pretty_assertions = "0.5"
