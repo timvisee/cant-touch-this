@@ -3,8 +3,8 @@
 
 use rocket;
 
-use rocket_contrib::{Json, Template};
 use rocket_contrib::static_files::StaticFiles;
+use rocket_contrib::{Json, Template};
 
 use std::collections::HashMap;
 
