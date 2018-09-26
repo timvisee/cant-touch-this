@@ -25,7 +25,7 @@ impl Hand {
     }
 
     /// Process a sensor hand frame from the sensor.
-    pub fn process_sensor_hand(&mut self, hand: SensorHand) {
+    pub fn process_sensor_hand(&mut self, hand: &SensorHand) {
         for f in hand.fingers().iter() {
             // Clone the gesture controller for new fragments
             // TODO: only clone for new fragments to improve performance

@@ -56,7 +56,7 @@ impl Core {
             sensor_controller: SensorController::new(fragment_manager.clone()),
             fragment_manager,
             beautifier: Beautifier::new(),
-            gesture_controller: gesture_controller,
+            gesture_controller,
             store,
             #[cfg(feature = "web")]
             server: Server::new(),
