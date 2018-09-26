@@ -3,8 +3,8 @@ use std::sync::Arc;
 
 use leap::{FingerType, Hand as SensorHand};
 
-use gesture::GestureController;
 use super::Fragment;
+use gesture::GestureController;
 
 /// A hand with traces.
 pub struct Hand {

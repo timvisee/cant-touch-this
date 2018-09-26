@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
-use gesture::GestureController;
 use super::{Hand, HandManager};
+use gesture::GestureController;
 
 /// A fragment manager.
 pub struct FragmentManager {
