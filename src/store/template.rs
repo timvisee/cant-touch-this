@@ -1,9 +1,4 @@
-use std::{
-    fs,
-    io::Result,
-    path::Path,
-    sync::Mutex,
-};
+use std::{fs, io::Result, path::Path, sync::Mutex};
 
 use toml;
 
@@ -42,7 +37,10 @@ impl TemplateStore {
         }
 
         // Obtain a templates list lock
-        let mut templates = self.templates.lock().expect("failed to lock templates list for loading");
+        let mut templates = self
+            .templates
+            .lock()
+            .expect("failed to lock templates list for loading");
 
         // Load, deserialize and set the list of templates
         *templates = toml::from_str(&fs::read_to_string(path)?)
@@ -56,7 +54,10 @@ impl TemplateStore {
     /// TODO: handle toml errors properly, return an error on failure instead of panicing.
     pub fn save(&self) -> Result<()> {
         // Obtain a templates list lock
-        let templates = self.templates.lock().expect("failed to lock templates list for saving");
+        let templates = self
+            .templates
+            .lock()
+            .expect("failed to lock templates list for saving");
 
         // Remove template files if there are not tempaltes to save
         if templates.is_empty() {
@@ -78,7 +79,10 @@ impl TemplateStore {
         println!("DEBUG: processing model:");
 
         // Obtain a templates list lock
-        let templates = self.templates.lock().expect("failed to lock templates list for detecting gestures");
+        let templates = self
+            .templates
+            .lock()
+            .expect("failed to lock templates list for detecting gestures");
 
         // Loop through each template
         for template in &*templates {
