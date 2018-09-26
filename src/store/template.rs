@@ -5,7 +5,7 @@ use toml;
 use types::{Model, Template};
 
 /// The default file path to save the templates in.
-const TEMPLATES_FILE_PATH: &str = "~/.cant-touch-this-templates";
+const TEMPLATES_FILE_PATH: &str = "~/.config/cant-touch-this/templates.toml";
 
 /// Used for storing templates.
 pub struct TemplateStore {
@@ -31,7 +31,7 @@ impl TemplateStore {
 
         // Ensure a file exists
         if !path.is_file() {
-            eprintln!("Could not load templates, file does not exist");
+            eprintln!("Not loading templates, no file exists");
             return Ok(());
         }
 
@@ -45,8 +45,14 @@ impl TemplateStore {
     /// Save the current list of templates to a file.
     ///
     /// TODO: handle toml errors properly, return an error on failure instead of panicing.
-    /// TODO: make file configurable, or use a different file anyway
     pub fn save(&self) -> Result<()> {
+        // Remove template files if there are not tempaltes to save
+        if self.templates.is_empty() {
+            fs::remove_file(TEMPLATES_FILE_PATH);
+            return Ok(());
+        }
+
+        println!("Saving templates to file...");
         fs::write(
             TEMPLATES_FILE_PATH,
             toml::to_string(&self.templates)
