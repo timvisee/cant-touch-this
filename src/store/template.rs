@@ -64,6 +64,8 @@ impl TemplateStore {
     /// Compare a given model against the tempaltes,
     /// to see whether there is a gesture match.
     pub fn detect_gesture(&self, other: &Model) {
+        println!("DEBUG: processing model:");
+
         // Loop through each template
         for template in &self.templates {
             // Get the model to compare against
@@ -72,6 +74,8 @@ impl TemplateStore {
             // TODO: do the model comparison
 
             // TODO: build a list of matching templates to return for actions to process
+
+            println!("DEBUG: testing template");
         }
     }
 }

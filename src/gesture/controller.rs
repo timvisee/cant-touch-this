@@ -1,3 +1,6 @@
+use std::sync::Arc;
+
+use store::TemplateStore;
 use types::Model;
 
 /// Gesture controller, for recognition and recording
@@ -7,19 +10,21 @@ use types::Model;
 /// TODO: build the recognition part, which compares it to a set of templates
 /// TODO: build the recording part
 #[derive(Debug)]
-pub struct GestureController {}
+pub struct GestureController {
+    /// The template store that is referenced for gesture detection.
+    store: Arc<TemplateStore>,
+}
 
 impl GestureController {
     /// Construct a new gesture controller.
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(store: Arc<TemplateStore>) -> Self {
+        Self { store }
     }
 
     /// Attempt to detect gestures in the given collected model.
     pub fn detect_gesture(&self, model: &Model) {
         // TODO: gesture detection logic for model here
-        // TODO: pass the model laong to the template store
 
-        println!("DEBUG: processing model");
+        self.store.detect_gesture(model)
     }
 }

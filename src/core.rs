@@ -33,7 +33,7 @@ pub struct Core {
     /// The gesture template store
     ///
     /// This is used by the gesture controller to match new against.
-    store: TemplateStore,
+    store: Arc<TemplateStore>,
 
     /// The web server
     ///
@@ -47,10 +47,9 @@ impl Core {
     pub fn new() -> Core {
         println!("Initializing core...");
 
-        // Build the gesture controller
-        let gesture_controller = Arc::new(GestureController::new());
-
-        // Build the fragment manager
+        // Build components in order, depending on each other
+        let store = Arc::new(TemplateStore::new());
+        let gesture_controller = Arc::new(GestureController::new(store.clone()));
         let fragment_manager = Arc::new(FragmentManager::new(gesture_controller.clone()));
 
         Core {
@@ -58,7 +57,7 @@ impl Core {
             fragment_manager,
             beautifier: Beautifier::new(),
             gesture_controller: gesture_controller,
-            store: TemplateStore::new(),
+            store,
             #[cfg(feature = "web")]
             server: Server::new(),
         }
@@ -67,7 +66,7 @@ impl Core {
     /// Start the core.
     pub fn start(&mut self) {
         // Load the templates
-        self.store.load();
+        // self.store.load();
 
         // Start the web server
         #[cfg(feature = "web")]
