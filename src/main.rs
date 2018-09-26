@@ -1,10 +1,11 @@
-#![feature(plugin)]
+#![feature(decl_macro, plugin, proc_macro_non_items)]
 #![plugin(rocket_codegen)]
 // TODO: remove this after developing
 #![allow(unused)]
 
 extern crate leap;
 extern crate nalgebra;
+#[macro_use]
 extern crate rocket;
 #[cfg(feature = "web")]
 extern crate rocket_contrib;
