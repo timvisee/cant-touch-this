@@ -13,28 +13,34 @@ default = []
 web = []
 
 [dependencies]
-leap = { git = "https://github.com/timvisee/leap-rs.git", rev = "3205901", version = "0.1.0" }
+leap = "0.1.0"
 nalgebra = "0.16"
+rocket = "0.4.0-dev"
+rocket_codegen = "0.4.0-dev"
 serde = "1.0"
 serde_derive = "1.0"
 toml = "0.4"
 
-[dependencies.rocket]
-version = "0.4.0-dev"
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "633d37b"
-
-[dependencies.rocket_codegen]
-version = "0.4.0-dev"
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "633d37b"
-
 [dependencies.rocket_contrib]
 version = "0.4.0-dev"
-git = "https://github.com/SergioBenitez/Rocket"
-rev = "633d37b"
 default_features = false
 features = ["handlebars_templates"]
+
+[patch.crates-io.rocket]
+git = "https://github.com/SergioBenitez/Rocket"
+rev = "633d37b"
+
+[patch.crates-io.rocket_codegen]
+git = "https://github.com/SergioBenitez/Rocket"
+rev = "633d37b"
+
+[patch.crates-io.rocket_contrib]
+git = "https://github.com/SergioBenitez/Rocket"
+rev = "633d37b"
+
+[patch.crates-io.leap]
+git = "https://github.com/timvisee/leap-rs.git"
+rev = "3205901"
 
 [dev-dependencies]
 pretty_assertions = "0.5"
