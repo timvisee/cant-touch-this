@@ -40,3 +40,19 @@ fn example(name: String) -> Template {
 
     Template::render("index", &context)
 }
+
+#[get("/api/v1/start_recording")]
+fn start_recording() -> Json<RecordResponse> {
+    Json(RecordResponse::new(true))
+}
+
+#[derive(Serialize, Deserialize)]
+struct RecordResponse {
+    started: bool,
+}
+
+impl RecordResponse {
+    pub fn new(started: bool) -> RecordResponse {
+        RecordResponse { started }
+    }
+}

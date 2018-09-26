@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
     <title>Hello, {{name}}!</title>
   </head>
@@ -20,10 +21,20 @@
       </div>
     </nav>
 
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <button id="start_recording" type="button" class="btn btn-outline-success">Start recording</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="js/jquery.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
