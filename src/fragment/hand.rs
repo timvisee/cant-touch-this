@@ -26,16 +26,21 @@ impl Hand {
 
     /// Process a sensor hand frame from the sensor.
     pub fn process_sensor_hand(&mut self, hand: &SensorHand) {
+        // TODO: do not only walk through the extended fingers here
         for f in hand.fingers().extended().iter() {
             // Clone the gesture controller for new fragments
             // TODO: only clone for new fragments to improve performance
             let gesture_controller = self.gesture_controller.clone();
 
+            // Only process extended index fingers
+            // TODO: process all fingers after debugging
+            let process = f.type_enum() == FingerType::Index && f.is_extended();
+
             // Process the sensor finger on the fragment, create it if it doesn't exist
             self.fingers
                 .entry(f.type_enum())
                 .or_insert_with(|| Fragment::new(gesture_controller))
-                .process_sensor_finger(f);
+                .process_sensor_finger(f, process);
         }
     }
 }

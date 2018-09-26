@@ -17,6 +17,7 @@ impl TemplateStore {
     /// Construct a new empty template store
     pub fn new() -> Self {
         Self {
+            // TODO: after debugging, load an emtpy list of templates instead
             templates: Mutex::new(vec![
                 Template::new("dummy".into(), Model::new(RotTrace::new(vec![
                     RotPoint::new(0.0); 64
