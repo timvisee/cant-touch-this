@@ -32,9 +32,9 @@ impl Server {
     /// Initialize and start the server.
     pub fn start(&self) {
         rocket::ignite()
-            .mount("/", routes![index, example, start_recording])
-            .mount("/css", StaticFiles::from("templates/css"))
-            .mount("/js", StaticFiles::from("templates/js"))
+            .mount("/", routes![index, start_recording])
+            .mount("/css", StaticFiles::from("res/static/css"))
+            .mount("/js", StaticFiles::from("res/static/js"))
             .manage(self.gesture_controller.clone())
             .manage(self.template_store.clone())
             .attach(Template::fairing())
@@ -44,18 +44,8 @@ impl Server {
 
 #[get("/")]
 fn index() -> Template {
-    let mut context = HashMap::new();
-    context.insert("name", "world");
-
-    Template::render("index", &context)
-}
-
-#[get("/<name>")]
-fn example(name: String) -> Template {
-    let mut context = HashMap::new();
-    context.insert("name", name);
-
-    Template::render("index", &context)
+    let context: HashMap<&str, &str> = HashMap::new();
+    Template::render("index", context)
 }
 
 #[get("/api/v1/start_recording")]
