@@ -7,16 +7,26 @@ use rocket::{self, State};
 use rocket_contrib::{static_files::StaticFiles, Json, Template};
 
 use gesture::GestureController;
+use store::TemplateStore;
 
 pub struct Server {
     /// The gesture controller used for managing recordings.
     gesture_controller: Arc<GestureController>,
+
+    /// The template store.
+    template_store: Arc<TemplateStore>,
 }
 
 impl Server {
     /// Construct a new server with the given `gesture_controller`.
-    pub fn new(gesture_controller: Arc<GestureController>) -> Server {
-        Server { gesture_controller }
+    pub fn new(
+        gesture_controller: Arc<GestureController>,
+        template_store: Arc<TemplateStore>,
+    ) -> Server {
+        Server {
+            gesture_controller,
+            template_store,
+        }
     }
 
     /// Initialize and start the server.
@@ -26,6 +36,7 @@ impl Server {
             .mount("/css", StaticFiles::from("templates/css"))
             .mount("/js", StaticFiles::from("templates/js"))
             .manage(self.gesture_controller.clone())
+            .manage(self.template_store.clone())
             .attach(Template::fairing())
             .launch();
     }

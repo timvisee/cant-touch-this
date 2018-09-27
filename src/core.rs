@@ -57,9 +57,9 @@ impl Core {
             fragment_manager,
             beautifier: Beautifier::new(),
             gesture_controller: gesture_controller.clone(),
-            store,
+            store: store.clone(),
             #[cfg(feature = "web")]
-            server: Server::new(gesture_controller),
+            server: Server::new(gesture_controller, store),
         }
     }
 
