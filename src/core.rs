@@ -1,5 +1,8 @@
 use std::sync::Arc;
 
+use clap::ArgMatches;
+use webbrowser;
+
 use beautifier::Beautifier;
 use fragment::FragmentManager;
 use gesture::GestureController;
@@ -11,6 +14,9 @@ use web::server::Server;
 /// The application core with a global state.
 #[allow(dead_code)]
 pub struct Core {
+    /// The CLI argument matches.
+    matches: ArgMatches<'static>,
+
     /// The sensor controller, handling the sensor data
     ///
     /// This produces 3D point traces.
@@ -44,7 +50,7 @@ pub struct Core {
 
 impl Core {
     /// Construct and initialize the core.
-    pub fn new() -> Core {
+    pub fn new(matches: ArgMatches<'static>) -> Core {
         println!("Initializing core...");
 
         // Build components in order, depending on each other
@@ -53,6 +59,7 @@ impl Core {
         let fragment_manager = Arc::new(FragmentManager::new(gesture_controller.clone()));
 
         Core {
+            matches,
             sensor_controller: SensorController::new(fragment_manager.clone()),
             fragment_manager,
             beautifier: Beautifier::new(),
@@ -68,9 +75,16 @@ impl Core {
         // Load the templates
         self.store.load();
 
-        // Start the web server
-        #[cfg(feature = "web")]
-        self.server.start();
+        #[cfg(feature = "web")] {
+            // Open the web configuration page
+            if self.matches.is_present("open") {
+                // TODO: dynamically obtain URL here
+                webbrowser::open("http://localhost:8000");
+            }
+
+            // Start the web server
+            self.server.start();
+        }
     }
 
     /// Stop the core.
@@ -80,24 +94,24 @@ impl Core {
     }
 }
 
-/// A handle holding a reference to the core.
-pub struct CoreHandle {
-    handle: Arc<Core>,
-}
+// /// A handle holding a reference to the core.
+// pub struct CoreHandle {
+//     handle: Arc<Core>,
+// }
 
-impl CoreHandle {
-    /// Construct and initialize a core, return a handle.
-    pub fn new() -> Self {
-        Self::from(Arc::new(Core::new()))
-    }
+// impl CoreHandle {
+//     /// Construct and initialize a core, return a handle.
+//     pub fn new() -> Self {
+//         Self::from(Arc::new(Core::new()))
+//     }
 
-    /// Construct a new handle from the given Core wrapped in an Arc.
-    pub fn from(handle: Arc<Core>) -> Self {
-        CoreHandle { handle }
-    }
+//     /// Construct a new handle from the given Core wrapped in an Arc.
+//     pub fn from(handle: Arc<Core>) -> Self {
+//         CoreHandle { handle }
+//     }
 
-    /// Get a reference to the core.
-    pub fn core(&self) -> &Core {
-        self.handle.as_ref()
-    }
-}
+//     /// Get a reference to the core.
+//     pub fn core(&self) -> &Core {
+//         self.handle.as_ref()
+//     }
+// }
