@@ -63,6 +63,11 @@ impl RotPoint {
     pub fn from_degrees(degrees: f64) -> RotPoint {
         RotPoint(degrees.to_radians())
     }
+
+    /// Get the number of radians for this rotational point.
+    pub fn radians(&self) -> f64 {
+        self.0
+    }
 }
 
 impl fmt::Display for Point3 {

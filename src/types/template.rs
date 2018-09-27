@@ -7,6 +7,11 @@ pub struct Template {
 }
 
 impl Template {
+    /// Construct a new template with the given `name` and `model`.
+    pub fn new(name: String, model: Model) -> Self {
+        Template { name, model }
+    }
+
     /// Get the template name.
     pub fn name(&self) -> &str {
         &self.name

@@ -1,8 +1,8 @@
-use std::{fs, io::Result, path::Path, sync::Mutex};
+use std::{cmp::min, fs, io::Result, path::Path, sync::Mutex};
 
 use toml;
 
-use types::{Model, Template};
+use types::{Model, RotPoint, RotTrace, Template};
 
 /// The default file path to save the templates in.
 const TEMPLATES_FILE_PATH: &str = "~/.config/cant-touch-this/templates.toml";
@@ -17,7 +17,11 @@ impl TemplateStore {
     /// Construct a new empty template store
     pub fn new() -> Self {
         Self {
-            templates: Mutex::new(Vec::new()),
+            // TODO: after debugging, load an emtpy list of templates instead
+            templates: Mutex::new(vec![Template::new(
+                "dummy".into(),
+                Model::new(RotTrace::new(vec![RotPoint::new(0.0); 64])),
+            )]),
         }
     }
 
@@ -51,6 +55,8 @@ impl TemplateStore {
         *templates = toml::from_str(&fs::read_to_string(path)?)
             .expect("failed to deserialize templates from loaded file");
 
+        println!("Loaded {} template(s)", templates.len());
+
         Ok(())
     }
 
@@ -70,7 +76,7 @@ impl TemplateStore {
             return Ok(());
         }
 
-        println!("Saving templates to file...");
+        println!("Saving {} template(s) to file...", templates.len());
         fs::write(
             TEMPLATES_FILE_PATH,
             toml::to_string(&*templates)
@@ -81,8 +87,6 @@ impl TemplateStore {
     /// Compare a given model against the tempaltes,
     /// to see whether there is a gesture match.
     pub fn detect_gesture(&self, other: &Model) {
-        println!("DEBUG: processing model:");
-
         // Obtain a templates list lock
         let templates = self
             .templates
@@ -94,11 +98,33 @@ impl TemplateStore {
             // Get the model to compare against
             let model = template.model();
 
-            // TODO: do the model comparison
+            // Get the model and other model points
+            let model_points = model.trace().points();
+            let other_points = other.trace().points();
+            let model_count = model_points.len();
+            let other_count = other_points.len();
 
-            // TODO: build a list of matching templates to return for actions to process
+            // Determine how many points to process, minimum length wins
+            let count = min(model_points.len(), other_points.len());
 
-            println!("DEBUG: testing template");
+            // Select the last points based on the determined count to use
+            let model_points = &model.trace().points()[model_count - count..model_count];
+            let other_points = &other.trace().points()[other_count - count..other_count];
+
+            // Caluclate the difference for each point
+            let diff: Vec<f64> = model_points
+                .iter()
+                .rev()
+                .zip(other_points.iter().rev())
+                .map(|(a, b)| b.radians() - a.radians())
+                .collect();
+
+            // Report the points
+            if !diff.is_empty() {
+                let avg = diff.iter().sum::<f64>() / diff.len() as f64;
+                println!("Diff: {}", avg);
+                // println!("Diff: {:?}", diff);
+            }
         }
     }
 }
