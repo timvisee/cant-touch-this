@@ -19,10 +19,20 @@ impl TemplateStore {
         Self {
             // TODO: after debugging, load an emtpy list of templates instead
             templates: Mutex::new(vec![Template::new(
-                "dummy".into(),
+                "Straight line".into(),
                 Model::new(RotTrace::new(vec![RotPoint::new(0.0); 64])),
             )]),
         }
+    }
+
+    /// Get a list of all template names.
+    pub fn names(&self) -> Vec<String> {
+        self.templates
+            .lock()
+            .expect("failed to lock templates list")
+            .iter()
+            .map(|t| t.name().into())
+            .collect()
     }
 
     /// Load a list of templates from a file.
