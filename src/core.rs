@@ -50,6 +50,8 @@ pub struct Core {
 
 impl Core {
     /// Construct and initialize the core.
+    ///
+    /// The CLI arguments matched must be given.
     pub fn new(matches: ArgMatches<'static>) -> Core {
         println!("Initializing core...");
 
@@ -75,7 +77,8 @@ impl Core {
         // Load the templates
         self.store.load();
 
-        #[cfg(feature = "web")] {
+        #[cfg(feature = "web")]
+        {
             // Open the web configuration page
             if self.matches.is_present("open") {
                 // TODO: dynamically obtain URL here

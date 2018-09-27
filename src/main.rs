@@ -54,11 +54,14 @@ fn build_app<'a, 'b>() -> App<'a, 'b> {
         .about(crate_description!());
 
     // Define the open argument if web is enabled
-    #[cfg(feature = "web")] {
-        app = app.arg(Arg::with_name("open")
-            .short("o")
-            .long("open")
-            .help("Open the web configuration in your browser"));
+    #[cfg(feature = "web")]
+    {
+        app = app.arg(
+            Arg::with_name("open")
+                .short("o")
+                .long("open")
+                .help("Open the web configuration in your browser"),
+        );
     }
 
     app
