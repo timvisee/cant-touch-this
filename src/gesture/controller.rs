@@ -27,4 +27,9 @@ impl GestureController {
 
         self.store.detect_gesture(model)
     }
+
+    /// Set the recording state.
+    pub fn set_recording(&self, recording: bool) {
+        println!("Setting recording state: {:?}", recording);
+    }
 }

@@ -6,7 +6,7 @@ use std::{
     sync::Arc,
 };
 
-use rocket;
+use rocket::{self, State};
 use rocket_contrib::{
     Json,
     Template,
@@ -32,6 +32,7 @@ impl Server {
             .mount("/", routes![index, example, start_recording])
             .mount("/css", StaticFiles::from("templates/css"))
             .mount("/js", StaticFiles::from("templates/js"))
+            .manage(self.gesture_controller.clone())
             .attach(Template::fairing())
             .launch();
     }
@@ -54,8 +55,15 @@ fn example(name: String) -> Template {
 }
 
 #[get("/api/v1/start_recording")]
-fn start_recording() -> Json<RecordResponse> {
-    Json(RecordResponse::new(true))
+fn start_recording(gesture_controller: State<Arc<GestureController>>) -> Json<RecordResponse> {
+    // TODO: move this into a parameter
+    let recording = true;
+
+    // Set the recording state in the gesture controller
+    gesture_controller.set_recording(recording);
+
+    // Respond with the state
+    Json(RecordResponse::new(recording))
 }
 
 #[derive(Serialize, Deserialize)]
