@@ -19,7 +19,7 @@ impl TemplateStore {
         Self {
             // TODO: after debugging, load an emtpy list of templates instead
             templates: Mutex::new(vec![Template::new(
-                "dummy".into(),
+                "Straight line".into(),
                 Model::new(RotTrace::new(vec![RotPoint::new(0.0); 64])),
             )]),
         }
