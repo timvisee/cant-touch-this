@@ -4,7 +4,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use rocket::{self, State};
-use rocket_contrib::{static_files::staticfiles, json, template};
+use rocket_contrib::{static_files::StaticFiles, Json, Template};
 
 use gesture::GestureController;
 
