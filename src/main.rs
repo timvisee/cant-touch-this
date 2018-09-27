@@ -7,7 +7,6 @@ extern crate leap;
 extern crate nalgebra;
 #[macro_use]
 extern crate rocket;
-extern crate rocket_codegen;
 #[cfg(feature = "web")]
 extern crate rocket_contrib;
 extern crate serde;
