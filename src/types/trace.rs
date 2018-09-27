@@ -117,8 +117,15 @@ impl RotTrace {
         RotTrace { points: vec![] }
     }
 
+    /// Push the given rotational point on the trace.
+    /// TODO: push a `RotPoint` here.
     pub fn push(&mut self, point: f64) {
         self.points.push(RotPoint::new(point));
+    }
+
+    /// Get a reference to the rotation points in this trace.
+    pub fn points(&self) -> &Vec<RotPoint> {
+        &self.points
     }
 }
 

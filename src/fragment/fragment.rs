@@ -37,7 +37,9 @@ impl Fragment {
 
     /// Push finger data from a sensor frame on the finger trace.
     /// Then, process the raw data into data we can work with in real-time.
-    pub fn process_sensor_finger(&mut self, finger: SensorFinger) {
+    ///
+    /// TODO: remove temporary parameter: `process`
+    pub fn process_sensor_finger(&mut self, finger: SensorFinger, process: bool) {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
 
@@ -50,6 +52,8 @@ impl Fragment {
         // TODO: do some data normalization (scaling, filtering)
 
         // Pass the processed data to the gesture controller, for recognition
-        self.gesture_controller.detect_gesture(&self.model);
+        if process {
+            self.gesture_controller.detect_gesture(&self.model);
+        }
     }
 }
