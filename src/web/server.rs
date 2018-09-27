@@ -1,17 +1,10 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
-use std::{
-    collections::HashMap,
-    sync::Arc,
-};
+use std::{collections::HashMap, sync::Arc};
 
 use rocket::{self, State};
-use rocket_contrib::{
-    Json,
-    Template,
-    static_files::StaticFiles,
-};
+use rocket_contrib::{static_files::staticfiles, json, template};
 
 use gesture::GestureController;
 
