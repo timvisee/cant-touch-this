@@ -4,7 +4,18 @@ $('#start_recording').on('click', function() {
     axios.get('/api/v1/record/' + !recording)
         .then(function (response) {
             console.log(response);
-            setRecordingState(response.data.started);
+            setRecordingState(response.data.recording);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+});
+
+// Fetch the current status from the server
+$(document).ready(function() {
+    axios.get('/api/v1/record')
+        .then(function (response) {
+            setRecordingState(response.data.recording);
         })
         .catch(function (error) {
             console.log(error);
