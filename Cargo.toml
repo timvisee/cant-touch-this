@@ -7,7 +7,7 @@ authors = [
 ]
 
 [features]
-default = []
+default = ["web"]
 
 # Include a web configuration utility
 web = []
