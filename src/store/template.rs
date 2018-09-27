@@ -21,6 +21,11 @@ impl TemplateStore {
         }
     }
 
+    /// Get a list of all template names.
+    pub fn names(&self) -> Vec<String> {
+        self.templates.lock().expect("failed to lock templates list").iter().map(|t| t.name().into()).collect()
+    }
+
     /// Load a list of templates from a file.
     /// On success, the current list of templates is replaced with the list of tempaltes from the
     /// file.
