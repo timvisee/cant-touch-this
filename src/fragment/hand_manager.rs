@@ -4,8 +4,8 @@ use std::sync::{Arc, Mutex};
 use leap::HandList as SensorHandList;
 
 use super::Hand;
-use types::Model;
 use fragment::FragmentManager;
+use types::Model;
 
 /// A hand manager.
 #[derive(Debug)]
@@ -84,11 +84,7 @@ impl HandManager {
             .lock()
             .expect("failed to lock hands manager list")
             .values()
-            .filter_map(|hand| hand
-                .lock()
-                .expect("failed to lock hand")
-                .get_live_model()
-            )
+            .filter_map(|hand| hand.lock().expect("failed to lock hand").get_live_model())
             .collect()
     }
 }

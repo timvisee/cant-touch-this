@@ -33,7 +33,10 @@ impl Server {
     /// Initialize and start the server.
     pub fn start(&self) {
         rocket::ignite()
-            .mount("/", routes![index, template_index, record, set_record, visualizer_points])
+            .mount(
+                "/",
+                routes![index, template_index, record, set_record, visualizer_points],
+            )
             .mount("/css", StaticFiles::from("res/static/css"))
             .mount("/js", StaticFiles::from("res/static/js"))
             .manage(self.gesture_controller.clone())

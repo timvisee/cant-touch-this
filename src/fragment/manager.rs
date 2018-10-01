@@ -1,8 +1,8 @@
 use std::sync::{Arc, Mutex};
 
-use types::Model;
 use super::{Hand, HandManager};
 use gesture::GestureController;
+use types::Model;
 
 /// A fragment manager.
 #[derive(Debug)]
