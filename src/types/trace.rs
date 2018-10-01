@@ -8,7 +8,7 @@ use types::{Point3, RotPoint};
 /// The maximum number of points allowed in a trace.
 ///
 /// TODO: dynamically define this, based on the longest recorded trace template.
-pub const TRACE_MAX_POINTS: usize = 100;
+pub const TRACE_MAX_POINTS: usize = 1024;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
@@ -121,11 +121,26 @@ impl RotTrace {
     /// TODO: push a `RotPoint` here.
     pub fn push(&mut self, point: f64) {
         self.points.push(RotPoint::new(point));
+        self.truncate();
     }
 
     /// Get a reference to the rotation points in this trace.
     pub fn points(&self) -> &Vec<RotPoint> {
         &self.points
+    }
+
+    /// Truncate the trace to the maximum allowed points.
+    ///
+    /// This removes the oldest points from the trace to fit `TRACE_MAX_POINTS`.
+    /// If the maximum isn't reached yet, invoking this does nothing.
+    ///
+    /// TODO: do not apply this when recording a trace, as it may have any
+    /// length.
+    fn truncate(&mut self) {
+        if self.points.len() > TRACE_MAX_POINTS {
+            let truncate = self.points.len() - TRACE_MAX_POINTS;
+            self.points.drain(..truncate);
+        }
     }
 }
 
