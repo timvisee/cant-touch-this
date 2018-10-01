@@ -60,6 +60,9 @@ impl Core {
         let gesture_controller = Arc::new(GestureController::new(store.clone()));
         let fragment_manager = Arc::new(FragmentManager::new(gesture_controller.clone()));
 
+        // TODO: this is temporary
+        gesture_controller.set_fragment_manager(fragment_manager.clone());
+
         Core {
             matches,
             sensor_controller: SensorController::new(fragment_manager.clone()),

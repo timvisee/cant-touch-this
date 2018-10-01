@@ -35,6 +35,11 @@ impl Fragment {
         &mut self.raw
     }
 
+    /// Get the processed fragment trace model.
+    pub fn model(&self) -> &Model {
+        &self.model
+    }
+
     /// Push finger data from a sensor frame on the finger trace.
     /// Then, process the raw data into data we can work with in real-time.
     ///
