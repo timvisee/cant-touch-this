@@ -57,15 +57,13 @@ impl PointTrace {
     /// is returned.
     ///
     /// A lazy iterator is returned for optimal performance.
+    ///
+    /// TODO: define a plane to multiply each point with
+    /// TODO: dynamically determine this plane
     #[inline]
     fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
-        // TODO: define a plane to multiply each point with
-        // TODO: dynamically determine this plane
-
         points
             .iter()
-            // TODO: use a 3D point, we're in 3D space
-            // .map(|p| p.to_npoint())
             .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)
