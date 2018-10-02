@@ -45,7 +45,20 @@ impl PointTrace {
     ///
     /// TODO: stream the iterator result, don't collect, improve performance
     #[inline]
-    fn calc_rot_points(&self, points: &[Point3]) -> Vec<RotPoint> {
+    fn calc_rot_points(points: &[Point3]) -> Vec<RotPoint> {
+        Self::calc_rot_points_iter(points).collect()
+    }
+
+    /// Given a list of points, calculate the rotation/angle the edges between
+    /// points in radians.
+    ///
+    /// In order to make reliable calculations the first two points are dropped
+    /// in the result. If a list of less than 3 points is given, an emtpy result
+    /// is returned.
+    ///
+    /// A lazy iterator is returned for optimal performance.
+    #[inline]
+    fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
         // TODO: define a plane to multiply each point with
         // TODO: dynamically determine this plane
 
@@ -59,7 +72,6 @@ impl PointTrace {
             .tuple_windows()
             .map(|(a, b)| (b.y.atan2(b.x) - a.y.atan2(a.x), a.magnitude()))
             .map(RotPoint::from_tuple)
-            .collect()
     }
 
     /// Given a list of points, calculate the rotation/angle the edges between
@@ -69,7 +81,7 @@ impl PointTrace {
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
     fn to_rot_points(&self) -> Vec<RotPoint> {
-        self.calc_rot_points(&self.points)
+        Self::calc_rot_points(&self.points)
     }
 
     /// Given a list of points (wrapped by this trace), calculate the last
@@ -82,7 +94,7 @@ impl PointTrace {
     /// At least three points need to be in this list in order to return the
     /// last rotation. If that isn't the case, `None` is returned instead.
     pub fn to_last_rot_point(&self) -> Option<RotPoint> {
-        self.calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
+        Self::calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
             .first()
             .cloned()
     }
