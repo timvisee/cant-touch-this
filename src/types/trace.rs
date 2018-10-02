@@ -8,7 +8,7 @@ use types::{Point3, RotPoint};
 /// The maximum number of points allowed in a trace.
 ///
 /// TODO: dynamically define this, based on the longest recorded trace template.
-pub const TRACE_MAX_POINTS: usize = 100;
+pub const TRACE_MAX_POINTS: usize = 1024;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
@@ -39,8 +39,9 @@ impl PointTrace {
     /// In order to make reliable calculations the first two points are dropped
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
-    fn calc_rot_points(&self) -> Vec<f64> {
-        self.points
+    fn calc_rot_points(&self, points: &[Point3]) -> Vec<RotPoint> {
+        // TODO: stream this iterator, instead of collecting 3 times
+        points
             .iter()
             .map(|p| p.to_npoint())
             .collect::<Vec<_>>()
@@ -48,8 +49,19 @@ impl PointTrace {
             .map(|p| p[1] - p[0])
             .collect::<Vec<_>>()
             .windows(2)
-            .map(|p| p[0].angle(&p[1]))
+            .map(|p| (p[0].angle(&p[1]), p[0].magnitude()))
+            .map(RotPoint::from_tuple)
             .collect()
+    }
+
+    /// Given a list of points, calculate the rotation/angle the edges between
+    /// points in radians.
+    ///
+    /// In order to make reliable calculations the first two points are dropped
+    /// in the result. If a list of less than 3 points is given, an emtpy result
+    /// is returned.
+    fn to_rot_points(&self) -> Vec<RotPoint> {
+        self.calc_rot_points(&self.points)
     }
 
     /// Given a list of points (wrapped by this trace), calculate the last
@@ -61,33 +73,20 @@ impl PointTrace {
     ///
     /// At least three points need to be in this list in order to return the
     /// last rotation. If that isn't the case, `None` is returned instead.
-    pub fn calc_last_rot_point(&self) -> Option<f64> {
-        self.points
-            .split_at(max(self.points.len(), 3) - 3)
-            .1
-            .iter()
-            .map(|p| p.to_npoint())
-            .collect::<Vec<_>>()
-            .windows(2)
-            .map(|p| p[1] - p[0])
-            .collect::<Vec<_>>()
-            .windows(2)
-            .map(|p| p[0].angle(&p[1]))
-            .next()
+    pub fn to_last_rot_point(&self) -> Option<RotPoint> {
+        self.calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
+            .first()
+            .cloned()
     }
 
     /// Convert this point trace into a rotational trace.
     #[allow(unused)]
     pub fn to_rot_trace(&self) -> RotTrace {
-        RotTrace::new(
-            self.calc_rot_points()
-                .into_iter()
-                .map(RotPoint::new)
-                .collect(),
-        )
+        RotTrace::new(self.to_rot_points())
     }
 
     /// Add a new point to the trace.
+    #[inline]
     pub fn push(&mut self, point: Point3) {
         self.points.push(point);
         self.truncate();
@@ -100,6 +99,7 @@ impl PointTrace {
     ///
     /// TODO: do not apply this when recording a trace, as it may have any
     /// length.
+    #[inline]
     fn truncate(&mut self) {
         if self.points.len() > TRACE_MAX_POINTS {
             let truncate = self.points.len() - TRACE_MAX_POINTS;
@@ -118,14 +118,29 @@ impl RotTrace {
     }
 
     /// Push the given rotational point on the trace.
-    /// TODO: push a `RotPoint` here.
-    pub fn push(&mut self, point: f64) {
-        self.points.push(RotPoint::new(point));
+    pub fn push(&mut self, point: RotPoint) {
+        self.points.push(point);
+        self.truncate();
     }
 
     /// Get a reference to the rotation points in this trace.
     pub fn points(&self) -> &Vec<RotPoint> {
         &self.points
+    }
+
+    /// Truncate the trace to the maximum allowed points.
+    ///
+    /// This removes the oldest points from the trace to fit `TRACE_MAX_POINTS`.
+    /// If the maximum isn't reached yet, invoking this does nothing.
+    ///
+    /// TODO: do not apply this when recording a trace, as it may have any
+    /// length.
+    #[inline]
+    fn truncate(&mut self) {
+        if self.points.len() > TRACE_MAX_POINTS {
+            let truncate = self.points.len() - TRACE_MAX_POINTS;
+            self.points.drain(..truncate);
+        }
     }
 }
 

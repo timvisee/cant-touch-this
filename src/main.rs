@@ -1,4 +1,4 @@
-#![feature(decl_macro, plugin, proc_macro_non_items)]
+#![feature(decl_macro, plugin, proc_macro_non_items, option_replace)]
 #![plugin(rocket_codegen)]
 // TODO: remove this after developing
 #![allow(unused)]

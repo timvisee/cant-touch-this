@@ -2,8 +2,10 @@ use std::sync::{Arc, Mutex};
 
 use super::{Hand, HandManager};
 use gesture::GestureController;
+use types::Model;
 
 /// A fragment manager.
+#[derive(Debug)]
 pub struct FragmentManager {
     /// The hand manager, tracked by the fragment manager.
     hand: HandManager,
@@ -32,6 +34,11 @@ impl FragmentManager {
             .entry(id)
             .or_insert_with(|| Arc::new(Mutex::new(Hand::new(self.gesture_controller.clone()))))
             .clone()
+    }
+
+    // TODO: this is temporary
+    pub fn get_live_models(&self) -> Vec<Model> {
+        self.hand.get_live_models()
     }
 
     // TODO: create a method for garbage collecting hands that haven't been updated in a while

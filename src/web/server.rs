@@ -8,6 +8,7 @@ use rocket_contrib::{static_files::StaticFiles, Json, Template};
 
 use gesture::GestureController;
 use store::TemplateStore;
+use types::Model;
 
 pub struct Server {
     /// The gesture controller used for managing recordings.
@@ -32,7 +33,10 @@ impl Server {
     /// Initialize and start the server.
     pub fn start(&self) {
         rocket::ignite()
-            .mount("/", routes![index, template_index, record, set_record])
+            .mount(
+                "/",
+                routes![index, template_index, record, set_record, visualizer_points],
+            )
             .mount("/css", StaticFiles::from("res/static/css"))
             .mount("/js", StaticFiles::from("res/static/js"))
             .manage(self.gesture_controller.clone())
@@ -82,4 +86,18 @@ fn set_record(
 #[derive(Serialize, Deserialize)]
 struct RecordResponse {
     recording: bool,
+}
+
+#[get("/api/v1/visualizer/points")]
+fn visualizer_points(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
+    // Get the live data models
+    let models = gesture_controller.get_live_trace();
+
+    // Respond with the state
+    Json(LiveTraceResponse { models })
+}
+
+#[derive(Serialize, Deserialize)]
+struct LiveTraceResponse {
+    models: Vec<Model>,
 }

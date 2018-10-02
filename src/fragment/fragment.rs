@@ -35,6 +35,11 @@ impl Fragment {
         &mut self.raw
     }
 
+    /// Get the processed fragment trace model.
+    pub fn model(&self) -> &Model {
+        &self.model
+    }
+
     /// Push finger data from a sensor frame on the finger trace.
     /// Then, process the raw data into data we can work with in real-time.
     ///
@@ -45,7 +50,7 @@ impl Fragment {
 
         // Calculate the new rotational point based on the new data,
         // add it to the processed trace
-        if let Some(x) = self.raw.calc_last_rot_point() {
+        if let Some(x) = self.raw.to_last_rot_point() {
             self.model.trace_mut().push(x);
         }
 

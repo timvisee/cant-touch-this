@@ -5,8 +5,10 @@ use leap::{FingerType, Hand as SensorHand};
 
 use super::Fragment;
 use gesture::GestureController;
+use types::Model;
 
 /// A hand with traces.
+#[derive(Debug)]
 pub struct Hand {
     /// The fingers on this hand, grouped by their finger types.
     fingers: HashMap<FingerType, Fragment>,
@@ -42,5 +44,13 @@ impl Hand {
                 .or_insert_with(|| Fragment::new(gesture_controller))
                 .process_sensor_finger(f, process);
         }
+    }
+
+    // TODO: this is temporary
+    pub fn get_live_model(&self) -> Option<Model> {
+        // TODO: do not clone here
+        self.fingers
+            .get(&FingerType::Index)
+            .map(|fragment| fragment.model().clone())
     }
 }

@@ -5,8 +5,10 @@ use leap::HandList as SensorHandList;
 
 use super::Hand;
 use fragment::FragmentManager;
+use types::Model;
 
 /// A hand manager.
+#[derive(Debug)]
 pub struct HandManager {
     /// A hashmap with hands, grouped by their hand ID obtained from the sensor.
     ///
@@ -75,4 +77,14 @@ impl HandManager {
     // TODO: create a method for garbage collecting hands that haven't been updated in a while,
     //       this should be called from all contexts the manager is used, preferreably in some
     //       automated fashion
+
+    // TODO: this is temporary
+    pub fn get_live_models(&self) -> Vec<Model> {
+        self.hands
+            .lock()
+            .expect("failed to lock hands manager list")
+            .values()
+            .filter_map(|hand| hand.lock().expect("failed to lock hand").get_live_model())
+            .collect()
+    }
 }
