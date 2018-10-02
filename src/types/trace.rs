@@ -57,10 +57,7 @@ impl PointTrace {
             .tuple_windows()
             .map(|(a, b)| b - a)
             .tuple_windows()
-            .map(|(a, b)| (
-                b.y.atan2(b.x) - a.y.atan2(a.x),
-                a.magnitude(),
-            ))
+            .map(|(a, b)| (b.y.atan2(b.x) - a.y.atan2(a.x), a.magnitude()))
             .map(RotPoint::from_tuple)
             .collect()
     }
