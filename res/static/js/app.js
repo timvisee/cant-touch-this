@@ -166,10 +166,6 @@ function renderVisualizer(points) {
 
     // Map the rotational points into x/y axis we can render
     points = points.map((point) => {
-        // // TODO: temporary filter
-        // if(rot < 0.05)
-        //     rot = 0;
-
         // Determine what coordinates to draw to
         let x = last_x + Math.cos(last_rot + point.angle) * point.distance;
         let y = last_y + Math.sin(last_rot + point.angle) * point.distance;
@@ -182,18 +178,17 @@ function renderVisualizer(points) {
         return { x, y };
     });
 
-    for(var i = 0; i < points.length; i ++)
-        context.fillRect(points[i].x ,points[i].y, 1, 1);
+    // Begin the path
+    context.beginPath();
 
-    // Do not draw if too few points
-    if(points.len < 3)
-        return;
-
-    for(var i = 1; i < points.length - 2; i ++) {
+    // Plot each point with a curved line
+    for(var i = 0; i < points.length - 2; i++) {
         var xc = (points[i].x + points[i + 1].x) / 2;
         var yc = (points[i].y + points[i + 1].y) / 2;
-        // context.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+        context.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
     }
+    // context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
 
-    // context.quadraticCurveTo(points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+    // Draw the path
+    context.stroke();
 }
