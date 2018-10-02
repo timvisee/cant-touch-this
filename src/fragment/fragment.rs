@@ -50,7 +50,7 @@ impl Fragment {
 
         // Calculate the new rotational point based on the new data,
         // add it to the processed trace
-        if let Some(x) = self.raw.calc_last_rot_point() {
+        if let Some(x) = self.raw.to_last_rot_point() {
             self.model.trace_mut().push(x);
         }
 

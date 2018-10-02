@@ -16,10 +16,6 @@ pub struct Point3 {
     pub z: f64,
 }
 
-/// A rotational point.
-#[derive(Copy, Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct RotPoint(f64);
-
 impl Point3 {
     /// Create a new Point3 using three `f64`'s.
     pub fn new(x: f64, y: f64, z: f64) -> Point3 {
@@ -51,22 +47,40 @@ impl Point3 {
     }
 }
 
+/// A rotational point.
+#[derive(Copy, Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct RotPoint {
+    /// The angle for this rotation.
+    angle: f64,
+
+    /// The distance to the next point.
+    distance: f64,
+}
+
 impl RotPoint {
-    pub fn new(f: f64) -> RotPoint {
-        RotPoint(f)
+    /// Construct a new rotational point.
+    pub fn new(angle: f64, distance: f64) -> Self {
+        Self { angle, distance }
     }
 
-    pub fn zero() -> RotPoint {
-        RotPoint(0.0)
+    /// Construct a new rotational point with it's components in a tuple.
+    /// This may be used for iterators, like: `.map(RotPoint::from_tuple)`
+    pub fn from_tuple((angle, distance): (f64, f64)) -> Self {
+        Self::new(angle, distance)
     }
 
-    pub fn from_degrees(degrees: f64) -> RotPoint {
-        RotPoint(degrees.to_radians())
+    /// Create an identity rotational point, with an angle of 0, and 1 for distance.
+    pub fn identity() -> Self {
+        Self::new(0.0, 1.0)
+    }
+
+    pub fn from_degrees(degrees: f64, distance: f64) -> Self {
+        Self::new(degrees.to_radians(), distance)
     }
 
     /// Get the number of radians for this rotational point.
     pub fn radians(&self) -> f64 {
-        self.0
+        self.angle
     }
 }
 
@@ -78,7 +92,7 @@ impl fmt::Display for Point3 {
 
 impl fmt::Display for RotPoint {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
+        write!(f, "({} rad -> {})", self.angle, self.distance)
     }
 }
 

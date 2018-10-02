@@ -39,9 +39,9 @@ impl PointTrace {
     /// In order to make reliable calculations the first two points are dropped
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
-    fn calc_rot_points(&self) -> Vec<RotPoint> {
+    fn calc_rot_points(&self, points: &[Point3]) -> Vec<RotPoint> {
         // TODO: stream this iterator, instead of collecting 3 times
-        self.points
+        points
             .iter()
             .map(|p| p.to_npoint())
             .collect::<Vec<_>>()
@@ -49,9 +49,19 @@ impl PointTrace {
             .map(|p| p[1] - p[0])
             .collect::<Vec<_>>()
             .windows(2)
-            .map(|p| p[0].angle(&p[1]))
-            .map(RotPoint::new)
+            .map(|p| (p[0].angle(&p[1]), p[0].magnitude()))
+            .map(RotPoint::from_tuple)
             .collect()
+    }
+
+    /// Given a list of points, calculate the rotation/angle the edges between
+    /// points in radians.
+    ///
+    /// In order to make reliable calculations the first two points are dropped
+    /// in the result. If a list of less than 3 points is given, an emtpy result
+    /// is returned.
+    fn to_rot_points(&self) -> Vec<RotPoint> {
+        self.calc_rot_points(&self.points)
     }
 
     /// Given a list of points (wrapped by this trace), calculate the last
@@ -63,26 +73,16 @@ impl PointTrace {
     ///
     /// At least three points need to be in this list in order to return the
     /// last rotation. If that isn't the case, `None` is returned instead.
-    pub fn calc_last_rot_point(&self) -> Option<RotPoint> {
-        self.points
-            .split_at(max(self.points.len(), 3) - 3)
-            .1
-            .iter()
-            .map(|p| p.to_npoint())
-            .collect::<Vec<_>>()
-            .windows(2)
-            .map(|p| p[1] - p[0])
-            .collect::<Vec<_>>()
-            .windows(2)
-            .map(|p| p[0].angle(&p[1]))
-            .map(RotPoint::new)
-            .next()
+    pub fn to_last_rot_point(&self) -> Option<RotPoint> {
+        self.calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
+            .first()
+            .cloned()
     }
 
     /// Convert this point trace into a rotational trace.
     #[allow(unused)]
     pub fn to_rot_trace(&self) -> RotTrace {
-        RotTrace::new(self.calc_rot_points().into_iter().collect())
+        RotTrace::new(self.to_rot_points())
     }
 
     /// Add a new point to the trace.
