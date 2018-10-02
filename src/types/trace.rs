@@ -3,6 +3,7 @@ use std::f64::consts::PI;
 use std::fmt;
 
 use itertools::Itertools;
+use nalgebra::geometry::Point2 as NPoint2;
 use nalgebra::geometry::Point3 as NPoint3;
 
 use types::{Point3, RotPoint};
@@ -45,13 +46,21 @@ impl PointTrace {
     /// TODO: stream the iterator result, don't collect, improve performance
     #[inline]
     fn calc_rot_points(&self, points: &[Point3]) -> Vec<RotPoint> {
+        // TODO: define a plane to multiply each point with
+        // TODO: dynamically determine this plane
+
         points
             .iter()
-            .map(|p| p.to_npoint())
+            // TODO: use a 3D point, we're in 3D space
+            // .map(|p| p.to_npoint())
+            .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)
             .tuple_windows()
-            .map(|(a, ref b)| (a.angle(b), a.magnitude()))
+            .map(|(a, b)| (
+                b.y.atan2(b.x) - a.y.atan2(a.x),
+                a.magnitude(),
+            ))
             .map(RotPoint::from_tuple)
             .collect()
     }
