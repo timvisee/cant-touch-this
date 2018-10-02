@@ -2,6 +2,7 @@ use std::cmp::max;
 use std::f64::consts::PI;
 use std::fmt;
 
+use itertools::Itertools;
 use nalgebra::geometry::Point3 as NPoint3;
 
 use types::{Point3, RotPoint};
@@ -40,17 +41,17 @@ impl PointTrace {
     /// In order to make reliable calculations the first two points are dropped
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
+    ///
+    /// TODO: stream the iterator result, don't collect, improve performance
+    #[inline]
     fn calc_rot_points(&self, points: &[Point3]) -> Vec<RotPoint> {
-        // TODO: stream this iterator, instead of collecting 3 times
         points
             .iter()
             .map(|p| p.to_npoint())
-            .collect::<Vec<_>>()
-            .windows(2)
-            .map(|p| p[1] - p[0])
-            .collect::<Vec<_>>()
-            .windows(2)
-            .map(|p| (p[0].angle(&p[1]), p[0].magnitude()))
+            .tuple_windows()
+            .map(|(a, b)| b - a)
+            .tuple_windows()
+            .map(|(a, ref b)| (a.angle(b), a.magnitude()))
             .map(RotPoint::from_tuple)
             .collect()
     }

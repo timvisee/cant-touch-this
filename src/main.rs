@@ -5,6 +5,7 @@
 
 #[macro_use]
 extern crate clap;
+extern crate itertools;
 extern crate leap;
 extern crate nalgebra;
 #[macro_use]
