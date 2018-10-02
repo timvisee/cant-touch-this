@@ -1,4 +1,10 @@
-#![feature(decl_macro, plugin, proc_macro_non_items, option_replace)]
+#![feature(
+    decl_macro,
+    plugin,
+    proc_macro_non_items,
+    option_replace,
+    test
+)]
 #![plugin(rocket_codegen)]
 // TODO: remove this after developing
 #![allow(unused)]
@@ -15,6 +21,7 @@ extern crate rocket_contrib;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate test;
 extern crate toml;
 extern crate webbrowser;
 

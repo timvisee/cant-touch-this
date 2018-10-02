@@ -190,6 +190,8 @@ impl fmt::Display for RotTrace {
 
 #[cfg(test)]
 mod tests {
+    use test::{black_box, Bencher};
+
     use super::*;
 
     #[test]
@@ -242,5 +244,20 @@ mod tests {
             points.to_last_rot_point(),
             Some(RotPoint::from_degrees(90.0, 5.0))
         );
+    }
+
+    #[bench]
+    fn corner_bench(b: &mut Bencher) {
+        let points = PointTrace::new(vec![
+            Point3::new(0.0, 0.0, 0.0),
+            Point3::new(0.0, 5.0, 0.0),
+            Point3::new(0.0, 5.0, 5.0),
+            Point3::new(0.0, 0.0, 5.0),
+            Point3::new(-5.0, 0.0, 5.0),
+            Point3::new(-5.0, 0.0, 0.0),
+            Point3::new(0.0, 0.0, 0.0),
+        ]);
+
+        b.iter(|| black_box(points.to_rot_trace()));
     }
 }
