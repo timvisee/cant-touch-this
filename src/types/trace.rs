@@ -39,7 +39,8 @@ impl PointTrace {
     /// In order to make reliable calculations the first two points are dropped
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
-    fn calc_rot_points(&self) -> Vec<f64> {
+    fn calc_rot_points(&self) -> Vec<RotPoint> {
+        // TODO: stream this iterator, instead of collecting 3 times
         self.points
             .iter()
             .map(|p| p.to_npoint())
@@ -49,6 +50,7 @@ impl PointTrace {
             .collect::<Vec<_>>()
             .windows(2)
             .map(|p| p[0].angle(&p[1]))
+            .map(RotPoint::new)
             .collect()
     }
 
@@ -61,7 +63,7 @@ impl PointTrace {
     ///
     /// At least three points need to be in this list in order to return the
     /// last rotation. If that isn't the case, `None` is returned instead.
-    pub fn calc_last_rot_point(&self) -> Option<f64> {
+    pub fn calc_last_rot_point(&self) -> Option<RotPoint> {
         self.points
             .split_at(max(self.points.len(), 3) - 3)
             .1
@@ -73,18 +75,14 @@ impl PointTrace {
             .collect::<Vec<_>>()
             .windows(2)
             .map(|p| p[0].angle(&p[1]))
+            .map(RotPoint::new)
             .next()
     }
 
     /// Convert this point trace into a rotational trace.
     #[allow(unused)]
     pub fn to_rot_trace(&self) -> RotTrace {
-        RotTrace::new(
-            self.calc_rot_points()
-                .into_iter()
-                .map(RotPoint::new)
-                .collect(),
-        )
+        RotTrace::new(self.calc_rot_points().into_iter().collect())
     }
 
     /// Add a new point to the trace.
@@ -118,9 +116,8 @@ impl RotTrace {
     }
 
     /// Push the given rotational point on the trace.
-    /// TODO: push a `RotPoint` here.
-    pub fn push(&mut self, point: f64) {
-        self.points.push(RotPoint::new(point));
+    pub fn push(&mut self, point: RotPoint) {
+        self.points.push(point);
         self.truncate();
     }
 
