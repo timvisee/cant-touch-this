@@ -1,4 +1,5 @@
 use std::cmp::max;
+use std::f64::consts::PI;
 use std::fmt;
 
 use nalgebra::geometry::Point3 as NPoint3;
@@ -183,9 +184,9 @@ mod tests {
         assert_eq!(zero.to_rot_trace(), RotTrace::empty());
         assert_eq!(one.to_rot_trace(), RotTrace::empty());
         assert_eq!(two.to_rot_trace(), RotTrace::empty());
-        assert!(zero.calc_last_rot_point().is_none());
-        assert!(one.calc_last_rot_point().is_none());
-        assert!(two.calc_last_rot_point().is_none());
+        assert!(zero.to_last_rot_point().is_none());
+        assert!(one.to_last_rot_point().is_none());
+        assert!(two.to_last_rot_point().is_none());
     }
 
     #[test]
@@ -196,10 +197,13 @@ mod tests {
             Point3::new(5.0, 5.0, 5.0),
         ]);
 
-        let expected = RotTrace::new(vec![RotPoint::zero(); 1]);
+        let expected = RotTrace::new(vec![RotPoint::new(0f64, 3f64.sqrt())]);
 
         assert_eq!(points.to_rot_trace(), expected);
-        assert_eq!(points.calc_last_rot_point(), Some(0.0));
+        assert_eq!(
+            points.to_last_rot_point(),
+            Some(RotPoint::new(0f64, 3f64.sqrt()))
+        );
     }
 
     #[test]
@@ -214,9 +218,12 @@ mod tests {
             Point3::new(0.0, 0.0, 0.0),
         ]);
 
-        let expected = RotTrace::new(vec![RotPoint::from_degrees(90.0); 5]);
+        let expected = RotTrace::new(vec![RotPoint::from_degrees(90.0, 5.0); 5]);
 
         assert_eq!(points.to_rot_trace(), expected);
-        assert_eq!(points.calc_last_rot_point(), Some(90_f64.to_radians()));
+        assert_eq!(
+            points.to_last_rot_point(),
+            Some(RotPoint::from_degrees(90.0, 5.0))
+        );
     }
 }
