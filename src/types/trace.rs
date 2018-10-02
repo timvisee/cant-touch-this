@@ -86,6 +86,7 @@ impl PointTrace {
     }
 
     /// Add a new point to the trace.
+    #[inline]
     pub fn push(&mut self, point: Point3) {
         self.points.push(point);
         self.truncate();
@@ -98,6 +99,7 @@ impl PointTrace {
     ///
     /// TODO: do not apply this when recording a trace, as it may have any
     /// length.
+    #[inline]
     fn truncate(&mut self) {
         if self.points.len() > TRACE_MAX_POINTS {
             let truncate = self.points.len() - TRACE_MAX_POINTS;
@@ -133,6 +135,7 @@ impl RotTrace {
     ///
     /// TODO: do not apply this when recording a trace, as it may have any
     /// length.
+    #[inline]
     fn truncate(&mut self) {
         if self.points.len() > TRACE_MAX_POINTS {
             let truncate = self.points.len() - TRACE_MAX_POINTS;
