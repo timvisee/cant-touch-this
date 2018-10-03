@@ -13,6 +13,9 @@ use types::{Point3, RotPoint};
 /// TODO: dynamically define this, based on the longest recorded trace template.
 pub const TRACE_MAX_POINTS: usize = 1024;
 
+/// The distance to use while resampling points.
+pub const SAMPLE_DISTANCE: f64 = 15.0;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
     /// The trace points.
@@ -62,8 +65,41 @@ impl PointTrace {
     /// TODO: dynamically determine this plane
     #[inline]
     fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
-        points
+        // TODO: return if empty
+        // // Return if we don't have any point
+        // if points.is_empty() {
+        //     return vec![].into_iter();
+        // }
+
+        // Convert the list into npoints
+        let points: Vec<NPoint3<f64>> = points
             .iter()
+            .map(|p| p.to_npoint())
+            .collect();
+
+        // Create a list of sampled points, add the first point
+        let mut sampled: Vec<NPoint3<f64>> = vec![];
+        let mut last = points[0];
+
+        // Loop through all points for sampling, skip first as origin
+        for point in points.iter().skip(1) {
+            // Sample if distance to this point is greater than preferred distance
+            while (last - point).magnitude() >= SAMPLE_DISTANCE {
+                // Get the point vector, normalize it to the preferred sample distance
+                let vector = (point - last).normalize() * SAMPLE_DISTANCE;
+
+                // Define the new sample point with this vector
+                sampled.push(last);
+                last = last + vector;
+            }
+        }
+
+        // Push the last point we sampled onto the sampled list
+        sampled.push(last);
+
+        // Do the rotational calculations
+        sampled
+            .into_iter()
             .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)
