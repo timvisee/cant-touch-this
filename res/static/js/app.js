@@ -103,6 +103,9 @@ function initVisualizer() {
 
     // Fetch initial data for the visualizer
     fetchVisualizer();
+
+    // Enable the live visualizer by default now
+    setLiveVisualize(true);
 }
 
 /**

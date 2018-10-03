@@ -1,4 +1,4 @@
-use std::{cmp::min, fs, io::Result, path::Path, sync::Mutex};
+use std::{cmp::min, f64::consts::PI, fs, io::Result, path::Path, sync::Mutex};
 
 use toml;
 
@@ -18,10 +18,20 @@ impl TemplateStore {
     pub fn new() -> Self {
         Self {
             // TODO: after debugging, load an emtpy list of templates instead
-            templates: Mutex::new(vec![Template::new(
-                "Straight line".into(),
-                Model::new(RotTrace::new(vec![RotPoint::new(0.0, 15.0); 16])),
-            )]),
+            templates: Mutex::new(vec![
+                Template::new(
+                    "Straight line".into(),
+                    Model::new(RotTrace::new(vec![RotPoint::new(0.0, 15.0); 16])),
+                ),
+                Template::new(
+                    "Circle clockwise".into(),
+                    Model::new(RotTrace::new(vec![RotPoint::new(0.25, 15.0); 16])),
+                ),
+                Template::new(
+                    "Circle counter-clockwise".into(),
+                    Model::new(RotTrace::new(vec![RotPoint::new(-0.25, 15.0); 16])),
+                ),
+            ]),
         }
     }
 
@@ -109,6 +119,11 @@ impl TemplateStore {
             let model_count = model_points.len();
             let other_count = other_points.len();
 
+            // Skip if the template has more points than our current trace
+            if other_count < model_count {
+                continue;
+            }
+
             // Determine how many points to process, minimum length wins
             let count = min(model_points.len(), other_points.len());
 
@@ -121,15 +136,24 @@ impl TemplateStore {
                 .iter()
                 .rev()
                 .zip(other_points.iter().rev())
-                .map(|(a, b)| b.radians() - a.radians())
+                .map(|(a, b)| rad_diff(b.radians(), a.radians()))
                 .collect();
 
-            // Report the points
-            if !diff.is_empty() {
-                let avg = diff.iter().sum::<f64>() / diff.len() as f64;
-                println!("Diff: {}", avg);
-                // println!("Diff: {:?}", diff);
+            // Calculate threshold values
+            let sum = diff.iter().sum::<f64>();
+            let avg = diff.iter().sum::<f64>() / diff.len() as f64;
+
+            // A match is found if values are within thresholds
+            if sum.abs() < 0.05 {
+                println!("### HIT: {}", template.name());
             }
         }
     }
+}
+
+/// Calculate the difference between two circular radian angles.
+///
+/// The returned value will always be `(-PI, PI]`.
+fn rad_diff(a: f64, b: f64) -> f64 {
+    (a - b + PI).mod_euc(2.0 * PI) - PI
 }

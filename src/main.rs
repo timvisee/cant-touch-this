@@ -3,7 +3,8 @@
     plugin,
     proc_macro_non_items,
     option_replace,
-    test
+    test,
+    euclidean_division,
 )]
 #![plugin(rocket_codegen)]
 // TODO: remove this after developing

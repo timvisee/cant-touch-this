@@ -106,6 +106,7 @@ impl PointTrace {
         // Do the rotational calculations
         sampled
             .into_iter()
+            .rev()
             .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)
