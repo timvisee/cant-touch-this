@@ -1,6 +1,6 @@
 use std::sync::{Arc, Mutex};
 
-use fragment::FragmentManager;
+use fragment::{Fragment, FragmentManager};
 use store::TemplateStore;
 use types::Model;
 
@@ -33,11 +33,11 @@ impl GestureController {
         }
     }
 
-    /// Attempt to detect gestures in the given collected model.
-    pub fn detect_gesture(&self, model: &Model) {
-        // TODO: gesture detection logic for model here
+    /// Attempt to detect gestures in the given collected fragment.
+    pub fn detect_gesture(&self, fragment: &mut Fragment) {
+        // TODO: gesture detection logic for fragment here
 
-        self.store.detect_gesture(model)
+        self.store.detect_gesture(fragment)
     }
 
     /// Check whether we're recording.

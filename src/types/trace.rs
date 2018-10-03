@@ -167,6 +167,13 @@ impl PointTrace {
             self.points.drain(..truncate);
         }
     }
+
+    /// Clear the trace.
+    ///
+    /// This resets the trace back to zero items.
+    pub fn clear(&mut self) {
+        self.points.clear();
+    }
 }
 
 impl RotTrace {
@@ -202,6 +209,13 @@ impl RotTrace {
             let truncate = self.points.len() - TRACE_MAX_POINTS;
             self.points.drain(..truncate);
         }
+    }
+
+    /// Clear the trace.
+    ///
+    /// This resets the trace back to zero items.
+    pub fn clear(&mut self) {
+        self.points.clear();
     }
 }
 

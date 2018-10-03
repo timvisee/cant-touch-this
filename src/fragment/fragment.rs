@@ -61,7 +61,16 @@ impl Fragment {
 
         // Pass the processed data to the gesture controller, for recognition
         if process {
-            self.gesture_controller.detect_gesture(&self.model);
+            // TODO: do not clone here
+            self.gesture_controller.clone().detect_gesture(self);
         }
+    }
+
+    /// Clear the fragment.
+    ///
+    /// This resets the raw trace and the model back to their identity.
+    pub fn clear(&mut self) {
+        self.raw.clear();
+        self.model.clear();
     }
 }

@@ -28,4 +28,11 @@ impl Model {
     pub fn trace_mut(&mut self) -> &mut RotTrace {
         &mut self.trace
     }
+
+    /// Clear the model.
+    ///
+    /// This resets the model back to zero trace items.
+    pub fn clear(&mut self) {
+        self.trace.clear();
+    }
 }

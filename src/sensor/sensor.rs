@@ -47,10 +47,10 @@ impl LeapListener for SensorListener {
         // Grab a frame from the controller
         let frame = controller.frame();
 
-        println!(
-            "Got update from Leap Motion sensor: {} FPS",
-            frame.current_fps(),
-        );
+        // println!(
+        //     "Got update from Leap Motion sensor: {} FPS",
+        //     frame.current_fps(),
+        // );
 
         // Process the hand frame data in the hand manager
         self.hands

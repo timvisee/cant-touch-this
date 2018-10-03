@@ -2,6 +2,7 @@ use std::{cmp::min, f64::consts::PI, fs, io::Result, path::Path, sync::Mutex};
 
 use toml;
 
+use fragment::Fragment;
 use types::{Model, RotPoint, RotTrace, Template};
 
 /// The default file path to save the templates in.
@@ -109,7 +110,7 @@ impl TemplateStore {
 
     /// Compare a given model against the tempaltes,
     /// to see whether there is a gesture match.
-    pub fn detect_gesture(&self, other: &Model) {
+    pub fn detect_gesture(&self, other: &mut Fragment) {
         // Obtain a templates list lock
         let templates = self
             .templates
@@ -121,55 +122,62 @@ impl TemplateStore {
             // Get the model to compare against
             let model = template.model();
 
-            // Get the model and other model points
-            let model_points = model.trace().points();
-            let other_points = other.trace().points();
-            let model_count = model_points.len();
-            let other_count = other_points.len();
+            {
+                // Get the model and other model points
+                let model_points = model.trace().points();
+                let other_points = other.model().trace().points();
+                let model_count = model_points.len();
+                let other_count = other_points.len();
 
-            // Skip if the template has more points than our current trace
-            if other_count < model_count {
-                continue;
+                // Skip if the template has more points than our current trace
+                if other_count < model_count {
+                    continue;
+                }
+
+                // Determine how many points to process, minimum length wins
+                let count = min(model_points.len(), other_points.len());
+
+                // Select the last points based on the determined count to use
+                let model_points = &model.trace().points()[model_count - count..model_count];
+                let other_points = &other.model().trace().points()[other_count - count..other_count];
+
+                // Caluclate the difference for each point
+                let diff = model_points
+                    .iter()
+                    .rev()
+                    .zip(other_points.iter().rev())
+                    .map(|(a, b)| rad_diff(b.radians(), a.radians()));
+
+                // Calculate the cummulative difference on each point
+                let cum_diff: Vec<f64> = diff
+                    .scan(0.0, |acc, p| {
+                        *acc += p;
+                        Some(*acc)
+                    })
+                    .collect();
+
+                // Skip if the total difference is too big
+                if cum_diff.last().unwrap().abs() > 0.05 {
+                    continue;
+                }
+
+                // // Skip if any of the points has a difference of more than 2
+                // if cum_diff.iter().any(|p| p.abs() > 2.0) {
+                //     continue;
+                // }
+
+                // // Skip if each window of 5 points has an average difference bigger than 1
+                // if cum_diff.windows(5).any(|p| (p.iter().sum::<f64>().abs() / 5.0) > 1.0) {
+                //     continue;
+                // }
+
+                println!("### HIT: {}", template.name());
             }
 
-            // Determine how many points to process, minimum length wins
-            let count = min(model_points.len(), other_points.len());
+            // Clear the fragment history
+            other.clear();
 
-            // Select the last points based on the determined count to use
-            let model_points = &model.trace().points()[model_count - count..model_count];
-            let other_points = &other.trace().points()[other_count - count..other_count];
-
-            // Caluclate the difference for each point
-            let diff = model_points
-                .iter()
-                .rev()
-                .zip(other_points.iter().rev())
-                .map(|(a, b)| rad_diff(b.radians(), a.radians()));
-
-            // Calculate the cummulative difference on each point
-            let cum_diff: Vec<f64> = diff
-                .scan(0.0, |acc, p| {
-                    *acc += p;
-                    Some(*acc)
-                })
-                .collect();
-
-            // // Skip if the total difference is too big
-            // if cum_diff.last().unwrap().abs() > 0.05 {
-            //     continue;
-            // }
-
-            // // Skip if any of the points has a difference of more than 2
-            // if cum_diff.iter().any(|p| p.abs() > 2.0) {
-            //     continue;
-            // }
-
-            // Skip if each window of 5 points has an average difference bigger than 1
-            if cum_diff.windows(5).any(|p| (p.iter().sum::<f64>().abs() / 5.0) > 1.0) {
-                continue;
-            }
-
-            println!("### HIT: {}", template.name());
+            break;
         }
     }
 }
