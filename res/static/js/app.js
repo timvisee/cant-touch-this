@@ -1,4 +1,4 @@
-$('#start_recording').on('click', function() {
+$('#toggle_record').on('click', function() {
     let recording = $(this).hasClass("btn-danger");
 
     axios.get('/api/v1/record/' + !recording)
@@ -31,18 +31,16 @@ $(document).ready(function() {
  * Set the recording state.
  */
 function setRecordingState(recording) {
-    let button = $('#start_recording');
+    let button = $('#toggle_record');
 
     if(recording) {
         button.text("Recording...");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
-        setLiveVisualize(true);
     } else {
         button.text("Start recording");
         button.removeClass("btn-danger");
         button.addClass("btn-outline-success");
-        setLiveVisualize(false);
     }
 }
 
@@ -82,6 +80,11 @@ var visualizer = null;
  * The timer that is used for requesting visualizer data.
  */
 var visualizerTimer = null;
+
+$('#toggle_visualize').on('click', function() {
+    let visualizing = $(this).hasClass("btn-danger");
+    setLiveVisualize(!visualizing);
+});
 
 /**
  * Initialize the visualizer.
@@ -145,6 +148,18 @@ function setLiveVisualize(enabled) {
     // Build a new visualization timer
     if(enabled)
         visualizerTimer = setInterval(fetchVisualizer, 50);
+
+    // Set the button state
+    let button = $('#toggle_visualize');
+    if(enabled) {
+        button.text("Visualizing...");
+        button.removeClass("btn-outline-success");
+        button.addClass("btn-danger");
+    } else {
+        button.text("Visualize");
+        button.removeClass("btn-danger");
+        button.addClass("btn-outline-success");
+    }
 }
 
 /**
