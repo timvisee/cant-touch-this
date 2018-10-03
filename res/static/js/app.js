@@ -37,6 +37,7 @@ function setRecordingState(recording) {
         button.text("Recording...");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
+        setLiveVisualize(true);
     } else {
         button.text("Start recording");
         button.removeClass("btn-danger");
