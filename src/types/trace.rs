@@ -80,11 +80,15 @@ impl PointTrace {
         let points: Vec<NPoint3> = points.iter().map(|p| p.to_npoint()).collect();
 
         // Create a list of sampled points, add the first point
+        // TODO: lazily sample this in an iterator, extract the logic
         let mut sampled: Vec<NPoint3> = vec![];
-        let mut last = points[0];
+        let mut last: NPoint3 = (&points)
+            .last()
+            .cloned()
+            .unwrap_or_else(|| NPoint3::origin());
 
-        // Loop through all points for sampling, skip first as origin
-        for point in points.iter().skip(1) {
+        // Loop through all points for sampling from the end, skip the sample origin
+        for point in points.iter().rev().skip(1) {
             // Sample if distance to this point is greater than preferred distance
             while (last - point).magnitude() >= SAMPLE_DISTANCE {
                 // Get the point vector, normalize it to the preferred sample distance
