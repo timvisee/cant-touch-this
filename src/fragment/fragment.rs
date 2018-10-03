@@ -48,11 +48,14 @@ impl Fragment {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
 
-        // Calculate the new rotational point based on the new data,
-        // add it to the processed trace
-        if let Some(x) = self.raw.to_last_rot_point() {
-            self.model.trace_mut().push(x);
-        }
+        // TODO: currently resampling/recalculating whole trace,
+        // TODO: reimplement to only sample/calculate the new point
+        // // Calculate the new rotational point based on the new data,
+        // // add it to the processed trace
+        // if let Some(x) = self.raw.to_last_rot_point() {
+        //     self.model.trace_mut().push(x);
+        // }
+        *self.model.trace_mut() = self.raw.to_rot_trace();
 
         // TODO: do some data normalization (scaling, filtering)
 

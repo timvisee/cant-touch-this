@@ -3,15 +3,23 @@ use std::f64::consts::PI;
 use std::fmt;
 
 use itertools::Itertools;
-use nalgebra::geometry::Point2 as NPoint2;
-use nalgebra::geometry::Point3 as NPoint3;
+use nalgebra::geometry;
 
 use types::{Point3, RotPoint};
+
+/// The 2D point type we're using
+type NPoint2 = geometry::Point2<f64>;
+
+/// The 3D point type we're using
+type NPoint3 = geometry::Point3<f64>;
 
 /// The maximum number of points allowed in a trace.
 ///
 /// TODO: dynamically define this, based on the longest recorded trace template.
 pub const TRACE_MAX_POINTS: usize = 1024;
+
+/// The distance to use while resampling points.
+pub const SAMPLE_DISTANCE: f64 = 15.0;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
@@ -62,8 +70,42 @@ impl PointTrace {
     /// TODO: dynamically determine this plane
     #[inline]
     fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
-        points
-            .iter()
+        // TODO: return if empty
+        // // Return if we don't have any point
+        // if points.is_empty() {
+        //     return vec![].into_iter();
+        // }
+
+        // Convert the list into npoints
+        let points: Vec<NPoint3> = points.iter().map(|p| p.to_npoint()).collect();
+
+        // Create a list of sampled points, add the first point
+        // TODO: lazily sample this in an iterator, extract the logic
+        let mut sampled: Vec<NPoint3> = vec![];
+        let mut last: NPoint3 = (&points)
+            .last()
+            .cloned()
+            .unwrap_or_else(|| NPoint3::origin());
+
+        // Loop through all points for sampling from the end, skip the sample origin
+        for point in points.iter().rev().skip(1) {
+            // Sample if distance to this point is greater than preferred distance
+            while (last - point).magnitude() >= SAMPLE_DISTANCE {
+                // Get the point vector, normalize it to the preferred sample distance
+                let vector = (point - last).normalize() * SAMPLE_DISTANCE;
+
+                // Define the new sample point with this vector
+                sampled.push(last);
+                last = last + vector;
+            }
+        }
+
+        // Push the last point we sampled onto the sampled list
+        sampled.push(last);
+
+        // Do the rotational calculations
+        sampled
+            .into_iter()
             .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)

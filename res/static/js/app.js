@@ -182,13 +182,20 @@ function renderVisualizer(points) {
     context.beginPath();
 
     // Plot each point with a curved line
-    for(var i = 0; i < points.length - 2; i++) {
+    for(var i = 0; i < points.length - 1; i++) {
         var xc = (points[i].x + points[i + 1].x) / 2;
         var yc = (points[i].y + points[i + 1].y) / 2;
         context.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
     }
-    // context.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
 
     // Draw the path
     context.stroke();
+
+    // Draw the sample points
+    context.fillStyle = "red";
+    for(var i = 0; i < points.length; i++) {
+        context.beginPath();
+        context.arc(points[i].x, points[i].y, 1.5, 0, 2 * Math.PI);
+        context.fill();
+    }
 }
