@@ -25,11 +25,19 @@ impl TemplateStore {
                 ),
                 Template::new(
                     "Circle clockwise".into(),
-                    Model::new(RotTrace::new(vec![RotPoint::new(0.25, 15.0); 16])),
+                    Model::new(RotTrace::new(vec![RotPoint::new(-0.25, 15.0); 16])),
                 ),
                 Template::new(
                     "Circle counter-clockwise".into(),
-                    Model::new(RotTrace::new(vec![RotPoint::new(-0.25, 15.0); 16])),
+                    Model::new(RotTrace::new(vec![RotPoint::new(0.25, 15.0); 16])),
+                ),
+                Template::new(
+                    "KANKER grote circle clockwise".into(),
+                    Model::new(RotTrace::new(vec![RotPoint::new(-0.10, 15.0); 16])),
+                ),
+                Template::new(
+                    "KANKER grote circle counter-clockwise".into(),
+                    Model::new(RotTrace::new(vec![RotPoint::new(0.10, 15.0); 16])),
                 ),
             ]),
         }
@@ -146,15 +154,15 @@ impl TemplateStore {
                 })
                 .collect();
 
-            // Skip if the total difference is too big
-            if cum_diff.last().unwrap().abs() > 0.05 {
-                continue;
-            }
+            // // Skip if the total difference is too big
+            // if cum_diff.last().unwrap().abs() > 0.05 {
+            //     continue;
+            // }
 
-            // Skip if any of the points has a difference of more than 2
-            if cum_diff.iter().any(|p| p.abs() > 2.0) {
-                continue;
-            }
+            // // Skip if any of the points has a difference of more than 2
+            // if cum_diff.iter().any(|p| p.abs() > 2.0) {
+            //     continue;
+            // }
 
             // Skip if each window of 5 points has an average difference bigger than 1
             if cum_diff.windows(5).any(|p| (p.iter().sum::<f64>().abs() / 5.0) > 1.0) {
