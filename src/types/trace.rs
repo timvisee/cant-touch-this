@@ -72,10 +72,7 @@ impl PointTrace {
         // }
 
         // Convert the list into npoints
-        let points: Vec<NPoint3<f64>> = points
-            .iter()
-            .map(|p| p.to_npoint())
-            .collect();
+        let points: Vec<NPoint3<f64>> = points.iter().map(|p| p.to_npoint()).collect();
 
         // Create a list of sampled points, add the first point
         let mut sampled: Vec<NPoint3<f64>> = vec![];
