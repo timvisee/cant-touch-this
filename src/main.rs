@@ -4,7 +4,7 @@
     proc_macro_non_items,
     option_replace,
     test,
-    euclidean_division,
+    euclidean_division
 )]
 #![plugin(rocket_codegen)]
 // TODO: remove this after developing
