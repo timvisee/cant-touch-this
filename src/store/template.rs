@@ -132,21 +132,36 @@ impl TemplateStore {
             let other_points = &other.trace().points()[other_count - count..other_count];
 
             // Caluclate the difference for each point
-            let diff: Vec<f64> = model_points
+            let diff = model_points
                 .iter()
                 .rev()
                 .zip(other_points.iter().rev())
-                .map(|(a, b)| rad_diff(b.radians(), a.radians()))
+                .map(|(a, b)| rad_diff(b.radians(), a.radians()));
+
+            // Calculate the cummulative difference on each point
+            let cum_diff: Vec<f64> = diff
+                .scan(0.0, |acc, p| {
+                    *acc += p;
+                    Some(*acc)
+                })
                 .collect();
 
-            // Calculate threshold values
-            let sum = diff.iter().sum::<f64>();
-            let avg = diff.iter().sum::<f64>() / diff.len() as f64;
-
-            // A match is found if values are within thresholds
-            if sum.abs() < 0.05 {
-                println!("### HIT: {}", template.name());
+            // Skip if the total difference is too big
+            if cum_diff.last().unwrap().abs() > 0.05 {
+                continue;
             }
+
+            // Skip if any of the points has a difference of more than 2
+            if cum_diff.iter().any(|p| p.abs() > 2.0) {
+                continue;
+            }
+
+            // Skip if each window of 5 points has an average difference bigger than 1
+            if cum_diff.windows(5).any(|p| (p.iter().sum::<f64>().abs() / 5.0) > 1.0) {
+                continue;
+            }
+
+            println!("### HIT: {}", template.name());
         }
     }
 }
