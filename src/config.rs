@@ -3,7 +3,7 @@
 /// Sampling related configuration.
 pub mod sample {
     /// The distance that is used between points when resampling a trace.
-    pub const DISTANCE: f64 = 15.0;
+    pub const DISTANCE: f64 = 10.0;
 }
 
 /// Trace related configuration.

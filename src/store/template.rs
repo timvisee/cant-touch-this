@@ -23,23 +23,23 @@ impl TemplateStore {
             templates: Mutex::new(vec![
                 Template::new(
                     "Straight line".into(),
-                    Model::new(RotTrace::new(vec![RotPoint::new(0.0, 15.0); 16])),
+                    Model::new(RotTrace::new(vec![RotPoint::new(0.0, 15.0); 25])),
                 ),
                 Template::new(
                     "Circle clockwise".into(),
-                    Model::new(RotTrace::new(vec![RotPoint::new(-0.25, 15.0); 16])),
+                    Model::new(RotTrace::new(vec![RotPoint::new(-0.25, 15.0); 25])),
                 ),
                 Template::new(
                     "Circle counter-clockwise".into(),
-                    Model::new(RotTrace::new(vec![RotPoint::new(0.25, 15.0); 16])),
+                    Model::new(RotTrace::new(vec![RotPoint::new(0.25, 15.0); 25])),
                 ),
                 Template::new(
                     "Big circle clockwise".into(),
-                    Model::new(RotTrace::new(vec![RotPoint::new(-0.10, 15.0); 16])),
+                    Model::new(RotTrace::new(vec![RotPoint::new(-0.10, 15.0); 25])),
                 ),
                 Template::new(
                     "Big circle counter-clockwise".into(),
-                    Model::new(RotTrace::new(vec![RotPoint::new(0.10, 15.0); 16])),
+                    Model::new(RotTrace::new(vec![RotPoint::new(0.10, 15.0); 25])),
                 ),
             ]),
         }
