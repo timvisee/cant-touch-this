@@ -5,9 +5,13 @@ use std::{cmp::max, f64::consts::PI, fmt};
 use config::trace::MAX_POINTS;
 use prelude::*;
 use types::{Point3, RotPoint};
+use util::rad::diff as rad_diff;
 
 /// The 2D point type we're using
 type NPoint2 = geometry::Point2<f64>;
+
+/// The 3D point type we're using
+type NPoint3 = geometry::Point3<f64>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
@@ -42,7 +46,7 @@ impl PointTrace {
     /// TODO: stream the iterator result, don't collect, improve performance
     #[inline]
     fn calc_rot_points(points: &[Point3]) -> Vec<RotPoint> {
-        Self::calc_rot_points_iter(points).collect()
+        Self::calc_rot_points_iter(points.into_iter().map(|p| p.to_npoint())).collect()
     }
 
     /// Given a list of points, calculate the rotation/angle the edges between
@@ -56,17 +60,16 @@ impl PointTrace {
     ///
     /// TODO: dynamically determine drawing plane at `NPoint2` conversion point
     #[inline]
-    fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
-        // Resample the points, then do the rotatoinal calculations
+    fn calc_rot_points_iter<'a, I>(points: I) -> impl Iterator<Item = RotPoint> + 'a
+    where
+        I: Iterator<Item = NPoint3> + 'a,
+    {
         points
-            .iter()
-            .map(|p| p.to_npoint())
-            .sample_points()
             .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)
             .tuple_windows()
-            .map(|(a, b)| (b.y.atan2(b.x) - a.y.atan2(a.x), a.magnitude()))
+            .map(|(a, b)| (rad_diff(b.y.atan2(b.x), a.y.atan2(a.x)), a.magnitude()))
             .map(RotPoint::from_tuple)
     }
 
@@ -76,8 +79,17 @@ impl PointTrace {
     /// In order to make reliable calculations the first two points are dropped
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
-    fn to_rot_points(&self) -> Vec<RotPoint> {
-        Self::calc_rot_points(&self.points)
+    #[inline]
+    fn to_rot_points(&self, resample: bool) -> Vec<RotPoint> {
+        if resample {
+            Self::calc_rot_points_iter(
+                self.points.iter().map(|p| p.to_npoint()).sample_points(),
+            ).collect()
+        } else {
+            Self::calc_rot_points_iter(
+                self.points.iter().map(|p| p.to_npoint()),
+            ).collect()
+        }
     }
 
     /// Given a list of points (wrapped by this trace), calculate the last
@@ -89,6 +101,7 @@ impl PointTrace {
     ///
     /// At least three points need to be in this list in order to return the
     /// last rotation. If that isn't the case, `None` is returned instead.
+    #[inline]
     pub fn to_last_rot_point(&self) -> Option<RotPoint> {
         Self::calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
             .first()
@@ -97,8 +110,9 @@ impl PointTrace {
 
     /// Convert this point trace into a rotational trace.
     #[allow(unused)]
-    pub fn to_rot_trace(&self) -> RotTrace {
-        RotTrace::new(self.to_rot_points())
+    #[inline]
+    pub fn to_rot_trace(&self, resample: bool) -> RotTrace {
+        RotTrace::new(self.to_rot_points(resample))
     }
 
     /// Add a new point to the trace.
@@ -212,9 +226,9 @@ mod tests {
         let one = PointTrace::new(vec![Point3::zero(); 1]);
         let two = PointTrace::new(vec![Point3::zero(); 2]);
 
-        assert_eq!(zero.to_rot_trace(), RotTrace::empty());
-        assert_eq!(one.to_rot_trace(), RotTrace::empty());
-        assert_eq!(two.to_rot_trace(), RotTrace::empty());
+        assert_eq!(zero.to_rot_trace(false), RotTrace::empty());
+        assert_eq!(one.to_rot_trace(false), RotTrace::empty());
+        assert_eq!(two.to_rot_trace(false), RotTrace::empty());
         assert!(zero.to_last_rot_point().is_none());
         assert!(one.to_last_rot_point().is_none());
         assert!(two.to_last_rot_point().is_none());
@@ -224,16 +238,18 @@ mod tests {
     fn straight() {
         let points = PointTrace::new(vec![
             Point3::new(0.0, 0.0, 0.0),
-            Point3::new(1.0, 1.0, 1.0),
-            Point3::new(5.0, 5.0, 5.0),
+            Point3::new(1.0, 1.0, 0.0),
+            Point3::new(5.0, 5.0, 0.0),
         ]);
 
-        let expected = RotTrace::new(vec![RotPoint::new(0f64, 3f64.sqrt())]);
+        let expected = RotTrace::new(vec![RotPoint::new(0f64, 2f64.sqrt())]);
 
-        assert_eq!(points.to_rot_trace(), expected);
+        assert_eq!(points.to_rot_trace(false), expected);
+
+        // TODO: is this obsolete?
         assert_eq!(
             points.to_last_rot_point(),
-            Some(RotPoint::new(0f64, 3f64.sqrt()))
+            Some(RotPoint::new(0f64, 2f64.sqrt()))
         );
     }
 
@@ -242,19 +258,17 @@ mod tests {
         let points = PointTrace::new(vec![
             Point3::new(0.0, 0.0, 0.0),
             Point3::new(0.0, 5.0, 0.0),
-            Point3::new(0.0, 5.0, 5.0),
-            Point3::new(0.0, 0.0, 5.0),
-            Point3::new(-5.0, 0.0, 5.0),
-            Point3::new(-5.0, 0.0, 0.0),
+            Point3::new(5.0, 5.0, 0.0),
+            Point3::new(5.0, 0.0, 0.0),
             Point3::new(0.0, 0.0, 0.0),
         ]);
 
-        let expected = RotTrace::new(vec![RotPoint::from_degrees(90.0, 5.0); 5]);
+        let expected = RotTrace::new(vec![RotPoint::from_degrees(-90.0, 5.0); 3]);
 
-        assert_eq!(points.to_rot_trace(), expected);
+        assert_eq!(points.to_rot_trace(false), expected);
         assert_eq!(
             points.to_last_rot_point(),
-            Some(RotPoint::from_degrees(90.0, 5.0))
+            Some(RotPoint::from_degrees(-90.0, 5.0))
         );
     }
 
@@ -263,13 +277,38 @@ mod tests {
         let points = PointTrace::new(vec![
             Point3::new(0.0, 0.0, 0.0),
             Point3::new(0.0, 5.0, 0.0),
-            Point3::new(0.0, 5.0, 5.0),
-            Point3::new(0.0, 0.0, 5.0),
-            Point3::new(-5.0, 0.0, 5.0),
-            Point3::new(-5.0, 0.0, 0.0),
+            Point3::new(5.0, 5.0, 0.0),
+            Point3::new(5.0, 0.0, 0.0),
             Point3::new(0.0, 0.0, 0.0),
         ]);
 
-        b.iter(|| black_box(points.to_rot_trace()));
+        b.iter(|| black_box(points.to_rot_trace(false)));
+    }
+
+    #[bench]
+    fn corner_bench_4096(b: &mut Bencher) {
+        let points = PointTrace::new(vec![Point3::zero(); 4096]);
+
+        b.iter(|| black_box(points.to_rot_trace(false)));
+    }
+
+    #[bench]
+    fn corner_bench_resampled(b: &mut Bencher) {
+        let points = PointTrace::new(vec![
+            Point3::new(0.0, 0.0, 0.0),
+            Point3::new(0.0, 5.0, 0.0),
+            Point3::new(5.0, 5.0, 0.0),
+            Point3::new(5.0, 0.0, 0.0),
+            Point3::new(0.0, 0.0, 0.0),
+        ]);
+
+        b.iter(|| black_box(points.to_rot_trace(true)));
+    }
+
+    #[bench]
+    fn corner_bench_4096_resampled(b: &mut Bencher) {
+        let points = PointTrace::new(vec![Point3::zero(); 4096]);
+
+        b.iter(|| black_box(points.to_rot_trace(true)));
     }
 }

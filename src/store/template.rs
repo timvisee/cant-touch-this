@@ -1,4 +1,4 @@
-use std::{cmp::min, f64::consts::PI, fs, io::Result, path::Path, sync::Mutex};
+use std::{cmp::min, fs, io::Result, path::Path, sync::Mutex};
 
 use rayon::prelude::*;
 use toml;
@@ -9,6 +9,7 @@ use config::{
 };
 use fragment::Fragment;
 use types::{Model, RotPoint, RotTrace, Template};
+use util::rad::diff as rad_diff;
 
 /// Used for storing templates.
 #[derive(Debug)]
@@ -186,11 +187,4 @@ impl TemplateStore {
             println!("### HIT: {}", hit.name());
         }
     }
-}
-
-/// Calculate the difference between two circular radian angles.
-///
-/// The returned value will always be `(-PI, PI]`.
-fn rad_diff(a: f64, b: f64) -> f64 {
-    (a - b + PI).mod_euc(2.0 * PI) - PI
 }

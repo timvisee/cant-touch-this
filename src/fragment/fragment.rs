@@ -55,7 +55,7 @@ impl Fragment {
         // if let Some(x) = self.raw.to_last_rot_point() {
         //     self.model.trace_mut().push(x);
         // }
-        *self.model.trace_mut() = self.raw.to_rot_trace();
+        *self.model.trace_mut() = self.raw.to_rot_trace(true);
 
         // TODO: do some data normalization (scaling, filtering)
 
