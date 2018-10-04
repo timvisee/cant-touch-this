@@ -61,13 +61,13 @@ where
                     let sampled = last + vector;
                     self.last.replace(sampled);
                     return Some(sampled);
-                },
+                }
 
                 None => {
                     // Sample the origin as first point
                     self.last.replace(p);
                     return self.iter.next();
-                },
+                }
             }
         }
 

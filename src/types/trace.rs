@@ -1,10 +1,6 @@
 use itertools::Itertools;
 use nalgebra::geometry;
-use std::{
-    cmp::max,
-    f64::consts::PI,
-    fmt,
-};
+use std::{cmp::max, f64::consts::PI, fmt};
 
 use config::trace::MAX_POINTS;
 use prelude::*;
