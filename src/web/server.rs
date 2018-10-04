@@ -35,7 +35,14 @@ impl Server {
         rocket::ignite()
             .mount(
                 "/",
-                routes![index, template_index, save_template, record, set_record, visualizer_points],
+                routes![
+                    index,
+                    template_index,
+                    save_template,
+                    record,
+                    set_record,
+                    visualizer_points
+                ],
             )
             .mount("/css", StaticFiles::from("res/static/css"))
             .mount("/js", StaticFiles::from("res/static/js"))
