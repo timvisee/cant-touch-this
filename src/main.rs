@@ -15,6 +15,7 @@ extern crate clap;
 extern crate itertools;
 extern crate leap;
 extern crate nalgebra;
+extern crate rayon;
 #[macro_use]
 extern crate rocket;
 #[cfg(feature = "web")]
