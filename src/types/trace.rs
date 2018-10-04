@@ -82,13 +82,10 @@ impl PointTrace {
     #[inline]
     fn to_rot_points(&self, resample: bool) -> Vec<RotPoint> {
         if resample {
-            Self::calc_rot_points_iter(
-                self.points.iter().map(|p| p.to_npoint()).sample_points(),
-            ).collect()
+            Self::calc_rot_points_iter(self.points.iter().map(|p| p.to_npoint()).sample_points())
+                .collect()
         } else {
-            Self::calc_rot_points_iter(
-                self.points.iter().map(|p| p.to_npoint()),
-            ).collect()
+            Self::calc_rot_points_iter(self.points.iter().map(|p| p.to_npoint())).collect()
         }
     }
 
