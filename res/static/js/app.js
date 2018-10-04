@@ -13,6 +13,8 @@ $('#toggle_record').on('click', function() {
 
 // Fetch the current status from the server
 $(document).ready(function() {
+    hideSaveButton();
+
     fetchRecordingState();
 
     fetchTemplates().then(function(templates) {
@@ -32,16 +34,25 @@ $(document).ready(function() {
  */
 function setRecordingState(recording) {
     let button = $('#toggle_record');
+    let save = $('#save_recording');
+    let panel = $('#clear_visual');
 
     if(recording) {
         button.text("Recording...");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
+
+        save.css('display', 'none');
+        panel.css('display', 'none');
+
         setLiveVisualize(true);
     } else {
         button.text("Start recording");
         button.removeClass("btn-danger");
         button.addClass("btn-outline-success");
+
+        save.css('display', 'inline-block');
+        panel.css('display', 'inline-block');
     }
 }
 
@@ -218,3 +229,30 @@ function renderVisualizer(points) {
         context.fill();
     }
 }
+
+$('#save_recording').on('click', function() {
+    axios.get('/api/v1/template/save')
+        .then(function(response) {
+            console.log(response);
+        })
+        .catch(function(error) {
+            console.log(error);
+        })
+});
+
+$('#toggle_record').on('click', function() {
+    let recording = $(this).hasClass("btn-danger");
+
+    axios.get('/api/v1/record/' + !recording)
+        .then(function(response) {
+            console.log(response);
+            setRecordingState(response.data.recording);
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+});
+
+$('#clear_visual').on('click', function() {
+    initVisualizer();
+});
