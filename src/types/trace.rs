@@ -50,24 +50,13 @@ impl PointTrace {
         Self::calc_rot_points_iter(points).collect()
     }
 
-    /// Given a list of points, calculate the rotation/angle the edges between
-    /// points in radians.
-    ///
-    /// In order to make reliable calculations the first two points are dropped
-    /// in the result. If a list of less than 3 points is given, an emtpy result
-    /// is returned.
-    ///
-    /// A lazy iterator is returned for optimal performance.
-    ///
-    /// TODO: define a plane to multiply each point with
-    /// TODO: dynamically determine this plane
+    /// Resample the given list of points to give the points a fixed distance.
     #[inline]
-    fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
-        // TODO: return if empty
-        // // Return if we don't have any point
-        // if points.is_empty() {
-        //     return vec![].into_iter();
-        // }
+    fn resample_points(points: &[Point3]) -> Vec<NPoint3> {
+        // Return if we don't have any point
+        if points.is_empty() {
+            return vec![];
+        }
 
         // Convert the list into npoints
         let points: Vec<NPoint3> = points.iter().map(|p| p.to_npoint()).collect();
@@ -96,8 +85,24 @@ impl PointTrace {
         // Push the last point we sampled onto the sampled list
         sampled.push(last);
 
-        // Do the rotational calculations
         sampled
+    }
+
+    /// Given a list of points, calculate the rotation/angle the edges between
+    /// points in radians.
+    ///
+    /// In order to make reliable calculations the first two points are dropped
+    /// in the result. If a list of less than 3 points is given, an emtpy result
+    /// is returned.
+    ///
+    /// A lazy iterator is returned for optimal performance.
+    ///
+    /// TODO: define a plane to multiply each point with
+    /// TODO: dynamically determine this plane
+    #[inline]
+    fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
+        // Resample the points, then do the rotatoinal calculations
+        Self::resample_points(points)
             .into_iter()
             .rev()
             .map(|p| NPoint2::new(p.x, p.y))
