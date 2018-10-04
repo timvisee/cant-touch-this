@@ -1,25 +1,13 @@
-use std::cmp::max;
-use std::f64::consts::PI;
-use std::fmt;
-
 use itertools::Itertools;
 use nalgebra::geometry;
+use std::{cmp::max, f64::consts::PI, fmt};
 
+use config::trace::MAX_POINTS;
+use prelude::*;
 use types::{Point3, RotPoint};
 
 /// The 2D point type we're using
 type NPoint2 = geometry::Point2<f64>;
-
-/// The 3D point type we're using
-type NPoint3 = geometry::Point3<f64>;
-
-/// The maximum number of points allowed in a trace.
-///
-/// TODO: dynamically define this, based on the longest recorded trace template.
-pub const TRACE_MAX_POINTS: usize = 1024;
-
-/// The distance to use while resampling points.
-pub const SAMPLE_DISTANCE: f64 = 15.0;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
@@ -64,49 +52,16 @@ impl PointTrace {
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
     ///
-    /// A lazy iterator is returned for optimal performance.
+    /// A streaming/lazy iterator is returned for optimal performance.
     ///
-    /// TODO: define a plane to multiply each point with
-    /// TODO: dynamically determine this plane
+    /// TODO: dynamically determine drawing plane at `NPoint2` conversion point
     #[inline]
     fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
-        // TODO: return if empty
-        // // Return if we don't have any point
-        // if points.is_empty() {
-        //     return vec![].into_iter();
-        // }
-
-        // Convert the list into npoints
-        let points: Vec<NPoint3> = points.iter().map(|p| p.to_npoint()).collect();
-
-        // Create a list of sampled points, add the first point
-        // TODO: lazily sample this in an iterator, extract the logic
-        let mut sampled: Vec<NPoint3> = vec![];
-        let mut last: NPoint3 = (&points)
-            .last()
-            .cloned()
-            .unwrap_or_else(|| NPoint3::origin());
-
-        // Loop through all points for sampling from the end, skip the sample origin
-        for point in points.iter().rev().skip(1) {
-            // Sample if distance to this point is greater than preferred distance
-            while (last - point).magnitude() >= SAMPLE_DISTANCE {
-                // Get the point vector, normalize it to the preferred sample distance
-                let vector = (point - last).normalize() * SAMPLE_DISTANCE;
-
-                // Define the new sample point with this vector
-                sampled.push(last);
-                last = last + vector;
-            }
-        }
-
-        // Push the last point we sampled onto the sampled list
-        sampled.push(last);
-
-        // Do the rotational calculations
-        sampled
-            .into_iter()
-            .rev()
+        // Resample the points, then do the rotatoinal calculations
+        points
+            .iter()
+            .map(|p| p.to_npoint())
+            .sample_points()
             .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)
@@ -155,15 +110,15 @@ impl PointTrace {
 
     /// Truncate the trace to the maximum allowed points.
     ///
-    /// This removes the oldest points from the trace to fit `TRACE_MAX_POINTS`.
+    /// This removes the oldest points from the trace to fit `config::trace::MAX_POINTS`.
     /// If the maximum isn't reached yet, invoking this does nothing.
     ///
     /// TODO: do not apply this when recording a trace, as it may have any
     /// length.
     #[inline]
     fn truncate(&mut self) {
-        if self.points.len() > TRACE_MAX_POINTS {
-            let truncate = self.points.len() - TRACE_MAX_POINTS;
+        if self.points.len() > MAX_POINTS {
+            let truncate = self.points.len() - MAX_POINTS;
             self.points.drain(..truncate);
         }
     }
@@ -198,15 +153,15 @@ impl RotTrace {
 
     /// Truncate the trace to the maximum allowed points.
     ///
-    /// This removes the oldest points from the trace to fit `TRACE_MAX_POINTS`.
+    /// This removes the oldest points from the trace to fit `MAX_POINTS`.
     /// If the maximum isn't reached yet, invoking this does nothing.
     ///
     /// TODO: do not apply this when recording a trace, as it may have any
     /// length.
     #[inline]
     fn truncate(&mut self) {
-        if self.points.len() > TRACE_MAX_POINTS {
-            let truncate = self.points.len() - TRACE_MAX_POINTS;
+        if self.points.len() > MAX_POINTS {
+            let truncate = self.points.len() - MAX_POINTS;
             self.points.drain(..truncate);
         }
     }

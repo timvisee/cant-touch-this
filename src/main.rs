@@ -31,12 +31,15 @@ extern crate webbrowser;
 extern crate pretty_assertions;
 
 pub(crate) mod beautifier;
+pub(crate) mod config;
 pub(crate) mod core;
 pub(crate) mod fragment;
 pub(crate) mod gesture;
+pub(crate) mod prelude;
 pub(crate) mod sensor;
 pub(crate) mod store;
 pub(crate) mod types;
+pub(crate) mod util;
 #[cfg(feature = "web")]
 pub(crate) mod web;
 
