@@ -22,13 +22,13 @@ pub mod recognition {
 
     /// The maximum angle difference threshold in radians any trace point may have as compared to
     /// a template.
-    pub const POINT_DIFF_MAX: f64 = 2.0;
+    pub const POINT_DIFF_MAX: f64 = 2.5;
 
     /// The size of comparison groups.
     ///
     /// Overlapping groups of points are selected to be compared, with averaged out values.
     /// This defines how big these comparison groups are.
-    pub const GROUP_SIZE: usize = 5;
+    pub const GROUP_SIZE: usize = 4;
 
     /// The maximum average angle difference threshold in radians a group of points may have as
     /// compared to a template.
