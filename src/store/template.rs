@@ -1,5 +1,6 @@
 use std::{cmp::min, f64::consts::PI, fs, io::Result, path::Path, sync::Mutex};
 
+use rayon::prelude::*;
 use toml;
 
 use config::{
@@ -118,12 +119,13 @@ impl TemplateStore {
             .lock()
             .expect("failed to lock templates list for detecting gestures");
 
-        // Loop through each template
-        for template in &*templates {
-            // Get the model to compare against
-            let model = template.model();
+        // Find a matching template for the current trace
+        let hit = templates
+            .par_iter()
+            .find_any(|template| {
+                // Get the model to compare against
+                let model = template.model();
 
-            {
                 // Get the model and other model points
                 let model_points = model.trace().points();
                 let other_points = other.model().trace().points();
@@ -132,7 +134,7 @@ impl TemplateStore {
 
                 // Skip if the template has more points than our current trace
                 if other_count < model_count {
-                    continue;
+                    return false;
                 }
 
                 // Determine how many points to process, minimum length wins
@@ -160,12 +162,12 @@ impl TemplateStore {
 
                 // Skip if the total difference is too big
                 if cum_diff.last().unwrap().abs() > TOTAL_DIFF_MAX {
-                    continue;
+                    return false;
                 }
 
                 // Skip if any of the points has a difference of more than 2
                 if cum_diff.iter().any(|p| p.abs() > POINT_DIFF_MAX) {
-                    continue;
+                    return false;
                 }
 
                 // Skip if each window of 5 points has an average difference bigger than 1
@@ -173,16 +175,17 @@ impl TemplateStore {
                     .windows(GROUP_SIZE)
                     .any(|p| (p.iter().sum::<f64>().abs() / GROUP_SIZE as f64) > GROUP_DIFF_MAX)
                 {
-                    continue;
+                    return false;
                 }
 
-                println!("### HIT: {}", template.name());
-            }
+                true
+            });
 
+        if let Some(hit) = hit {
             // Clear the fragment history
             other.clear();
 
-            break;
+            println!("### HIT: {}", hit.name());
         }
     }
 }
