@@ -229,3 +229,30 @@ function renderVisualizer(points) {
         context.fill();
     }
 }
+
+$('#save_recording').on('click', function() {
+    axios.get('/api/v1/template/save')
+        .then(function(response) {
+            console.log(response);
+        })
+        .catch(function(error) {
+            console.log(error);
+        })
+});
+
+$('#toggle_record').on('click', function() {
+    let recording = $(this).hasClass("btn-danger");
+
+    axios.get('/api/v1/record/' + !recording)
+        .then(function(response) {
+            console.log(response);
+            setRecordingState(response.data.recording);
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+});
+
+$('#clear_visual').on('click', function() {
+    initVisualizer();
+});
