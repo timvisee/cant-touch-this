@@ -4,19 +4,14 @@ use std::{
     cmp::max,
     f64::consts::PI,
     fmt,
-    iter::{Iterator, Peekable},
 };
 
-use config::sample::DISTANCE as SAMPLE_DISTANCE;
 use config::trace::MAX_POINTS;
 use prelude::*;
 use types::{Point3, RotPoint};
 
 /// The 2D point type we're using
 type NPoint2 = geometry::Point2<f64>;
-
-/// The 3D point type we're using
-type NPoint3 = geometry::Point3<f64>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
