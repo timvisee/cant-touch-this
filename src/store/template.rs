@@ -2,11 +2,12 @@ use std::{cmp::min, f64::consts::PI, fs, io::Result, path::Path, sync::Mutex};
 
 use toml;
 
+use config::{
+    recognition::{GROUP_DIFF_MAX, GROUP_SIZE, POINT_DIFF_MAX, TOTAL_DIFF_MAX},
+    template::FILE,
+};
 use fragment::Fragment;
 use types::{Model, RotPoint, RotTrace, Template};
-
-/// The default file path to save the templates in.
-const TEMPLATES_FILE_PATH: &str = "~/.config/cant-touch-this/templates.toml";
 
 /// Used for storing templates.
 #[derive(Debug)]
@@ -33,11 +34,11 @@ impl TemplateStore {
                     Model::new(RotTrace::new(vec![RotPoint::new(0.25, 15.0); 16])),
                 ),
                 Template::new(
-                    "KANKER grote circle clockwise".into(),
+                    "Big circle clockwise".into(),
                     Model::new(RotTrace::new(vec![RotPoint::new(-0.10, 15.0); 16])),
                 ),
                 Template::new(
-                    "KANKER grote circle counter-clockwise".into(),
+                    "Big circle counter-clockwise".into(),
                     Model::new(RotTrace::new(vec![RotPoint::new(0.10, 15.0); 16])),
                 ),
             ]),
@@ -61,7 +62,7 @@ impl TemplateStore {
     /// If the file doesn't exist, nothing is loaded and `Ok` is returned.
     pub fn load(&self) -> Result<()> {
         // Build the file path
-        let path = Path::new(TEMPLATES_FILE_PATH);
+        let path = Path::new(FILE);
 
         // Ensure a file exists
         if !path.is_file() {
@@ -96,13 +97,13 @@ impl TemplateStore {
 
         // Remove template files if there are not tempaltes to save
         if templates.is_empty() {
-            fs::remove_file(TEMPLATES_FILE_PATH);
+            fs::remove_file(FILE);
             return Ok(());
         }
 
         println!("Saving {} template(s) to file...", templates.len());
         fs::write(
-            TEMPLATES_FILE_PATH,
+            FILE,
             toml::to_string(&*templates)
                 .expect("failed to serialize template data, unable to save"),
         )
@@ -158,19 +159,22 @@ impl TemplateStore {
                     .collect();
 
                 // Skip if the total difference is too big
-                if cum_diff.last().unwrap().abs() > 0.05 {
+                if cum_diff.last().unwrap().abs() > TOTAL_DIFF_MAX {
                     continue;
                 }
 
-                // // Skip if any of the points has a difference of more than 2
-                // if cum_diff.iter().any(|p| p.abs() > 2.0) {
-                //     continue;
-                // }
+                // Skip if any of the points has a difference of more than 2
+                if cum_diff.iter().any(|p| p.abs() > POINT_DIFF_MAX) {
+                    continue;
+                }
 
-                // // Skip if each window of 5 points has an average difference bigger than 1
-                // if cum_diff.windows(5).any(|p| (p.iter().sum::<f64>().abs() / 5.0) > 1.0) {
-                //     continue;
-                // }
+                // Skip if each window of 5 points has an average difference bigger than 1
+                if GROUP_SIZE > 0 && cum_diff
+                    .windows(GROUP_SIZE)
+                    .any(|p| (p.iter().sum::<f64>().abs() / GROUP_SIZE as f64) > GROUP_DIFF_MAX)
+                {
+                    continue;
+                }
 
                 println!("### HIT: {}", template.name());
             }

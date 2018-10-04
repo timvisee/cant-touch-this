@@ -1,10 +1,11 @@
+use itertools::Itertools;
+use nalgebra::geometry;
 use std::cmp::max;
 use std::f64::consts::PI;
 use std::fmt;
 
-use itertools::Itertools;
-use nalgebra::geometry;
-
+use config::sample::DISTANCE as SAMPLE_DISTANCE;
+use config::trace::MAX_POINTS;
 use types::{Point3, RotPoint};
 
 /// The 2D point type we're using
@@ -12,14 +13,6 @@ type NPoint2 = geometry::Point2<f64>;
 
 /// The 3D point type we're using
 type NPoint3 = geometry::Point3<f64>;
-
-/// The maximum number of points allowed in a trace.
-///
-/// TODO: dynamically define this, based on the longest recorded trace template.
-pub const TRACE_MAX_POINTS: usize = 1024;
-
-/// The distance to use while resampling points.
-pub const SAMPLE_DISTANCE: f64 = 15.0;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct PointTrace {
@@ -155,15 +148,15 @@ impl PointTrace {
 
     /// Truncate the trace to the maximum allowed points.
     ///
-    /// This removes the oldest points from the trace to fit `TRACE_MAX_POINTS`.
+    /// This removes the oldest points from the trace to fit `config::trace::MAX_POINTS`.
     /// If the maximum isn't reached yet, invoking this does nothing.
     ///
     /// TODO: do not apply this when recording a trace, as it may have any
     /// length.
     #[inline]
     fn truncate(&mut self) {
-        if self.points.len() > TRACE_MAX_POINTS {
-            let truncate = self.points.len() - TRACE_MAX_POINTS;
+        if self.points.len() > MAX_POINTS {
+            let truncate = self.points.len() - MAX_POINTS;
             self.points.drain(..truncate);
         }
     }
@@ -198,15 +191,15 @@ impl RotTrace {
 
     /// Truncate the trace to the maximum allowed points.
     ///
-    /// This removes the oldest points from the trace to fit `TRACE_MAX_POINTS`.
+    /// This removes the oldest points from the trace to fit `MAX_POINTS`.
     /// If the maximum isn't reached yet, invoking this does nothing.
     ///
     /// TODO: do not apply this when recording a trace, as it may have any
     /// length.
     #[inline]
     fn truncate(&mut self) {
-        if self.points.len() > TRACE_MAX_POINTS {
-            let truncate = self.points.len() - TRACE_MAX_POINTS;
+        if self.points.len() > MAX_POINTS {
+            let truncate = self.points.len() - MAX_POINTS;
             self.points.drain(..truncate);
         }
     }

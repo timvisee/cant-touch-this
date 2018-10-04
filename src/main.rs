@@ -31,6 +31,7 @@ extern crate webbrowser;
 extern crate pretty_assertions;
 
 pub(crate) mod beautifier;
+pub(crate) mod config;
 pub(crate) mod core;
 pub(crate) mod fragment;
 pub(crate) mod gesture;
