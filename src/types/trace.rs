@@ -1,11 +1,15 @@
 use itertools::Itertools;
 use nalgebra::geometry;
-use std::cmp::max;
-use std::f64::consts::PI;
-use std::fmt;
+use std::{
+    cmp::max,
+    f64::consts::PI,
+    fmt,
+    iter::{Iterator, Peekable},
+};
 
 use config::sample::DISTANCE as SAMPLE_DISTANCE;
 use config::trace::MAX_POINTS;
+use prelude::*;
 use types::{Point3, RotPoint};
 
 /// The 2D point type we're using
@@ -50,44 +54,6 @@ impl PointTrace {
         Self::calc_rot_points_iter(points).collect()
     }
 
-    /// Resample the given list of points to give the points a fixed distance.
-    #[inline]
-    fn resample_points(points: &[Point3]) -> Vec<NPoint3> {
-        // Return if we don't have any point
-        if points.is_empty() {
-            return vec![];
-        }
-
-        // Convert the list into npoints
-        let points: Vec<NPoint3> = points.iter().map(|p| p.to_npoint()).collect();
-
-        // Create a list of sampled points, add the first point
-        // TODO: lazily sample this in an iterator, extract the logic
-        let mut sampled: Vec<NPoint3> = vec![];
-        let mut last: NPoint3 = (&points)
-            .last()
-            .cloned()
-            .unwrap_or_else(|| NPoint3::origin());
-
-        // Loop through all points for sampling from the end, skip the sample origin
-        for point in points.iter().rev().skip(1) {
-            // Sample if distance to this point is greater than preferred distance
-            while (last - point).magnitude() >= SAMPLE_DISTANCE {
-                // Get the point vector, normalize it to the preferred sample distance
-                let vector = (point - last).normalize() * SAMPLE_DISTANCE;
-
-                // Define the new sample point with this vector
-                sampled.push(last);
-                last = last + vector;
-            }
-        }
-
-        // Push the last point we sampled onto the sampled list
-        sampled.push(last);
-
-        sampled
-    }
-
     /// Given a list of points, calculate the rotation/angle the edges between
     /// points in radians.
     ///
@@ -95,16 +61,16 @@ impl PointTrace {
     /// in the result. If a list of less than 3 points is given, an emtpy result
     /// is returned.
     ///
-    /// A lazy iterator is returned for optimal performance.
+    /// A streaming/lazy iterator is returned for optimal performance.
     ///
-    /// TODO: define a plane to multiply each point with
-    /// TODO: dynamically determine this plane
+    /// TODO: dynamically determine drawing plane at `NPoint2` conversion point
     #[inline]
     fn calc_rot_points_iter<'a>(points: &'a [Point3]) -> impl Iterator<Item = RotPoint> + 'a {
         // Resample the points, then do the rotatoinal calculations
-        Self::resample_points(points)
-            .into_iter()
-            .rev()
+        points
+            .iter()
+            .map(|p| p.to_npoint())
+            .sample_points()
             .map(|p| NPoint2::new(p.x, p.y))
             .tuple_windows()
             .map(|(a, b)| b - a)
