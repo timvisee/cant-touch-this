@@ -139,7 +139,8 @@ impl TemplateStore {
 
                 // Select the last points based on the determined count to use
                 let model_points = &model.trace().points()[model_count - count..model_count];
-                let other_points = &other.model().trace().points()[other_count - count..other_count];
+                let other_points =
+                    &other.model().trace().points()[other_count - count..other_count];
 
                 // Caluclate the difference for each point
                 let diff = model_points
