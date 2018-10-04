@@ -112,6 +112,7 @@ impl TemplateStore {
 
     /// Compare a given model against the tempaltes,
     /// to see whether there is a gesture match.
+    #[inline]
     pub fn detect_gesture(&self, other: &mut Fragment) {
         // Obtain a templates list lock
         let templates = self

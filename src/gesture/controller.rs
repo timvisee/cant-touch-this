@@ -34,6 +34,7 @@ impl GestureController {
     }
 
     /// Attempt to detect gestures in the given collected fragment.
+    #[inline]
     pub fn detect_gesture(&self, fragment: &mut Fragment) {
         // TODO: gesture detection logic for fragment here
 

@@ -186,7 +186,7 @@ function renderVisualizer(points) {
     // Map the rotational points into x/y axis we can render
     points = points.map((point) => {
         // Determine what coordinates to draw to
-        let x = last_x + Math.cos(last_rot + point.angle) * point.distance;
+        let x = last_x - Math.cos(last_rot + point.angle) * point.distance;
         let y = last_y + Math.sin(last_rot + point.angle) * point.distance;
 
         // Update the last values
