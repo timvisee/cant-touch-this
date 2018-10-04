@@ -13,7 +13,8 @@ $('#toggle_record').on('click', function() {
 
 // Fetch the current status from the server
 $(document).ready(function() {
-    hideSaveButton();
+    // TODO: comment-out function that is not yet available
+    // hideSaveButton();
 
     fetchRecordingState();
 
