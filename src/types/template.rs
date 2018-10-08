@@ -1,6 +1,6 @@
 use types::Model;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Template {
     name: String,
     model: Model,

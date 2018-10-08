@@ -36,9 +36,14 @@ impl GestureController {
     /// Attempt to detect gestures in the given collected fragment.
     #[inline]
     pub fn detect_gesture(&self, fragment: &mut Fragment) {
-        // TODO: gesture detection logic for fragment here
+        // Attempt to find a matching template
+        if let Some(template) = self.store.find_matching(fragment) {
+            // Clear the history to prevent overlapping detections
+            fragment.clear();
 
-        self.store.detect_gesture(fragment)
+            // Report
+            println!("### HIT: {}", template.name());
+        }
     }
 
     /// Check whether we're recording.

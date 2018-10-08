@@ -1,15 +1,11 @@
-use std::{cmp::min, fs, io::Result, path::Path, sync::Mutex};
+use std::{fs, io::Result, path::Path, sync::Mutex};
 
 use rayon::prelude::*;
 use toml;
 
-use config::{
-    recognition::{GROUP_DIFF_MAX, GROUP_SIZE, POINT_DIFF_MAX, TOTAL_DIFF_MAX},
-    template::FILE,
-};
+use config::template::FILE;
 use fragment::Fragment;
 use types::{Model, RotPoint, RotTrace, Template};
-use util::rad::diff as rad_diff;
 
 /// Used for storing templates.
 #[derive(Debug)]
@@ -111,80 +107,21 @@ impl TemplateStore {
         )
     }
 
-    /// Compare a given model against the tempaltes,
-    /// to see whether there is a gesture match.
+    /// Find a matching template in this template store, for the given `other` fragment.
+    /// This may be used for gesture detection based on templates.
+    ///
+    /// This attempts to find a matching template in parallel. Only one match may be returned, and
+    /// searching for a match is stalled when a first match is found.
+    ///
+    /// If no template is matching, `None` is returned.
     #[inline]
-    pub fn detect_gesture(&self, other: &mut Fragment) {
-        // Obtain a templates list lock
-        let templates = self
-            .templates
+    pub fn find_matching(&self, other: &mut Fragment) -> Option<Template> {
+        // Obtain a templates list lock, and attempt to find a matching template
+        self.templates
             .lock()
-            .expect("failed to lock templates list for detecting gestures");
-
-        // Find a matching template for the current trace
-        let hit = templates.par_iter().find_any(|template| {
-            // Get the model to compare against
-            let model = template.model();
-
-            // Get the model and other model points
-            let model_points = model.trace().points();
-            let other_points = other.model().trace().points();
-            let model_count = model_points.len();
-            let other_count = other_points.len();
-
-            // Skip if the template has more points than our current trace
-            if other_count < model_count {
-                return false;
-            }
-
-            // Determine how many points to process, minimum length wins
-            let count = min(model_points.len(), other_points.len());
-
-            // Select the last points based on the determined count to use
-            let model_points = &model.trace().points()[model_count - count..model_count];
-            let other_points = &other.model().trace().points()[other_count - count..other_count];
-
-            // Caluclate the difference for each point
-            let diff = model_points
-                .iter()
-                .rev()
-                .zip(other_points.iter().rev())
-                .map(|(a, b)| rad_diff(b.radians(), a.radians()));
-
-            // Calculate the cummulative difference on each point
-            let cum_diff: Vec<f64> = diff
-                .scan(0.0, |acc, p| {
-                    *acc += p;
-                    Some(*acc)
-                })
-                .collect();
-
-            // Skip if the total difference is too big
-            if cum_diff.last().unwrap().abs() > TOTAL_DIFF_MAX {
-                return false;
-            }
-
-            // Skip if any of the points has a difference of more than 2
-            if cum_diff.iter().any(|p| p.abs() > POINT_DIFF_MAX) {
-                return false;
-            }
-
-            // Skip if each window of 5 points has an average difference bigger than 1
-            if GROUP_SIZE > 0 && cum_diff
-                .windows(GROUP_SIZE)
-                .any(|p| (p.iter().sum::<f64>().abs() / GROUP_SIZE as f64) > GROUP_DIFF_MAX)
-            {
-                return false;
-            }
-
-            true
-        });
-
-        if let Some(hit) = hit {
-            // Clear the fragment history
-            other.clear();
-
-            println!("### HIT: {}", hit.name());
-        }
+            .expect("failed to lock templates list for detecting gestures")
+            .par_iter()
+            .find_any(|template| template.model().matches(other.model()))
+            .cloned()
     }
 }
