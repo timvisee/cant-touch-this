@@ -1,7 +1,7 @@
 #![feature(
     decl_macro,
     plugin,
-    proc_macro_non_items,
+    proc_macro_hygiene,
     option_replace,
     test,
     euclidean_division
