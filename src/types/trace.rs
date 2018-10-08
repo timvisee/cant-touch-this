@@ -1,6 +1,6 @@
 use itertools::Itertools;
 use nalgebra::geometry;
-use std::{cmp::max, f64::consts::PI, fmt};
+use std::fmt;
 
 use config::trace::MAX_POINTS;
 use prelude::*;
@@ -26,28 +26,23 @@ pub struct RotTrace {
 }
 
 impl PointTrace {
-    /// Construct a point trace with the given points.
-    pub fn new(v: Vec<Point3>) -> PointTrace {
-        PointTrace { points: v }
-    }
-
     /// Construct an emtpy point trace.
     pub fn empty() -> PointTrace {
         PointTrace { points: vec![] }
     }
 
-    /// Given a list of points, calculate the rotation/angle the edges between
-    /// points in radians.
-    ///
-    /// In order to make reliable calculations the first two points are dropped
-    /// in the result. If a list of less than 3 points is given, an emtpy result
-    /// is returned.
-    ///
-    /// TODO: stream the iterator result, don't collect, improve performance
-    #[inline]
-    fn calc_rot_points(points: &[Point3]) -> Vec<RotPoint> {
-        Self::calc_rot_points_iter(points.into_iter().map(|p| p.to_npoint())).collect()
-    }
+    // /// Given a list of points, calculate the rotation/angle the edges between
+    // /// points in radians.
+    // ///
+    // /// In order to make reliable calculations the first two points are dropped
+    // /// in the result. If a list of less than 3 points is given, an emtpy result
+    // /// is returned.
+    // ///
+    // /// TODO: stream the iterator result, don't collect, improve performance
+    // #[inline]
+    // fn calc_rot_points(points: &[Point3]) -> Vec<RotPoint> {
+    //     Self::calc_rot_points_iter(points.into_iter().map(|p| p.to_npoint())).collect()
+    // }
 
     /// Given a list of points, calculate the rotation/angle the edges between
     /// points in radians.
@@ -89,21 +84,21 @@ impl PointTrace {
         }
     }
 
-    /// Given a list of points (wrapped by this trace), calculate the last
-    /// rotation/angle between the last two edges of the points, in radians.
-    ///
-    /// This function is similar to `calc_rot_points`, but only calculates the
-    /// last rotational point instead of all known. This may be used for
-    /// incremental rotation trace creation.
-    ///
-    /// At least three points need to be in this list in order to return the
-    /// last rotation. If that isn't the case, `None` is returned instead.
-    #[inline]
-    pub fn to_last_rot_point(&self) -> Option<RotPoint> {
-        Self::calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
-            .first()
-            .cloned()
-    }
+    // /// Given a list of points (wrapped by this trace), calculate the last
+    // /// rotation/angle between the last two edges of the points, in radians.
+    // ///
+    // /// This function is similar to `calc_rot_points`, but only calculates the
+    // /// last rotational point instead of all known. This may be used for
+    // /// incremental rotation trace creation.
+    // ///
+    // /// At least three points need to be in this list in order to return the
+    // /// last rotation. If that isn't the case, `None` is returned instead.
+    // #[inline]
+    // pub fn to_last_rot_point(&self) -> Option<RotPoint> {
+    //     Self::calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
+    //         .first()
+    //         .cloned()
+    // }
 
     /// Convert this point trace into a rotational trace.
     #[allow(unused)]
@@ -151,30 +146,9 @@ impl RotTrace {
         RotTrace { points: vec![] }
     }
 
-    /// Push the given rotational point on the trace.
-    pub fn push(&mut self, point: RotPoint) {
-        self.points.push(point);
-        self.truncate();
-    }
-
     /// Get a reference to the rotation points in this trace.
     pub fn points(&self) -> &Vec<RotPoint> {
         &self.points
-    }
-
-    /// Truncate the trace to the maximum allowed points.
-    ///
-    /// This removes the oldest points from the trace to fit `MAX_POINTS`.
-    /// If the maximum isn't reached yet, invoking this does nothing.
-    ///
-    /// TODO: do not apply this when recording a trace, as it may have any
-    /// length.
-    #[inline]
-    fn truncate(&mut self) {
-        if self.points.len() > MAX_POINTS {
-            let truncate = self.points.len() - MAX_POINTS;
-            self.points.drain(..truncate);
-        }
     }
 
     /// Clear the trace.

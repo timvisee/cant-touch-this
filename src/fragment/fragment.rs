@@ -3,7 +3,7 @@ use std::sync::Arc;
 use leap::Finger as SensorFinger;
 
 use gesture::GestureController;
-use types::{Model, Point3, PointTrace, RotTrace};
+use types::{Model, Point3, PointTrace};
 
 /// A fragment.
 // TODO: keep track of the last update time
@@ -28,11 +28,6 @@ impl Fragment {
             model: Model::empty(),
             gesture_controller,
         }
-    }
-
-    /// Get a mutable reference to the raw point trace in this fragment.
-    pub fn raw(&mut self) -> &mut PointTrace {
-        &mut self.raw
     }
 
     /// Get the processed fragment trace model.

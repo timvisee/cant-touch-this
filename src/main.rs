@@ -7,8 +7,6 @@
     euclidean_division
 )]
 #![plugin(rocket_codegen)]
-// TODO: remove this after developing
-#![allow(unused)]
 
 #[macro_use]
 extern crate clap;
@@ -16,7 +14,6 @@ extern crate itertools;
 extern crate leap;
 extern crate nalgebra;
 extern crate rayon;
-#[macro_use]
 extern crate rocket;
 #[cfg(feature = "web")]
 extern crate rocket_contrib;
@@ -53,8 +50,8 @@ fn main() {
 
     // Initialize the core, and start it
     let mut core = Core::new(matches);
-    core.start();
-    core.stop();
+    core.start().expect("failed to start core");
+    core.stop().expect("failed to gracefully stop core");
 }
 
 /// Build the `clap` `App` definition for CLI argument parsing.

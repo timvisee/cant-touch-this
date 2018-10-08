@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{io::Result, sync::Arc};
 
 use clap::ArgMatches;
 use webbrowser;
@@ -68,27 +68,32 @@ impl Core {
     }
 
     /// Start the core.
-    pub fn start(&mut self) {
+    pub fn start(&mut self) -> Result<()> {
         // Load the templates
-        self.store.load();
+        self.store.load()?;
 
         #[cfg(feature = "web")]
         {
             // Open the web configuration page
+            // TODO: dynamically obtain URL
             if self.matches.is_present("open") {
-                // TODO: dynamically obtain URL here
-                webbrowser::open("http://localhost:8000");
+                if let Err(err) = webbrowser::open("http://localhost:8000") {
+                    eprintln!("Failed to open configuration URL in webbrowser.");
+                    eprintln!("{}", err);
+                }
             }
 
             // Start the web server
             self.server.start();
         }
+
+        Ok(())
     }
 
     /// Stop the core.
-    pub fn stop(&mut self) {
+    pub fn stop(&mut self) -> Result<()> {
         // Save the templates
-        self.store.save();
+        self.store.save()
     }
 }
 

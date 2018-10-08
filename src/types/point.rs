@@ -1,7 +1,7 @@
 use std::fmt;
 
 use leap::vector::Vector;
-use nalgebra::{base::Vector3, geometry::Point3 as NPoint3};
+use nalgebra::geometry::Point3 as NPoint3;
 
 /// A point in 3D space.
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -22,22 +22,9 @@ impl Point3 {
         Point3 { x, y, z }
     }
 
-    /// Create a new Point3 with all coordinates set to `0.0`.
-    pub fn zero() -> Point3 {
-        Point3 {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-        }
-    }
-
     /// Create a new Point3 using a `&leap::vector::Vector`.
     pub fn from_leap(v: &Vector) -> Point3 {
-        Point3 {
-            x: v.x().into(),
-            y: v.y().into(),
-            z: v.z().into(),
-        }
+        Self::new(v.x().into(), v.y().into(), v.z().into())
     }
 
     /// Convert this point to a `nalgebra` `Point3` used for special
@@ -69,11 +56,8 @@ impl RotPoint {
         Self::new(angle, distance)
     }
 
-    /// Create an identity rotational point, with an angle of 0, and 1 for distance.
-    pub fn identity() -> Self {
-        Self::new(0.0, 1.0)
-    }
-
+    /// Create a rotational point based on the given number of degrees instead of using radians.
+    #[allow(unused)]
     pub fn from_degrees(degrees: f64, distance: f64) -> Self {
         Self::new(degrees.to_radians(), distance)
     }

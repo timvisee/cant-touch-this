@@ -1,6 +1,7 @@
 [development]
 template_dir = "./res/templates"
 log = "critical"
+workers = 2
 
 [production]
 address = "0.0.0.0"
@@ -8,3 +9,4 @@ port = 8000
 secret_key = "I0s3vnpzwlQq9ZeOWqOxhR4PQMPHA7bvvhpnJgz1CtE="
 template_dir = "./res/templates"
 log = "critical"
+workers = 2

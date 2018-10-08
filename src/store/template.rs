@@ -95,7 +95,7 @@ impl TemplateStore {
 
         // Remove template files if there are not tempaltes to save
         if templates.is_empty() {
-            fs::remove_file(FILE);
+            let _ = fs::remove_file(FILE);
             return Ok(());
         }
 
@@ -117,6 +117,7 @@ impl TemplateStore {
     #[inline]
     pub fn find_matching(&self, other: &mut Fragment) -> Option<Template> {
         // Obtain a templates list lock, and attempt to find a matching template
+        // TODO: do not clone to improve performance
         self.templates
             .lock()
             .expect("failed to lock templates list for detecting gestures")

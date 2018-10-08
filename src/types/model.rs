@@ -23,11 +23,6 @@ impl Model {
         Self::new(RotTrace::empty())
     }
 
-    /// Get a reference to the internal rotational trace.
-    pub fn trace(&self) -> &RotTrace {
-        &self.trace
-    }
-
     /// Get a mutable reference to the internal rotational trace.
     pub fn trace_mut(&mut self) -> &mut RotTrace {
         &mut self.trace

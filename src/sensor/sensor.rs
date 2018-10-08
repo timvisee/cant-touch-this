@@ -7,14 +7,14 @@ use fragment::{FragmentManager, HandManager};
 /// Structure representing a motion sensor.
 pub struct Sensor {
     /// The Leap Motion controller instance.
-    controller: LeapController,
+    _controller: LeapController,
 }
 
 impl Sensor {
     /// Construct a new sensor with the given listener.
     pub fn new(listener: SensorListener) -> Self {
         Self {
-            controller: LeapController::with_listener(listener),
+            _controller: LeapController::with_listener(listener),
         }
     }
 }
