@@ -49,7 +49,7 @@ impl HandManager {
     pub fn process_sensor_hand_list(
         &self,
         hand_list: SensorHandList,
-        fragment_manager: Arc<FragmentManager>,
+        fragment_manager: &Arc<FragmentManager>,
     ) {
         // Loop through all hands
         for sensor_hand in hand_list.iter() {

@@ -1,4 +1,7 @@
-use std::sync::{Arc, Mutex};
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+};
 
 use fragment::{Fragment, FragmentManager};
 use store::TemplateStore;
@@ -16,7 +19,7 @@ pub struct GestureController {
     store: Arc<TemplateStore>,
 
     /// The recording state.
-    recording: Mutex<bool>,
+    recording: AtomicBool,
 
     /// The fragment manager.
     /// TODO: this is temporary, and should not be public
@@ -28,7 +31,7 @@ impl GestureController {
     pub fn new(store: Arc<TemplateStore>) -> Self {
         Self {
             store,
-            recording: Mutex::new(false),
+            recording: AtomicBool::new(false),
             fragment_manager: Mutex::new(None),
         }
     }
@@ -48,19 +51,13 @@ impl GestureController {
 
     /// Check whether we're recording.
     pub fn recording(&self) -> bool {
-        *self
-            .recording
-            .lock()
-            .expect("failed to lock recording state")
+        self.recording.load(Ordering::Relaxed)
     }
 
     /// Set the recording state.
     pub fn set_recording(&self, recording: bool) {
         // Set the state
-        *self
-            .recording
-            .lock()
-            .expect("failed to lock recording state") = recording;
+        self.recording.store(recording, Ordering::Relaxed);
 
         // Report
         if recording {

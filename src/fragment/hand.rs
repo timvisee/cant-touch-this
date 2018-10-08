@@ -42,7 +42,7 @@ impl Hand {
             self.fingers
                 .entry(f.type_enum())
                 .or_insert_with(|| Fragment::new(gesture_controller))
-                .process_sensor_finger(f, process);
+                .process_sensor_finger(&f, process);
         }
     }
 

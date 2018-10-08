@@ -54,7 +54,7 @@ impl LeapListener for SensorListener {
 
         // Process the hand frame data in the hand manager
         self.hands
-            .process_sensor_hand_list(frame.hands(), self.fragment_manager.clone());
+            .process_sensor_hand_list(frame.hands(), &self.fragment_manager);
     }
 
     fn on_connect(&mut self, _: &LeapController) {

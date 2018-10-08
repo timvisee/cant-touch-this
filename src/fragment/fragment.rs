@@ -39,7 +39,7 @@ impl Fragment {
     /// Then, process the raw data into data we can work with in real-time.
     ///
     /// TODO: remove temporary parameter: `process`
-    pub fn process_sensor_finger(&mut self, finger: SensorFinger, process: bool) {
+    pub fn process_sensor_finger(&mut self, finger: &SensorFinger, process: bool) {
         self.raw
             .push(Point3::from(finger.stabilized_tip_position()));
 
