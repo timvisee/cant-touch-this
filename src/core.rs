@@ -3,7 +3,6 @@ use std::sync::Arc;
 use clap::ArgMatches;
 use webbrowser;
 
-use beautifier::Beautifier;
 use fragment::FragmentManager;
 use gesture::GestureController;
 use sensor::SensorController;
@@ -24,12 +23,6 @@ pub struct Core {
 
     /// The fragment manager, keeping track of trace fragments.
     fragment_manager: Arc<FragmentManager>,
-
-    /// The sensor data beautifier
-    ///
-    /// This beautifies 3D point traces and produces a rotation trace.
-    /// TODO: is this obsolete?
-    beautifier: Beautifier,
 
     /// The gesture controller
     ///
@@ -67,7 +60,6 @@ impl Core {
             matches,
             sensor_controller: SensorController::new(fragment_manager.clone()),
             fragment_manager,
-            beautifier: Beautifier::new(),
             gesture_controller: gesture_controller.clone(),
             store: store.clone(),
             #[cfg(feature = "web")]

@@ -31,7 +31,6 @@ extern crate webbrowser;
 #[macro_use]
 extern crate pretty_assertions;
 
-pub(crate) mod beautifier;
 pub(crate) mod config;
 pub(crate) mod core;
 pub(crate) mod fragment;
