@@ -1,3 +1,5 @@
+use std::cmp::max;
+
 use itertools::Itertools;
 use nalgebra::geometry;
 use std::fmt;
@@ -19,30 +21,30 @@ pub struct PointTrace {
     points: Vec<Point3>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-pub struct RotTrace {
-    /// The rotation at each point.
-    points: Vec<RotPoint>,
-}
-
 impl PointTrace {
-    /// Construct an emtpy point trace.
-    pub fn empty() -> PointTrace {
-        PointTrace { points: vec![] }
+    /// Constructor.
+    #[allow(unused)]
+    pub fn new(v: Vec<Point3>) -> Self {
+        Self { points: v }
     }
 
-    // /// Given a list of points, calculate the rotation/angle the edges between
-    // /// points in radians.
-    // ///
-    // /// In order to make reliable calculations the first two points are dropped
-    // /// in the result. If a list of less than 3 points is given, an emtpy result
-    // /// is returned.
-    // ///
-    // /// TODO: stream the iterator result, don't collect, improve performance
-    // #[inline]
-    // fn calc_rot_points(points: &[Point3]) -> Vec<RotPoint> {
-    //     Self::calc_rot_points_iter(points.into_iter().map(|p| p.to_npoint())).collect()
-    // }
+    /// Construct an emtpy point trace.
+    pub fn empty() -> Self {
+        Self { points: vec![] }
+    }
+
+    /// Given a list of points, calculate the rotation/angle the edges between
+    /// points in radians.
+    ///
+    /// In order to make reliable calculations the first two points are dropped
+    /// in the result. If a list of less than 3 points is given, an emtpy result
+    /// is returned.
+    ///
+    /// TODO: stream the iterator result, don't collect, improve performance
+    #[inline]
+    fn calc_rot_points(points: &[Point3]) -> Vec<RotPoint> {
+        Self::calc_rot_points_iter(points.into_iter().map(|p| p.to_npoint())).collect()
+    }
 
     /// Given a list of points, calculate the rotation/angle the edges between
     /// points in radians.
@@ -84,21 +86,22 @@ impl PointTrace {
         }
     }
 
-    // /// Given a list of points (wrapped by this trace), calculate the last
-    // /// rotation/angle between the last two edges of the points, in radians.
-    // ///
-    // /// This function is similar to `calc_rot_points`, but only calculates the
-    // /// last rotational point instead of all known. This may be used for
-    // /// incremental rotation trace creation.
-    // ///
-    // /// At least three points need to be in this list in order to return the
-    // /// last rotation. If that isn't the case, `None` is returned instead.
-    // #[inline]
-    // pub fn to_last_rot_point(&self) -> Option<RotPoint> {
-    //     Self::calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
-    //         .first()
-    //         .cloned()
-    // }
+    /// Given a list of points (wrapped by this trace), calculate the last
+    /// rotation/angle between the last two edges of the points, in radians.
+    ///
+    /// This function is similar to `calc_rot_points`, but only calculates the
+    /// last rotational point instead of all known. This may be used for
+    /// incremental rotation trace creation.
+    ///
+    /// At least three points need to be in this list in order to return the
+    /// last rotation. If that isn't the case, `None` is returned instead.
+    #[allow(unused)]
+    #[inline]
+    pub fn to_last_rot_point(&self) -> Option<RotPoint> {
+        Self::calc_rot_points(self.points.split_at(max(self.points.len(), 3) - 3).1)
+            .first()
+            .cloned()
+    }
 
     /// Convert this point trace into a rotational trace.
     #[allow(unused)]
@@ -137,13 +140,21 @@ impl PointTrace {
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct RotTrace {
+    /// The rotation at each point.
+    points: Vec<RotPoint>,
+}
+
 impl RotTrace {
-    pub fn new(v: Vec<RotPoint>) -> RotTrace {
-        RotTrace { points: v }
+    /// Constructor.
+    pub fn new(v: Vec<RotPoint>) -> Self {
+        Self { points: v }
     }
 
+    /// Construct an empty rotational trace.
     pub fn empty() -> RotTrace {
-        RotTrace { points: vec![] }
+        Self { points: vec![] }
     }
 
     /// Get a reference to the rotation points in this trace.

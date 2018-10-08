@@ -22,6 +22,12 @@ impl Point3 {
         Point3 { x, y, z }
     }
 
+    /// Create a new zero Point3.
+    #[allow(unused)]
+    pub fn zero() -> Point3 {
+        Point3::new(0.0, 0.0, 0.0)
+    }
+
     /// Create a new Point3 using a `&leap::vector::Vector`.
     pub fn from_leap(v: &Vector) -> Point3 {
         Self::new(v.x().into(), v.y().into(), v.z().into())
