@@ -58,14 +58,25 @@ impl Model {
         let model_points = &model_points[model_count - count..model_count];
         let other_points = &other_points[other_count - count..other_count];
 
-        // Caluclate the difference for each point
+        let model_points_cum: Vec<f64> = model_points.iter().scan(0.0, |acc, p| Some(*acc + p.radians())).collect();
+        let other_points_cum: Vec<f64> = other_points.iter().scan(0.0, |acc, p| Some(*acc + p.radians())).collect();
+
+        // Calculate the difference for each point
         let diff = model_points
             .iter()
             .rev()
             .zip(other_points.iter().rev())
             .map(|(a, b)| rad_diff(b.radians(), a.radians()));
 
-        // Calculate the cummulative difference on each point
+        // Calculate the cumulative difference for each point
+        let diff_inc_abs_diff: Vec<f64> = model_points_cum
+            .iter()
+            .rev()
+            .zip(other_points_cum.iter().rev())
+            .map(|(a, b)| (a - b).abs())
+            .collect();
+
+        // Calculate the cumulative difference on each point
         let cum_diff: Vec<f64> = diff
             .scan(0.0, |acc, p| {
                 *acc += p;
@@ -73,23 +84,27 @@ impl Model {
             })
             .collect();
 
-        // Skip if the total difference is too big
-        if cum_diff.last().unwrap().abs() > TOTAL_DIFF_MAX {
+        // // Skip if the total difference is too big
+        // if cum_diff.last().unwrap().abs() > TOTAL_DIFF_MAX {
+        //     return false;
+        // }
+
+        if diff_inc_abs_diff.windows(8).any(|p| p.iter().filter(|p| *p > &0.1).count() > 5) {
             return false;
         }
 
-        // Skip if any of the points has a difference of more than 2
-        if cum_diff.iter().any(|p| p.abs() > POINT_DIFF_MAX) {
-            return false;
-        }
+        // // Skip if any of the points has a difference of more than 2
+        // if cum_diff.iter().any(|p| p.abs() > POINT_DIFF_MAX) {
+        //     return false;
+        // }
 
-        // Skip if each window of 5 points has an average difference bigger than 1
-        if GROUP_SIZE > 0 && cum_diff
-            .windows(GROUP_SIZE)
-            .any(|p| (p.iter().sum::<f64>().abs() / GROUP_SIZE as f64) > GROUP_DIFF_MAX)
-        {
-            return false;
-        }
+        // // Skip if each window of 5 points has an average difference bigger than 1
+        // if GROUP_SIZE > 0 && cum_diff
+        //     .windows(GROUP_SIZE)
+        //     .any(|p| (p.iter().sum::<f64>().abs() / GROUP_SIZE as f64) > GROUP_DIFF_MAX)
+        // {
+        //     return false;
+        // }
 
         true
     }
