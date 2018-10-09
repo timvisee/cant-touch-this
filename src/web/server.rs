@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use rocket::{self, State};
-use rocket_contrib::{static_files::StaticFiles, Json, Template};
+use rocket_contrib::{json::Json, serve::StaticFiles, templates::Template};
 
 use gesture::GestureController;
 use store::TemplateStore;

@@ -19,7 +19,6 @@ leap = "0.1.0"
 nalgebra = "0.16"
 rayon = "1.0"
 rocket = "0.4.0-dev"
-rocket_codegen = "0.4.0-dev"
 serde = "1.0"
 serde_derive = "1.0"
 toml = "0.4"
@@ -28,23 +27,19 @@ webbrowser = "0.3"
 [dependencies.rocket_contrib]
 version = "0.4.0-dev"
 default_features = false
-features = ["handlebars_templates", "static_files", "json"]
+features = ["handlebars_templates", "json", "serve"]
 
 [patch.crates-io.leap]
 git = "https://github.com/timvisee/leap-rs.git"
 rev = "3205901"
 
 [patch.crates-io.rocket]
-git = "https://github.com/timvisee/Rocket"
-rev = "c5fdd06"
-
-[patch.crates-io.rocket_codegen]
-git = "https://github.com/timvisee/Rocket"
-rev = "c5fdd06"
+git = "https://github.com/SergioBenitez/Rocket"
+rev = "f857f81"
 
 [patch.crates-io.rocket_contrib]
-git = "https://github.com/timvisee/Rocket"
-rev = "c5fdd06"
+git = "https://github.com/SergioBenitez/Rocket"
+rev = "f857f81"
 
 [dev-dependencies]
 pretty_assertions = "0.5"
