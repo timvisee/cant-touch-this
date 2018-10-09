@@ -58,8 +58,14 @@ impl Model {
         let model_points = &model_points[model_count - count..model_count];
         let other_points = &other_points[other_count - count..other_count];
 
-        let model_points_cum: Vec<f64> = model_points.iter().scan(0.0, |acc, p| Some(*acc + p.radians())).collect();
-        let other_points_cum: Vec<f64> = other_points.iter().scan(0.0, |acc, p| Some(*acc + p.radians())).collect();
+        let model_points_cum: Vec<f64> = model_points
+            .iter()
+            .scan(0.0, |acc, p| Some(*acc + p.radians()))
+            .collect();
+        let other_points_cum: Vec<f64> = other_points
+            .iter()
+            .scan(0.0, |acc, p| Some(*acc + p.radians()))
+            .collect();
 
         // Calculate the difference for each point
         let diff = model_points
@@ -89,7 +95,10 @@ impl Model {
         //     return false;
         // }
 
-        if diff_inc_abs_diff.windows(8).any(|p| p.iter().filter(|p| *p > &0.1).count() > 5) {
+        if diff_inc_abs_diff
+            .windows(8)
+            .any(|p| p.iter().filter(|p| *p > &0.1).count() > 5)
+        {
             return false;
         }
 
