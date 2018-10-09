@@ -6,7 +6,6 @@
     test,
     euclidean_division
 )]
-
 // TODO: use system allocator until we fixed the Rocket segfault in release
 #![feature(alloc_system, allocator_api)]
 extern crate alloc_system;
