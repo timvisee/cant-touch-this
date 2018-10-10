@@ -66,6 +66,12 @@ impl HandManager {
                 .expect("failed to unlock hand for updating traces")
                 .process_sensor_hand(&sensor_hand);
         }
+
+        // Retain hands from the hands map that aren't in view anymore
+        self.hands
+            .lock()
+            .expect("failed to lock hands in fragment manager, for decaying old hands")
+            .retain(|&hand_id, _| hand_list.iter().any(|h| h.id() == hand_id));
     }
 
     /// Get the mutex holding the raw hands.
