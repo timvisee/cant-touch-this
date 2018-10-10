@@ -4,7 +4,6 @@ use config::recognition::{
     INTERRUPT_MARGIN, MARGIN, MAX_DEVIATION_FACTOR, MAX_ERROR, SEARCH_SPACE,
 };
 use types::RotTrace;
-use util::rad::diff as rad_diff;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Model {
