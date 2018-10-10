@@ -87,10 +87,6 @@ impl HandManager {
             .retain(|&hand_id, _| hand_list.iter().any(|h| h.id() == hand_id));
     }
 
-    // TODO: create a method for garbage collecting hands that haven't been updated in a while,
-    //       this should be called from all contexts the manager is used, preferreably in some
-    //       automated fashion
-
     // TODO: this is temporary
     pub fn get_live_models(&self) -> Vec<Model> {
         self.hands

@@ -132,13 +132,6 @@ impl PointTrace {
         }
     }
 
-    /// Clear the trace.
-    ///
-    /// This resets the trace back to zero items.
-    pub fn clear(&mut self) {
-        self.points.clear();
-    }
-
     /// Clear most of the trace, except for the last few (newest) points as
     /// specified in `config::recognition::KEEP_POINTS`.
     ///
