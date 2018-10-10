@@ -41,5 +41,10 @@ impl FragmentManager {
         self.hand.get_live_models()
     }
 
+    /// Get the hand manager.
+    pub fn hand_manager(&self) -> &HandManager {
+        &self.hand
+    }
+
     // TODO: create a method for garbage collecting hands that haven't been updated in a while
 }
