@@ -66,6 +66,10 @@ impl HandManager {
                 .expect("failed to unlock hand for updating traces")
                 .process_sensor_hand(&sensor_hand);
         }
+
+        // Retain hands from the hands map that aren't in view anymore
+        self.retain_hands(&hand_list);
+        fragment_manager.hand_manager().retain_hands(&hand_list);
     }
 
     /// Get the mutex holding the raw hands.
@@ -74,9 +78,14 @@ impl HandManager {
         &self.hands
     }
 
-    // TODO: create a method for garbage collecting hands that haven't been updated in a while,
-    //       this should be called from all contexts the manager is used, preferreably in some
-    //       automated fashion
+    /// Only retain hands in this hand manager that are part of the given `hand_list`.
+    /// Other hands are drained from the list.
+    pub fn retain_hands(&self, hand_list: &SensorHandList) {
+        self.hands
+            .lock()
+            .expect("failed to lock hands in hand manager, for decaying old hands")
+            .retain(|&hand_id, _| hand_list.iter().any(|h| h.id() == hand_id));
+    }
 
     // TODO: this is temporary
     pub fn get_live_models(&self) -> Vec<Model> {

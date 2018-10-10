@@ -4,7 +4,7 @@ use itertools::Itertools;
 use nalgebra::geometry;
 use std::fmt;
 
-use config::trace::MAX_POINTS;
+use config::{recognition::KEEP_POINTS, trace::MAX_POINTS};
 use prelude::*;
 use types::{Point3, RotPoint};
 use util::rad::diff as rad_diff;
@@ -132,11 +132,16 @@ impl PointTrace {
         }
     }
 
-    /// Clear the trace.
+    /// Clear most of the trace, except for the last few (newest) points as
+    /// specified in `config::recognition::KEEP_POINTS`.
     ///
-    /// This resets the trace back to zero items.
-    pub fn clear(&mut self) {
-        self.points.clear();
+    /// The the number of current points is the same or less than
+    /// `KEEP_POINTS`, no points are removed from the trace.
+    pub fn clear_most(&mut self) {
+        let len = self.points.len();
+        if len > KEEP_POINTS {
+            self.points.drain(..len - KEEP_POINTS);
+        }
     }
 }
 

@@ -1,3 +1,18 @@
+/**
+ * A set of colors, used for randomizing visualizer colors.
+ */
+let COLORS = [
+    '#F44336',
+    '#536DFE',
+    '#9C27B0',
+    '#4CAF50',
+    '#FF5722',
+    '#FFA000',
+    '#795548',
+    '#607D8B',
+    '#757575',
+];
+
 $('#toggle_record').on('click', function() {
     let recording = $(this).hasClass("btn-danger");
 
@@ -135,11 +150,10 @@ function fetchVisualizer() {
                     return;
 
                 // Get the points, visualize and resolve
-                let points = models[0].trace.points;
-                renderVisualizer(points);
+                renderVisualizer(models);
 
-                // Resolve the promise, pass along the points data
-                resolve(points);
+                // Resolve the promise, pass along the models data
+                resolve(models);
             })
             .catch(function(err) {
                 // Stop the live visualizer due to errors
@@ -179,9 +193,9 @@ function setLiveVisualize(enabled) {
 }
 
 /**
- * Render the given set of points using the visualizer.
+ * Render the given list of models on the visualizer canvas.
  */
-function renderVisualizer(points) {
+function renderVisualizer(models) {
     // Ensure the visualizer is set
     if(visualizer === null)
         return;
@@ -189,6 +203,25 @@ function renderVisualizer(points) {
     // Get the drawing context, and clear it first
     let context = visualizer.getContext("2d");
     context.clearRect(0, 0, visualizer.width, visualizer.height);
+
+    // Render each model
+    models.forEach(function(model, i) {
+        _renderVisualizerTrace(context, model.trace.points, i);
+    });
+}
+
+/**
+ * Render a trace based on the given set of points on the visualizer.
+ *
+ * @param {object} context The canvas 2D drawing context.
+ * @param {object[]} points The list of points in a trace to draw.
+ * @param {int} i The index of this trace, used to determine what color to use.
+ */
+function _renderVisualizerTrace(context, points, i) {
+    // Determine the color to use, and set it
+    let color = COLORS[(i || 0) % COLORS.length];
+    context.strokeStyle = color;
+    context.fillStyle = color;
 
     // Cummulative coordinate and rotation values
     let last_x = 200;
@@ -223,7 +256,6 @@ function renderVisualizer(points) {
     context.stroke();
 
     // Draw the sample points
-    context.fillStyle = "red";
     for(var i = 0; i < points.length; i++) {
         context.beginPath();
         context.arc(points[i].x, points[i].y, 1.5, 0, 2 * Math.PI);
