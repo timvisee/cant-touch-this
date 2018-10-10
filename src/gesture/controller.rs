@@ -42,7 +42,7 @@ impl GestureController {
         // Attempt to find a matching template
         if let Some(template) = self.store.find_matching(fragment) {
             // Clear the history to prevent overlapping detections
-            fragment.clear();
+            fragment.clear_most();
 
             // Report
             println!("### HIT: {}", template.name());

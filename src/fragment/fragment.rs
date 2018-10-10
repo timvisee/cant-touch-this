@@ -68,4 +68,14 @@ impl Fragment {
         self.raw.clear();
         self.model.clear();
     }
+
+    /// Clear most of the trace, except for the last few (newest) points as
+    /// specified in `config::recognition::KEEP_POINTS`.
+    ///
+    /// The the number of current points is the same or less than
+    /// `KEEP_POINTS`, no points are removed from the trace.
+    pub fn clear_most(&mut self) {
+        self.raw.clear_most();
+        self.model.clear();
+    }
 }

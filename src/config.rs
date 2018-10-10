@@ -33,6 +33,13 @@ pub mod recognition {
     /// The maximum average angle difference threshold in radians a group of points may have as
     /// compared to a template.
     pub const GROUP_DIFF_MAX: f64 = 1.5;
+
+    /// When a trace is recognized as a gesture, the current trace is mostly cleared to prevent
+    /// duplicate detections over the same trace.
+    ///
+    /// This specifies how many points in the current trace history to keep when clearing the
+    /// history because of a recognized gesture.
+    pub const KEEP_POINTS: usize = 5;
 }
 
 /// Template related configuratoin.
