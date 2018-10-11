@@ -85,6 +85,6 @@ pub mod recognition {
 
 /// Template related configuration.
 pub mod template {
-    /// The file path to save the templates in.
-    pub const FILE: &str = "~/.config/cant-touch-this/templates.toml";
+    /// The name of the templates file.
+    pub const TEMPLATES_FILE: &str = "templates.json";
 }

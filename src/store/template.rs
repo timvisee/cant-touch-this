@@ -1,9 +1,10 @@
-use std::{fs, io::Result, path::Path, sync::Mutex};
+use std::{fs, io::Result, path::PathBuf, sync::Mutex};
 
+use directories::ProjectDirs;
 use rayon::prelude::*;
-use toml;
+use serde_json;
 
-use config::{sample::DISTANCE, template::FILE};
+use config::{sample::DISTANCE, template::TEMPLATES_FILE};
 use fragment::Fragment;
 use types::{Model, RotPoint, RotTrace, Template};
 
@@ -400,11 +401,11 @@ impl TemplateStore {
     ///
     /// If the file doesn't exist, nothing is loaded and `Ok` is returned.
     pub fn load(&self) -> Result<()> {
-        // Build the file path
-        let path = Path::new(FILE);
+        // Get the file path
+        let file = Self::file();
 
         // Ensure a file exists
-        if !path.is_file() {
+        if !file.is_file() {
             eprintln!("Not loading templates, no file exists");
             return Ok(());
         }
@@ -415,8 +416,10 @@ impl TemplateStore {
             .lock()
             .expect("failed to lock templates list for loading");
 
+        println!("Loading templates from {}...", file.to_str().unwrap_or("?"));
+
         // Load, deserialize and set the list of templates
-        *templates = toml::from_str(&fs::read_to_string(path)?)
+        *templates = serde_json::from_str(&fs::read_to_string(file)?)
             .expect("failed to deserialize templates from loaded file");
 
         println!("Loaded {} template(s)", templates.len());
@@ -426,7 +429,7 @@ impl TemplateStore {
 
     /// Save the current list of templates to a file.
     ///
-    /// TODO: handle toml errors properly, return an error on failure instead of panicing.
+    /// TODO: handle errors properly, return an error on failure instead of panicing.
     pub fn save(&self) -> Result<()> {
         // Obtain a templates list lock
         let templates = self
@@ -434,16 +437,31 @@ impl TemplateStore {
             .lock()
             .expect("failed to lock templates list for saving");
 
+        // Determine where to save
+        let file = Self::file();
+
         // Remove template files if there are not tempaltes to save
         if templates.is_empty() {
-            let _ = fs::remove_file(FILE);
+            let _ = fs::remove_file(file);
             return Ok(());
         }
 
-        println!("Saving {} template(s) to file...", templates.len());
+        println!(
+            "Saving {} template(s) to {}...",
+            templates.len(),
+            file.to_str().unwrap_or("?"),
+        );
+
+        // Create all parent directories
+        fs::create_dir_all(
+            file.parent()
+                .expect("failed to determine parent directory of template save file location"),
+        ).expect("failed to create directory to store templates file in");
+
+        // Write the file
         fs::write(
-            FILE,
-            toml::to_string(&*templates)
+            file,
+            serde_json::to_string_pretty(&*templates)
                 .expect("failed to serialize template data, unable to save"),
         )
     }
@@ -473,5 +491,13 @@ impl TemplateStore {
         } else {
             None
         }
+    }
+
+    /// Get the file the templates are saved to.
+    fn file<'a>() -> PathBuf {
+        ProjectDirs::from("", "", crate_name!())
+            .unwrap()
+            .cache_dir()
+            .join(TEMPLATES_FILE)
     }
 }

@@ -9,6 +9,7 @@
 
 #[macro_use]
 extern crate clap;
+extern crate directories;
 extern crate itertools;
 extern crate leap;
 extern crate nalgebra;
@@ -22,8 +23,8 @@ extern crate rocket_contrib;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_json;
 extern crate test;
-extern crate toml;
 extern crate webbrowser;
 
 #[cfg(test)]
