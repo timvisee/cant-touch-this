@@ -17,6 +17,7 @@ clap = "2.32"
 itertools = "0.7"
 leap = "0.1.0"
 nalgebra = "0.16"
+openssl-probe = "0.1"
 rayon = "1.0"
 rocket = "0.4.0-dev"
 serde = "1.0"
@@ -34,11 +35,11 @@ git = "https://github.com/timvisee/leap-rs.git"
 rev = "3205901"
 
 [patch.crates-io.rocket]
-git = "https://github.com/SergioBenitez/Rocket"
+git = "https://github.com/SergioBenitez/Rocket.git"
 rev = "f857f81"
 
 [patch.crates-io.rocket_contrib]
-git = "https://github.com/SergioBenitez/Rocket"
+git = "https://github.com/SergioBenitez/Rocket.git"
 rev = "f857f81"
 
 [dev-dependencies]

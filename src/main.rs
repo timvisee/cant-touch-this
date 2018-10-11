@@ -12,6 +12,7 @@ extern crate clap;
 extern crate itertools;
 extern crate leap;
 extern crate nalgebra;
+extern crate openssl_probe;
 extern crate rayon;
 #[macro_use]
 extern crate rocket;
@@ -41,12 +42,16 @@ pub(crate) mod util;
 pub(crate) mod web;
 
 use clap::{App, Arg};
+use openssl_probe::init_ssl_cert_env_vars;
 
 use core::Core;
 
 fn main() {
     // Build the clap app, get the matches
     let matches = build_app().get_matches();
+
+    // Initialize SSL certificate variables
+    init_ssl_cert_env_vars();
 
     // Initialize the core, and start it
     let mut core = Core::new(matches);
