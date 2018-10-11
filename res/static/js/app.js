@@ -185,15 +185,11 @@ function fetchVisualizer() {
     return new Promise(function(resolve, reject) {
         axios.get('/api/v1/visualizer/points')
             .then(function(response) {
-                // Skip if there are no models to render
+                // Get the models
                 let models = response.data.models;
-                if(models.length <= 0)
-                    return;
 
-                // Get the points, visualize and resolve
+                // Visualize and resolve
                 renderVisualizer(models);
-
-                // Resolve the promise, pass along the models data
                 resolve(models);
             })
             .catch(function(err) {
@@ -247,6 +243,12 @@ function renderVisualizer(models) {
     // Get the drawing context, and clear it first
     let context = visualizer.getContext("2d");
     context.clearRect(0, 0, visualizer.width, visualizer.height);
+
+    // Draw the origin dot
+    context.fillStyle = "black";
+    context.beginPath();
+    context.arc(visualizer.width / 2, visualizer.height / 2, 1.5, 0, 2 * Math.PI);
+    context.fill();
 
     // Render each model
     models.forEach(function(model, i) {
