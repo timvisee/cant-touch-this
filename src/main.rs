@@ -6,12 +6,6 @@
     test,
     euclidean_division
 )]
-// TODO: use system allocator until we fixed the Rocket segfault in release
-#![feature(alloc_system, allocator_api)]
-extern crate alloc_system;
-use alloc_system::System;
-#[global_allocator]
-static A: System = System;
 
 #[macro_use]
 extern crate clap;
