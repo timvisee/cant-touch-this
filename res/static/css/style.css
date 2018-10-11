@@ -1,3 +1,7 @@
+#visualizer {
+    border: 1px solid lightgray;
+}
+
 #save_recording,
 #clear_visual {
     display: none;
