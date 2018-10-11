@@ -56,7 +56,9 @@ $(document).ready(function() {
         let list = $('.list-template');
         list.html("");
         templates.forEach(function(template) {
-            $('<li/>').text(template).appendTo(list);
+            $('<li class="list-group-item" />').text(template).append(
+                $('<button type="button" class="btn btn-sm btn-outline-danger" />').text("X")
+            ).appendTo(list);
         });
     });
 
