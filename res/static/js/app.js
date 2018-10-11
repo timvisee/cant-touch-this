@@ -1,7 +1,7 @@
 /**
  * A set of colors, used for randomizing visualizer colors.
  */
-let COLORS = [
+const COLORS = [
     '#F44336',
     '#536DFE',
     '#9C27B0',
@@ -13,13 +13,30 @@ let COLORS = [
     '#757575',
 ];
 
+/**
+ * The normal gesture controller state.
+ */
+const STATE_NORMAL = 0;
+
+/**
+ * The gesture controlle recording state.
+ */
+const STATE_RECORDING = 1;
+
+/**
+ * The gesture controlle saving state.
+ */
+const STATE_SAVING = 2;
+
 $('#toggle_record').on('click', function() {
     let recording = $(this).hasClass("btn-danger");
+    let state = recording ? STATE_SAVING : STATE_RECORDING;
 
-    axios.get('/api/v1/record/' + !recording)
+    // Update the state on the server
+    axios.get('/api/v1/state/' + state)
         .then(function(response) {
             console.log(response);
-            setRecordingState(response.data.recording);
+            setState(response.data.state);
         })
         .catch(function(error) {
             console.log(error);
@@ -49,7 +66,7 @@ $(document).ready(function() {
     // TODO: comment-out function that is not yet available
     // hideSaveButton();
 
-    fetchRecordingState();
+    fetchState();
 
     // Updat the list of templates
     updateTemplateList();
@@ -58,10 +75,11 @@ $(document).ready(function() {
 });
 
 /**
- * Set the recording state.
+ * Set the state.
  */
-function setRecordingState(recording) {
+function setState(state) {
     let button = $('#toggle_record');
+    let recording = state == STATE_RECORDING;
 
     if(recording) {
         button.text("Cancel recording");
@@ -82,10 +100,10 @@ function setRecordingState(recording) {
  * Fetch the recording state from the server.
  * Update the recording button state.
  */
-function fetchRecordingState() {
-    axios.get('/api/v1/record')
+function fetchState() {
+    axios.get('/api/v1/state')
         .then(function(response) {
-            setRecordingState(response.data.recording);
+            setState(response.data.recording);
         })
         .catch(function(error) {
             console.log(error);

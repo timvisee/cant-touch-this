@@ -1,6 +1,6 @@
-use std::sync::{
-    atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
+use std::{
+    fmt::{self, Display},
+    sync::{Arc, Mutex},
 };
 
 use fragment::{Fragment, FragmentManager};
@@ -18,8 +18,8 @@ pub struct GestureController {
     /// The template store that is referenced for gesture detection.
     store: Arc<TemplateStore>,
 
-    /// The recording state.
-    recording: AtomicBool,
+    /// The state.
+    state: Mutex<State>,
 
     /// The fragment manager.
     /// TODO: this is temporary, and should not be public
@@ -31,7 +31,7 @@ impl GestureController {
     pub fn new(store: Arc<TemplateStore>) -> Self {
         Self {
             store,
-            recording: AtomicBool::new(false),
+            state: Mutex::new(State::default()),
             fragment_manager: Mutex::new(None),
         }
     }
@@ -49,22 +49,19 @@ impl GestureController {
         }
     }
 
-    /// Check whether we're recording.
-    pub fn recording(&self) -> bool {
-        self.recording.load(Ordering::Relaxed)
+    /// Get the current gesture controller state.
+    pub fn state(&self) -> State {
+        *self.state
+            .lock()
+            .expect("failed to lock gesture controller state")
     }
 
-    /// Set the recording state.
-    pub fn set_recording(&self, recording: bool) {
-        // Set the state
-        self.recording.store(recording, Ordering::Relaxed);
-
-        // Report
-        if recording {
-            println!("Started recording");
-        } else {
-            println!("Stopped recording");
-        }
+    /// Set the gesture controller state.
+    pub fn set_state(&self, state: State) {
+        println!("State: {}", state);
+        *self.state
+            .lock()
+            .expect("failed to lock gesture controller state") = state;
     }
 
     /// Return live trace data, for visualisation.
@@ -90,5 +87,78 @@ impl GestureController {
             .lock()
             .expect("failed to set fragment manager, unable to lock handle mutex")
             .replace(fragment_manager);
+    }
+}
+
+/// The state the gesture controller may be in.
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum State {
+    /// The normal and default state.
+    Normal,
+
+    /// The recording state.
+    Recording,
+
+    /// The saving state, after recording.
+    Saving,
+}
+
+impl State {
+    /// Construct the state from the given ID.
+    ///
+    /// `None` is returned if the given ID is invalid.
+    pub fn from_id(id: u8) -> Option<Self> {
+        match id {
+            0 => Some(State::Normal),
+            1 => Some(State::Recording),
+            2 => Some(State::Saving),
+            _ => None,
+        }
+    }
+
+    /// Get the state ID.
+    pub fn id(&self) -> u8 {
+        match self {
+            State::Normal => 0,
+            State::Recording => 1,
+            State::Saving => 2,
+        }
+    }
+
+    /// Get the state name.
+    pub fn name(&self) -> &'static str {
+        match self {
+            State::Normal => "normal",
+            State::Recording => "recording",
+            State::Saving => "saving",
+        }
+    }
+
+    /// Determine whether we should track incomming trace data.
+    pub fn should_track(&self) -> bool {
+        match self {
+            State::Saving => false,
+            _ => true,
+        }
+    }
+
+    /// Determine whether we should detect gestures in incomming trace data.
+    pub fn should_detect(&self) -> bool {
+        match self {
+            State::Normal => true,
+            _ => false,
+        }
+    }
+}
+
+impl Default for State {
+    fn default() -> State {
+        State::Normal
+    }
+}
+
+impl Display for State {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.name())
     }
 }

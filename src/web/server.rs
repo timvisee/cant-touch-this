@@ -3,7 +3,7 @@ use std::{collections::HashMap, sync::Arc};
 use rocket::{self, State};
 use rocket_contrib::{json::Json, serve::StaticFiles, templates::Template};
 
-use gesture::GestureController;
+use gesture::{GestureController, GestureState};
 use store::TemplateStore;
 use types::{Model, Template as GestureTemplate};
 
@@ -81,28 +81,31 @@ struct TemplateIndexResponse {
     templates: Vec<GestureTemplate>,
 }
 
-#[get("/api/v1/record")]
+#[get("/api/v1/state")]
 fn record(gesture_controller: State<Arc<GestureController>>) -> Json<RecordResponse> {
     Json(RecordResponse {
-        recording: gesture_controller.recording(),
+        state: gesture_controller.state().id(),
     })
 }
 
-#[get("/api/v1/record/<record>")]
+#[get("/api/v1/state/<state>")]
 fn set_record(
-    record: bool,
+    state: u8,
     gesture_controller: State<Arc<GestureController>>,
 ) -> Json<RecordResponse> {
-    // Set the recording state in the gesture controller
-    gesture_controller.set_recording(record);
+    // Parse the state
+    let state = GestureState::from_id(state).expect("failed to parse state ID");
+
+    // Set the state
+    gesture_controller.set_state(state);
 
     // Respond with the state
-    Json(RecordResponse { recording: record })
+    Json(RecordResponse { state: state.id() })
 }
 
 #[derive(Serialize, Deserialize)]
 struct RecordResponse {
-    recording: bool,
+    state: u8,
 }
 
 #[get("/api/v1/visualizer/points")]
