@@ -41,7 +41,7 @@ $('#clear_visual').on('click', function() {
     renderVisualizer([]);
 
     // Hide the button
-    $('#clear_visual').css('display', 'none');
+    setShowClearVisualize(false);
 });
 
 // Fetch the current status from the server
@@ -68,23 +68,20 @@ $(document).ready(function() {
  */
 function setRecordingState(recording) {
     let button = $('#toggle_record');
-    let save = $('#save_recording');
 
     if(recording) {
         button.text("Recording...");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
 
-        save.css('display', 'inline-block');
-
         setLiveVisualize(true);
     } else {
         button.text("Start recording");
         button.removeClass("btn-danger");
         button.addClass("btn-outline-success");
-
-        save.css('display', 'none');
     }
+
+    setShowSaveRecording(recording);
 }
 
 /**
@@ -111,6 +108,35 @@ function fetchTemplates() {
         }).catch(reject);
     });
 }
+
+/**
+ * Set whether to show the given button.
+ *
+ * @param {object} button A jQuery button.
+ * @param {boolean} show True to show, false to hide.
+ */
+function setShowButton(button, show) {
+    button.css('display', show ? 'inline-block' : 'none');
+}
+
+/**
+ * Set whehter to show the `Clear Visualize` button.
+ *
+ * @param {boolean} show True to show, false to hide.
+ */
+function setShowClearVisualize(show) {
+    setShowButton($('#clear_visual'), show);
+}
+
+/**
+ * Set whehter to show the `Save Recording` button.
+ *
+ * @param {boolean} show True to show, false to hide.
+ */
+function setShowSaveRecording(show) {
+    setShowButton($('#save_recording'), show);
+}
+
 
 
 
@@ -190,12 +216,8 @@ function setLiveVisualize(enabled) {
         clearInterval(visualizerTimer);
     visualizerTimer = null;
 
-    // Toggle the clear button
-    let clear = $('#clear_visual');
-    if(enabled)
-        clear.css('display', 'none');
-    else
-        clear.css('display', 'inline-block');
+    // Show the visualize button when live visualisation stops
+    setShowClearVisualize(!enabled);
 
     // Build a new visualization timer
     if(enabled)
