@@ -26,6 +26,24 @@ $('#toggle_record').on('click', function() {
         });
 });
 
+$('#save_recording').on('click', function() {
+    axios.get('/api/v1/template/save')
+        .then(function(response) {
+            console.log(response);
+        })
+        .catch(function(error) {
+            console.log(error);
+        })
+});
+
+$('#clear_visual').on('click', function() {
+    // Render the visualizer with no model data
+    renderVisualizer([]);
+
+    // Hide the button
+    $('#clear_visual').css('display', 'none');
+});
+
 // Fetch the current status from the server
 $(document).ready(function() {
     // TODO: comment-out function that is not yet available
@@ -51,15 +69,13 @@ $(document).ready(function() {
 function setRecordingState(recording) {
     let button = $('#toggle_record');
     let save = $('#save_recording');
-    let panel = $('#clear_visual');
 
     if(recording) {
         button.text("Recording...");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
 
-        save.css('display', 'none');
-        panel.css('display', 'none');
+        save.css('display', 'inline-block');
 
         setLiveVisualize(true);
     } else {
@@ -67,8 +83,7 @@ function setRecordingState(recording) {
         button.removeClass("btn-danger");
         button.addClass("btn-outline-success");
 
-        save.css('display', 'inline-block');
-        panel.css('display', 'inline-block');
+        save.css('display', 'none');
     }
 }
 
@@ -175,6 +190,13 @@ function setLiveVisualize(enabled) {
         clearInterval(visualizerTimer);
     visualizerTimer = null;
 
+    // Toggle the clear button
+    let clear = $('#clear_visual');
+    if(enabled)
+        clear.css('display', 'none');
+    else
+        clear.css('display', 'inline-block');
+
     // Build a new visualization timer
     if(enabled)
         visualizerTimer = setInterval(fetchVisualizer, 50);
@@ -262,30 +284,3 @@ function _renderVisualizerTrace(context, points, i) {
         context.fill();
     }
 }
-
-$('#save_recording').on('click', function() {
-    axios.get('/api/v1/template/save')
-        .then(function(response) {
-            console.log(response);
-        })
-        .catch(function(error) {
-            console.log(error);
-        })
-});
-
-$('#toggle_record').on('click', function() {
-    let recording = $(this).hasClass("btn-danger");
-
-    axios.get('/api/v1/record/' + !recording)
-        .then(function(response) {
-            console.log(response);
-            setRecordingState(response.data.recording);
-        })
-        .catch(function(error) {
-            console.log(error);
-        });
-});
-
-$('#clear_visual').on('click', function() {
-    initVisualizer();
-});
