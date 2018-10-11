@@ -70,7 +70,7 @@ function setRecordingState(recording) {
     let button = $('#toggle_record');
 
     if(recording) {
-        button.text("Recording...");
+        button.text("Cancel recording");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
 
@@ -268,7 +268,7 @@ function _renderVisualizerTrace(context, points, i) {
     context.fillStyle = color;
 
     // Cummulative coordinate and rotation values
-    let last_x = 200;
+    let last_x = 400;
     let last_y = 200;
     let last_rot = 0;
 
