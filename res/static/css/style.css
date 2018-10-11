@@ -6,6 +6,14 @@
     border: 1px solid lightgray;
 }
 
+.trim-panel {
+    display: none;
+}
+
+#trim-slider {
+    width: 800px;
+}
+
 #save_recording,
 #clear_visual {
     display: none;

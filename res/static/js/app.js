@@ -28,6 +28,11 @@ const STATE_RECORDING = 1;
  */
 const STATE_SAVING = 2;
 
+/**
+ * The current gesture controller state.
+ */
+var state;
+
 $('#toggle_record').on('click', function() {
     let recording = $(this).hasClass("btn-danger");
     let state = recording ? STATE_SAVING : STATE_RECORDING;
@@ -35,8 +40,8 @@ $('#toggle_record').on('click', function() {
     // Update the state on the server
     axios.get('/api/v1/state/' + state)
         .then(function(response) {
-            console.log(response);
-            setState(response.data.state);
+            state = response.data.state;
+            setState(state);
         })
         .catch(function(error) {
             console.log(error);
@@ -72,6 +77,9 @@ $(document).ready(function() {
     updateTemplateList();
 
     initVisualizer();
+
+    // Build the trim slider
+    buildTrimSlider();
 });
 
 /**
@@ -80,6 +88,7 @@ $(document).ready(function() {
 function setState(state) {
     let button = $('#toggle_record');
     let recording = state == STATE_RECORDING;
+    let saving = state == STATE_SAVING;
 
     if(recording) {
         button.text("Cancel recording");
@@ -94,6 +103,31 @@ function setState(state) {
     }
 
     setShowSaveRecording(recording);
+    setShowTrimPanel(saving);
+}
+
+/**
+ * Build the trim slider.
+ */
+function buildTrimSlider() {
+    // Configure the trim range slider
+    $("#trim-slider").slider({
+        range: true,
+        min: 0,
+        max: 500,
+        values: [0, 500],
+        slide: function(event, ui) {
+            $("#trim").val(ui.values[0] + " - " + ui.values[1] + " frames");
+        }
+    });
+
+    // Set the initial trim value
+    $("#trim").val(
+        $("#trim-slider").slider("values", 0) +
+        " - " +
+        $("#trim-slider").slider("values", 1) +
+        " frames"
+    );
 }
 
 /**
@@ -103,7 +137,9 @@ function setState(state) {
 function fetchState() {
     axios.get('/api/v1/state')
         .then(function(response) {
-            setState(response.data.recording);
+            // Update the state
+            state = response.data.recording;
+            setState(state);
         })
         .catch(function(error) {
             console.log(error);
@@ -212,6 +248,15 @@ function setShowClearVisualize(show) {
  */
 function setShowSaveRecording(show) {
     setShowButton($('#save_recording'), show);
+}
+
+/**
+ * Set whether to show the trim panel.
+ *
+ * @param {boolean} show True to show, false to hide.
+ */
+function setShowTrimPanel(show) {
+    $('.trim-panel').css(show ? 'inline' : 'none');
 }
 
 
