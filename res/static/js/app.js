@@ -51,16 +51,8 @@ $(document).ready(function() {
 
     fetchRecordingState();
 
-    fetchTemplates().then(function(templates) {
-        // Put the template items into the list
-        let list = $('.list-template');
-        list.html("");
-        templates.forEach(function(template) {
-            $('<li class="list-group-item" />').text(template).append(
-                $('<button type="button" class="btn btn-sm btn-outline-danger" />').text("X")
-            ).appendTo(list);
-        });
-    });
+    // Updat the list of templates
+    updateTemplateList();
 
     initVisualizer();
 });
@@ -105,10 +97,75 @@ function fetchRecordingState() {
  */
 function fetchTemplates() {
     return new Promise(function(resolve, reject) {
-        axios.get('/api/v1/template').then(function(data) {
-            resolve(data.data.templates);
-        }).catch(reject);
+        axios.get('/api/v1/template')
+            .then(function(data) {
+                resolve(data.data.templates);
+            })
+            .catch(reject);
     });
+}
+
+/**
+ * Update the template list, by fetching an up to date list of templates, then
+ * update the DOM.
+ */
+function updateTemplateList() {
+    // TODO: catch and handle errors
+    fetchTemplates()
+        .then(function(templates) {
+            // Put the template items into the list
+            let list = $('.list-template');
+            list.html("");
+            templates.forEach(function(template) {
+                // Get the template id and name
+                let id = template.id;
+                let name = template.name;
+                $('<li class="list-group-item" />')
+                    .text(name)
+                    .append(
+                        $('<button type="button" class="btn btn-sm btn-outline-danger" data-id="' + id + '" />')
+                            .text("X")
+                            .click(deleteTemplateCallback)
+                    )
+                    .append($('<span class="id"></span>').text('id: ' + id))
+                    .appendTo(list);
+            });
+        });
+}
+
+/**
+ * Delete the template with the given ID.
+ *
+ * This will send a request to the server to delete the template.
+ * After the deletion, the show list of templates is automatically updated.
+ *
+ * @param {int} id The ID of the template to delete.
+ * @return {Promise} A promise for the request.
+ */
+function deleteTemplate(id) {
+    return new Promise(function(resolve, reject) {
+        axios.get('/api/v1/template/' + id + '/delete')
+            .then(updateTemplateList)
+            .catch(function(err) {
+                console.error(err);
+                alert("An error occurred while requesting template deletion: " + err);
+            });
+    });
+}
+
+/**
+ * A callback to invoke when a template delete button is pressed.
+ * The button that was clicked to delete the template should be passed as
+ * `this`, for example by directly passing this as callback to the `.click()`
+ * event.
+ */
+function deleteTemplateCallback() {
+    // Get the button that was pressed, and mark it as disabled
+    let button = $(this);
+    button.attr('disabled', true);
+
+    // Delete the template
+    deleteTemplate(button.data('id'));
 }
 
 /**

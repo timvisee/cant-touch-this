@@ -368,14 +368,30 @@ impl TemplateStore {
         }
     }
 
-    /// Get a list of all template names.
-    pub fn names(&self) -> Vec<String> {
+    /// Delete the template with the given `id`.
+    /// Nothing happends if no template exists with the specified `id`.
+    ///
+    /// This method is expensive, as it clones the list of templates.
+    pub fn delete(&self, id: u32) -> Result<()> {
+        // Remove the template
+        self.templates
+            .lock()
+            .expect("failed to lock templates list to remove item")
+            .retain(|template| template.id() != id);
+
+        // Save the results
+        self.save()
+    }
+
+
+    /// Get a list of templates available in this store.
+    ///
+    /// This method is expensive, as it clones the list of templates.
+    pub fn to_templates(&self) -> Vec<Template> {
         self.templates
             .lock()
             .expect("failed to lock templates list")
-            .iter()
-            .map(|t| t.name().into())
-            .collect()
+            .clone()
     }
 
     /// Load a list of templates from a file.

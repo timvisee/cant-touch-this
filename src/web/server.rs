@@ -5,7 +5,7 @@ use rocket_contrib::{json::Json, serve::StaticFiles, templates::Template};
 
 use gesture::GestureController;
 use store::TemplateStore;
-use types::Model;
+use types::{Model, Template as GestureTemplate};
 
 pub struct Server {
     /// The gesture controller used for managing recordings.
@@ -35,6 +35,7 @@ impl Server {
                 routes![
                     index,
                     template_index,
+                    delete_template,
                     save_template,
                     record,
                     set_record,
@@ -59,8 +60,14 @@ fn index() -> Template {
 #[get("/api/v1/template")]
 fn template_index(store: State<Arc<TemplateStore>>) -> Json<TemplateIndexResponse> {
     Json(TemplateIndexResponse {
-        templates: store.names(),
+        templates: store.to_templates(),
     })
+}
+
+#[get("/api/v1/template/<id>/delete")]
+fn delete_template(id: u32, store: State<Arc<TemplateStore>>) -> Json<bool> {
+    store.delete(id).expect("failed to delete template and save list");
+    Json(true)
 }
 
 #[get("/api/v1/template/save")]
@@ -71,7 +78,7 @@ fn save_template() -> &'static str {
 
 #[derive(Serialize, Deserialize)]
 struct TemplateIndexResponse {
-    templates: Vec<String>,
+    templates: Vec<GestureTemplate>,
 }
 
 #[get("/api/v1/record")]

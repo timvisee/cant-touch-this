@@ -13,6 +13,7 @@ extern crate itertools;
 extern crate leap;
 extern crate nalgebra;
 extern crate openssl_probe;
+extern crate rand;
 extern crate rayon;
 #[macro_use]
 extern crate rocket;
