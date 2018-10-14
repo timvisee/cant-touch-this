@@ -384,7 +384,6 @@ impl TemplateStore {
         self.save()
     }
 
-
     /// Get a list of templates available in this store.
     ///
     /// This method is expensive, as it clones the list of templates.
@@ -456,7 +455,8 @@ impl TemplateStore {
         fs::create_dir_all(
             file.parent()
                 .expect("failed to determine parent directory of template save file location"),
-        ).expect("failed to create directory to store templates file in");
+        )
+        .expect("failed to create directory to store templates file in");
 
         // Write the file
         fs::write(
