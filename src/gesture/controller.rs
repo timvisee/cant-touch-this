@@ -51,7 +51,8 @@ impl GestureController {
 
     /// Get the current gesture controller state.
     pub fn state(&self) -> State {
-        *self.state
+        *self
+            .state
             .lock()
             .expect("failed to lock gesture controller state")
     }
@@ -59,7 +60,8 @@ impl GestureController {
     /// Set the gesture controller state.
     pub fn set_state(&self, state: State) {
         println!("State: {}", state);
-        *self.state
+        *self
+            .state
             .lock()
             .expect("failed to lock gesture controller state") = state;
     }

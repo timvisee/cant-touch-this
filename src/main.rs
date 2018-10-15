@@ -2,7 +2,6 @@
     decl_macro,
     plugin,
     proc_macro_hygiene,
-    option_replace,
     test,
     euclidean_division
 )]

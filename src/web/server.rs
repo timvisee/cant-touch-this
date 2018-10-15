@@ -66,7 +66,9 @@ fn template_index(store: State<Arc<TemplateStore>>) -> Json<TemplateIndexRespons
 
 #[get("/api/v1/template/<id>/delete")]
 fn delete_template(id: u32, store: State<Arc<TemplateStore>>) -> Json<bool> {
-    store.delete(id).expect("failed to delete template and save list");
+    store
+        .delete(id)
+        .expect("failed to delete template and save list");
     Json(true)
 }
 
