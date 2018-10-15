@@ -91,7 +91,7 @@ function setState(state) {
     let saving = state == STATE_SAVING;
 
     if(recording) {
-        button.text("Cancel recording");
+        button.text("Recording...");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
 
@@ -114,8 +114,8 @@ function buildTrimSlider() {
     $("#trim-slider").slider({
         range: true,
         min: 0,
-        max: 500,
-        values: [0, 500],
+        max: 100,
+        values: [0, 100],
         slide: function(event, ui) {
             $("#trim").val(ui.values[0] + " - " + ui.values[1] + " frames");
         }
@@ -125,7 +125,7 @@ function buildTrimSlider() {
     $("#trim").val(
         $("#trim-slider").slider("values", 0) +
         " - " +
-        $("#trim-slider").slider("values", 1) +
+        $("#trim-slider").slider("values", 100) +
         " frames"
     );
 }
@@ -256,7 +256,19 @@ function setShowSaveRecording(show) {
  * @param {boolean} show True to show, false to hide.
  */
 function setShowTrimPanel(show) {
-    $('.trim-panel').css(show ? 'inline' : 'none');
+    $('.trim-panel').css('display', show ? 'inline' : 'none');
+
+    // If the slider is shown, update it seeded by the last data
+    if(show) {
+        // Count the frames the recording has
+        // TODO: make sure there is a model
+        let frames = models[0].trace.points.length;
+
+        // Update the slider bounds and default value
+        let slider = $("#trim-slider");
+        slider.slider("option", "max", frames);
+        slider.slider("option", "values", [0, frames]);
+    }
 }
 
 
@@ -271,6 +283,11 @@ var visualizer = null;
  * The timer that is used for requesting visualizer data.
  */
 var visualizerTimer = null;
+
+/**
+ * The last model data we received.
+ */
+var models = [];
 
 $('#toggle_visualize').on('click', function() {
     let visualizing = $(this).hasClass("btn-danger");
@@ -305,7 +322,7 @@ function fetchVisualizer() {
         axios.get('/api/v1/visualizer')
             .then(function(response) {
                 // Get the models
-                let models = response.data.models;
+                models = response.data.models;
 
                 // Visualize and resolve
                 renderVisualizer(models);
