@@ -107,6 +107,8 @@ struct StateResponse {
     state: u8,
 }
 
+// TODO: input trim values when saving
+// TODO: trim trace before outputting when saving
 #[get("/api/v1/visualizer")]
 fn visualizer(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
     // Get the live data models
