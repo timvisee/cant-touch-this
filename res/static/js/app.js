@@ -302,7 +302,7 @@ function initVisualizer() {
  */
 function fetchVisualizer() {
     return new Promise(function(resolve, reject) {
-        axios.get('/api/v1/visualizer/points')
+        axios.get('/api/v1/visualizer')
             .then(function(response) {
                 // Get the models
                 let models = response.data.models;

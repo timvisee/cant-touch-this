@@ -37,9 +37,9 @@ impl Server {
                     template_index,
                     delete_template,
                     save_template,
-                    record,
-                    set_record,
-                    visualizer_points
+                    state,
+                    set_state,
+                    visualizer,
                 ],
             )
             .mount("/css", StaticFiles::from("res/static/css"))
@@ -84,17 +84,14 @@ struct TemplateIndexResponse {
 }
 
 #[get("/api/v1/state")]
-fn record(gesture_controller: State<Arc<GestureController>>) -> Json<RecordResponse> {
-    Json(RecordResponse {
+fn state(gesture_controller: State<Arc<GestureController>>) -> Json<StateResponse> {
+    Json(StateResponse {
         state: gesture_controller.state().id(),
     })
 }
 
 #[get("/api/v1/state/<state>")]
-fn set_record(
-    state: u8,
-    gesture_controller: State<Arc<GestureController>>,
-) -> Json<RecordResponse> {
+fn set_state(state: u8, gesture_controller: State<Arc<GestureController>>) -> Json<StateResponse> {
     // Parse the state
     let state = GestureState::from_id(state).expect("failed to parse state ID");
 
@@ -102,16 +99,16 @@ fn set_record(
     gesture_controller.set_state(state);
 
     // Respond with the state
-    Json(RecordResponse { state: state.id() })
+    Json(StateResponse { state: state.id() })
 }
 
 #[derive(Serialize, Deserialize)]
-struct RecordResponse {
+struct StateResponse {
     state: u8,
 }
 
-#[get("/api/v1/visualizer/points")]
-fn visualizer_points(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
+#[get("/api/v1/visualizer")]
+fn visualizer(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
     // Get the live data models
     let models = gesture_controller.get_live_trace();
 
