@@ -38,11 +38,11 @@ rev = "3205901"
 
 [patch.crates-io.rocket]
 git = "https://github.com/SergioBenitez/Rocket.git"
-rev = "f857f81"
+rev = "ad0ba0d"
 
 [patch.crates-io.rocket_contrib]
 git = "https://github.com/SergioBenitez/Rocket.git"
-rev = "f857f81"
+rev = "ad0ba0d"
 
 [dev-dependencies]
 pretty_assertions = "0.5"

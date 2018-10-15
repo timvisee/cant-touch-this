@@ -7,12 +7,7 @@ use fragment::{Fragment, FragmentManager};
 use store::TemplateStore;
 use types::Model;
 
-/// Gesture controller, for recognition and recording
-///
-/// TODO: define the following in sub structures,
-/// TODO: this should be a state machine:
-/// TODO: build the recognition part, which compares it to a set of templates
-/// TODO: build the recording part
+/// Gesture controller, for controlling/orchestrating recognition and recording
 #[derive(Debug)]
 pub struct GestureController {
     /// The template store that is referenced for gesture detection.
@@ -22,7 +17,6 @@ pub struct GestureController {
     state: Mutex<State>,
 
     /// The fragment manager.
-    /// TODO: this is temporary, and should not be public
     pub fragment_manager: Mutex<Option<Arc<FragmentManager>>>,
 }
 
