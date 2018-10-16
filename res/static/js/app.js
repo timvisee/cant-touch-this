@@ -35,7 +35,7 @@ var state;
 
 $('#toggle_record').on('click', function() {
     let recording = $(this).hasClass("btn-danger");
-    let state = recording ? STATE_SAVING : STATE_RECORDING;
+    let state = recording ? (models.length > 0 ? STATE_SAVING : STATE_NORMAL) : STATE_RECORDING;
 
     // Update the state on the server
     axios.get('/api/v1/state/' + state)
@@ -60,7 +60,8 @@ $('#save_recording').on('click', function() {
 
 $('#clear_visual').on('click', function() {
     // Render the visualizer with no model data
-    renderVisualizer([]);
+    models = [];
+    renderVisualizer(models);
 
     // Hide the button
     setShowClearVisualize(false);
