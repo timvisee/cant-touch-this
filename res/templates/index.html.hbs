@@ -27,7 +27,6 @@
         <div class="col">
           <p>
             <button id="toggle_record" type="button" class="btn btn-outline-success">Start recording</button>
-            <button id="save_recording" type="button" class="btn btn-outline-primary">Save recording</button>
             <button id="toggle_visualize" type="button" class="btn btn-outline-success">Visualize</button>
             <button id="clear_visual" type="button" class="btn btn-outline-warning">Clear Visual</button>
           </p>
@@ -47,6 +46,10 @@
                 <label for="amount">Trace:</label>
                 <input type="text" id="trim" name="trim" readonly style="border: 0;">
                 <div id="trim-slider"></div>
+              </div>
+              <div class="form-group">
+                <button id="save_recording" type="button" class="btn btn-success">Save</button>
+                <button id="discard_recording" type="button" class="btn btn-outline-danger">Discard</button>
               </div>
             </form>
           </div>

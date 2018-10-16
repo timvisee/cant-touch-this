@@ -6,17 +6,13 @@
     border: 1px solid lightgray;
 }
 
-.trim-panel {
+.trim-panel,
+#clear_visual {
     display: none;
 }
 
 #trim-slider {
     width: 800px;
-}
-
-#save_recording,
-#clear_visual {
-    display: none;
 }
 
 .row {
