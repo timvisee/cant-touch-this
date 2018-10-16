@@ -26,6 +26,13 @@ impl Hand {
         }
     }
 
+    /// Find the longest model in this hand.
+    ///
+    /// If there is no model, `None` is returned instead.
+    pub fn longest_model(&self) -> Option<Model> {
+        self.fingers.values().map(|f| f.model()).max_by_key(|m| m.len()).cloned()
+    }
+
     /// Process a sensor hand frame from the sensor.
     pub fn process_sensor_hand(&mut self, hand: &SensorHand) {
         // TODO: do not only walk through the extended fingers here

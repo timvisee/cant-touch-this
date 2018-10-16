@@ -36,8 +36,15 @@ impl FragmentManager {
             .clone()
     }
 
+    /// Get the longest model from the fragment manager.
+    ///
+    /// If no model is available, `None` is returned instead.
+    pub fn longest_model(&self) -> Option<Model> {
+        self.hand.longest_model()
+    }
+
     // TODO: this is temporary
-    pub fn get_live_models(&self) -> Vec<Model> {
+    pub fn live_models(&self) -> Vec<Model> {
         self.hand.get_live_models()
     }
 

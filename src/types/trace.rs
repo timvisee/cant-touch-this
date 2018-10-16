@@ -172,6 +172,18 @@ impl RotTrace {
         &self.points
     }
 
+    /// Get the number of points in this trace.
+    pub fn len(&self) -> usize {
+        self.points.len()
+    }
+
+    /// Trim the trace to the given bounds `[from, to]`.
+    ///
+    /// The bounds may be greater than the actual trace itself.
+    pub fn trim(&mut self, from: usize, to: usize) {
+        self.points = self.points.iter().skip(from).take(to - from).cloned().collect();
+    }
+
     /// Clear the trace.
     ///
     /// This resets the trace back to zero items.

@@ -35,8 +35,8 @@ impl Server {
                 routes![
                     index,
                     template_index,
+                    create_template,
                     delete_template,
-                    save_template,
                     state,
                     set_state,
                     visualizer,
@@ -64,18 +64,19 @@ fn template_index(store: State<Arc<TemplateStore>>) -> Json<TemplateIndexRespons
     })
 }
 
+#[get("/api/v1/template/create/<name>/<from>/<to>")]
+fn create_template(name: String, from: usize, to: usize, gesture_controller: State<Arc<GestureController>>) -> Json<bool> {
+    Json(
+        gesture_controller.create(name, from, to).is_ok(),
+    )
+}
+
 #[get("/api/v1/template/<id>/delete")]
 fn delete_template(id: u32, store: State<Arc<TemplateStore>>) -> Json<bool> {
     store
         .delete(id)
         .expect("failed to delete template and save list");
     Json(true)
-}
-
-#[get("/api/v1/template/save")]
-fn save_template() -> &'static str {
-    // TODO: Pass data into this method, then save it to the template file
-    "hello, world"
 }
 
 #[derive(Serialize, Deserialize)]
@@ -117,7 +118,7 @@ struct StateResponse {
 #[get("/api/v1/visualizer")]
 fn visualizer(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
     // Get the live data models
-    let models = gesture_controller.get_live_trace();
+    let models = gesture_controller.live_trace();
 
     // Respond with the state
     Json(LiveTraceResponse { models })

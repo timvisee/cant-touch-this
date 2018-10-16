@@ -29,11 +29,21 @@ impl Model {
         &mut self.trace
     }
 
+    /// Get the number of points in this trace.
+    pub fn len(&self) -> usize {
+        self.trace.len()
+    }
+
     /// Clear the model.
     ///
     /// This resets the model back to zero trace items.
     pub fn clear(&mut self) {
         self.trace.clear();
+    }
+
+    /// Trim the model to the given bounds `[from, to]`.
+    pub fn trim(&mut self, from: usize, to: usize) {
+        self.trace.trim(from, to);
     }
 
     /// Compare this model against the given `other` model, and decide whether they are similar

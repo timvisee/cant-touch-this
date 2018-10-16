@@ -1,11 +1,12 @@
 use std::{
     fmt::{self, Display},
+    io::Result,
     sync::{Arc, Mutex},
 };
 
 use fragment::{Fragment, FragmentManager};
 use store::TemplateStore;
-use types::Model;
+use types::{Model, Template};
 
 /// Gesture controller, for controlling/orchestrating recognition and recording
 #[derive(Debug)]
@@ -28,6 +29,28 @@ impl GestureController {
             state: Mutex::new(State::default()),
             fragment_manager: Mutex::new(None),
         }
+    }
+
+    /// Create a new template based on the current fragment manager data, with the given name and
+    /// trim positions.
+    pub fn create(&self, name: String, from: usize, to: usize) -> Result<()> {
+        // Grab the longest model we can find
+        // TODO: improve this later to support multiple fragments in a template
+        let mut model = self
+            .fragment_manager
+            .lock()
+            .expect("failed to lock fragment manager to create new template")
+            .as_ref()
+            .expect("failed to unwrap fragment manager to create new template")
+            .longest_model()
+            // TODO: do not unwrap, return a proper error
+            .expect("no model with trace available");
+
+        // Trim the model
+        model.trim(from, to);
+
+        // Create the template
+        self.store.add(Template::new(name, model))
     }
 
     /// Attempt to detect gestures in the given collected fragment.
@@ -63,14 +86,14 @@ impl GestureController {
     /// Return live trace data, for visualisation.
     ///
     /// TODO: this is temporary until a better method is implemented.
-    pub fn get_live_trace(&self) -> Vec<Model> {
+    pub fn live_trace(&self) -> Vec<Model> {
         match self
             .fragment_manager
             .lock()
             .expect("failed to lock fragment manager")
             .as_ref()
         {
-            Some(manager) => manager.get_live_models(),
+            Some(manager) => manager.live_models(),
             None => Vec::new(),
         }
     }

@@ -74,13 +74,16 @@ $('#save_recording').on('click', function() {
         return;
     }
 
-    axios.get('/api/v1/template/save/' + encodeURIComponent(name) + '/' + trim[0] + '/' + trim[1])
+    // Send the create request
+    axios.get('/api/v1/template/create/' + encodeURIComponent(name) + '/' + trim[0] + '/' + trim[1])
         .then(function(response) {
-            console.log(response);
+            updateTemplateList();
+            sendState(STATE_NORMAL);
         })
         .catch(function(error) {
+            alert("An error occurred while saving your template");
             console.log(error);
-        })
+        });
 });
 
 $('#discard_recording').on('click', function() {
@@ -149,6 +152,7 @@ function setState(state) {
     }
 
     setShowTrimPanel(saving);
+    setShowVisualize(!recording && !saving);
 }
 
 /**
@@ -283,6 +287,15 @@ function deleteTemplateCallback() {
  */
 function setShowButton(button, show) {
     button.css('display', show ? 'inline-block' : 'none');
+}
+
+/**
+ * Set whehter to show the `Clear Visualize` button.
+ *
+ * @param {boolean} show True to show, false to hide.
+ */
+function setShowVisualize(show) {
+    setShowButton($('#toggle_visualize'), show);
 }
 
 /**

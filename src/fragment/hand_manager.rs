@@ -45,6 +45,17 @@ impl HandManager {
             .cloned()
     }
 
+    /// Find the longest model from the hand list.
+    /// If no model exists, `None` is returned instead.
+    pub fn longest_model(&self) -> Option<Model> {
+        self.hands
+            .lock()
+            .expect("failed to lock hands in fragment manager, for obtaining longest model")
+            .values()
+            .filter_map(|h| h.lock().expect("failed to lock hand to find longest model").longest_model())
+            .max_by_key(|m| m.len())
+    }
+
     /// Process a hand list frame from the sensor.
     pub fn process_sensor_hand_list(
         &self,
