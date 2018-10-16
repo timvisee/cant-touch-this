@@ -84,6 +84,16 @@ impl GestureController {
             .expect("failed to set fragment manager, unable to lock handle mutex")
             .replace(fragment_manager);
     }
+
+    /// Clear the current trace data.
+    pub fn clear(&self) {
+        self.fragment_manager
+            .lock()
+            .expect("failed to lock fragment manager to clear trace data")
+            .as_ref()
+            .expect("failed to unwrap fragment manager to clear trace data")
+            .clear();
+    }
 }
 
 /// The state the gesture controller may be in.

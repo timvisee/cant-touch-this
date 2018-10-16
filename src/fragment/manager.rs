@@ -46,5 +46,10 @@ impl FragmentManager {
         &self.hand
     }
 
+    /// Clear the hands.
+    pub fn clear(&self) {
+        self.hand.clear();
+    }
+
     // TODO: create a method for garbage collecting hands that haven't been updated in a while
 }

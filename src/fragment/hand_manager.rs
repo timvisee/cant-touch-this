@@ -96,4 +96,12 @@ impl HandManager {
             .filter_map(|hand| hand.lock().expect("failed to lock hand").get_live_model())
             .collect()
     }
+
+    /// Clear the hands.
+    pub fn clear(&self) {
+        self.hands
+            .lock()
+            .expect("failed to lock hands manager list to clear hands")
+            .clear();
+    }
 }

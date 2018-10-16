@@ -98,6 +98,11 @@ fn set_state(state: u8, gesture_controller: State<Arc<GestureController>>) -> Js
     // Set the state
     gesture_controller.set_state(state);
 
+    // Reset the gesture data if setting the state to normal
+    if let GestureState::Normal = state {
+        gesture_controller.clear();
+    }
+
     // Respond with the state
     Json(StateResponse { state: state.id() })
 }
