@@ -241,6 +241,10 @@ function updateTemplateList() {
                     .append($('<span class="id"></span>').text('id: ' + id))
                     .appendTo(list);
             });
+
+            // Show a message if there are no templates
+            if(templates.length === 0)
+                list.html("<i>No templates configured, create one!</i>");
         });
 }
 
