@@ -83,6 +83,11 @@ impl HandManager {
         hand_list: SensorHandList,
         guesture_controller: &Arc<GestureController>,
     ) {
+        // Do not process any data when saving
+        if !guesture_controller.state().should_track() {
+            return;
+        }
+
         // Loop through all hands
         for sensor_hand in hand_list.iter() {
             // Obtain our hand or create a new one

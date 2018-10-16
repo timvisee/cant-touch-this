@@ -164,6 +164,7 @@ impl State {
     }
 
     /// Determine whether we should track incomming trace data.
+    #[inline]
     pub fn should_track(&self) -> bool {
         match self {
             State::Saving => false,
@@ -172,6 +173,7 @@ impl State {
     }
 
     /// Determine whether we should detect gestures in incomming trace data.
+    #[inline]
     pub fn should_detect(&self) -> bool {
         match self {
             State::Normal => true,
