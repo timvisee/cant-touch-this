@@ -1,6 +1,8 @@
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
 
-use super::{Hand, HandManager};
+use leap::HandList as SensorHandList;
+
+use super::HandManager;
 use gesture::GestureController;
 use types::Model;
 
@@ -23,19 +25,6 @@ impl FragmentManager {
         }
     }
 
-    /// Add a hand with the given hand ID.
-    ///
-    /// Note: if a hand with the given ID already exists, it is returned instead.
-    pub fn create_hand(&self, id: i32) -> Arc<Mutex<Hand>> {
-        self.hand
-            .raw_mutex()
-            .lock()
-            .expect("failed to lock hands manager to add a new hand")
-            .entry(id)
-            .or_insert_with(|| Arc::new(Mutex::new(Hand::new(self.gesture_controller.clone()))))
-            .clone()
-    }
-
     /// Get the longest model from the fragment manager.
     ///
     /// If no model is available, `None` is returned instead.
@@ -48,14 +37,15 @@ impl FragmentManager {
         self.hand.get_live_models()
     }
 
-    /// Get the hand manager.
-    pub fn hand_manager(&self) -> &HandManager {
-        &self.hand
-    }
-
     /// Clear the hands.
     pub fn clear(&self) {
         self.hand.clear();
+    }
+
+    /// Process a hand list frame from the sensor.
+    #[inline]
+    pub fn process_sensor_hand_list(&self, hand_list: SensorHandList) {
+        self.hand.process_sensor_hand_list(hand_list, &self.gesture_controller);
     }
 
     // TODO: create a method for garbage collecting hands that haven't been updated in a while

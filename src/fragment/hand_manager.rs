@@ -4,8 +4,8 @@ use std::sync::{Arc, Mutex};
 use leap::HandList as SensorHandList;
 
 use super::Hand;
-use fragment::FragmentManager;
 use types::Model;
+use gesture::GestureController;
 
 /// A hand manager.
 #[derive(Debug)]
@@ -56,18 +56,27 @@ impl HandManager {
             .max_by_key(|m| m.len())
     }
 
+    /// Add a hand with the given hand ID.
+    ///
+    /// Note: if a hand with the given ID already exists, it is returned instead.
+    pub fn create_hand(&self, id: i32, gesture_controller: &Arc<GestureController>) -> Arc<Mutex<Hand>> {
+        self.hands
+            .lock()
+            .expect("failed to lock hands manager to add a new hand")
+            .entry(id)
+            .or_insert_with(|| Arc::new(Mutex::new(Hand::new(gesture_controller.clone()))))
+            .clone()
+    }
+
     /// Process a hand list frame from the sensor.
-    pub fn process_sensor_hand_list(
-        &self,
-        hand_list: SensorHandList,
-        fragment_manager: &Arc<FragmentManager>,
-    ) {
+    #[inline]
+    pub fn process_sensor_hand_list(&self, hand_list: SensorHandList, guesture_controller: &Arc<GestureController>) {
         // Loop through all hands
         for sensor_hand in hand_list.iter() {
             // Obtain our hand or create a new one
             let hand = self.get(sensor_hand.id()).unwrap_or_else(|| {
                 // Create hand in global fragment manager, add it to this manager
-                let hand = fragment_manager.create_hand(sensor_hand.id());
+                let hand = self.create_hand(sensor_hand.id(), guesture_controller);
                 self.add(sensor_hand.id(), hand.clone());
                 hand
             });
@@ -80,13 +89,6 @@ impl HandManager {
 
         // Retain hands from the hands map that aren't in view anymore
         self.retain_hands(&hand_list);
-        fragment_manager.hand_manager().retain_hands(&hand_list);
-    }
-
-    /// Get the mutex holding the raw hands.
-    /// This may be useful for externally managing the hands hashmap.
-    pub fn raw_mutex<'a>(&'a self) -> &'a Mutex<HashMap<i32, Arc<Mutex<Hand>>>> {
-        &self.hands
     }
 
     /// Only retain hands in this hand manager that are part of the given `hand_list`.

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use leap::{Controller as LeapController, Listener as LeapListener};
 
-use fragment::{FragmentManager, HandManager};
+use fragment::FragmentManager;
 
 /// Structure representing a motion sensor.
 pub struct Sensor {
@@ -24,10 +24,6 @@ impl Sensor {
 /// This listener handles incomming events from the sensor,
 /// and processes it's data.
 pub struct SensorListener {
-    /// A hand manager, which keeps a list of all hands that have recently been tracked by the
-    /// sensor, so these are easily accessible when new data arrives.
-    hands: HandManager,
-
     /// The global fragment manager.
     fragment_manager: Arc<FragmentManager>,
 }
@@ -35,10 +31,7 @@ pub struct SensorListener {
 impl SensorListener {
     /// Construct a new sensor listener.
     pub fn new(fragment_manager: Arc<FragmentManager>) -> Self {
-        Self {
-            hands: HandManager::new(),
-            fragment_manager,
-        }
+        Self { fragment_manager }
     }
 }
 
@@ -53,8 +46,7 @@ impl LeapListener for SensorListener {
         // );
 
         // Process the hand frame data in the hand manager
-        self.hands
-            .process_sensor_hand_list(frame.hands(), &self.fragment_manager);
+        self.fragment_manager.process_sensor_hand_list(frame.hands());
     }
 
     fn on_connect(&mut self, _: &LeapController) {
