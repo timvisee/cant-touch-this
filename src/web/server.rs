@@ -35,11 +35,11 @@ impl Server {
                 routes![
                     index,
                     template_index,
+                    create_template,
                     delete_template,
-                    save_template,
-                    record,
-                    set_record,
-                    visualizer_points
+                    state,
+                    set_state,
+                    visualizer,
                 ],
             )
             .mount("/css", StaticFiles::from("res/static/css"))
@@ -64,6 +64,16 @@ fn template_index(store: State<Arc<TemplateStore>>) -> Json<TemplateIndexRespons
     })
 }
 
+#[get("/api/v1/template/create/<name>/<from>/<to>")]
+fn create_template(
+    name: String,
+    from: usize,
+    to: usize,
+    gesture_controller: State<Arc<GestureController>>,
+) -> Json<bool> {
+    Json(gesture_controller.create(name, from, to).is_ok())
+}
+
 #[get("/api/v1/template/<id>/delete")]
 fn delete_template(id: u32, store: State<Arc<TemplateStore>>) -> Json<bool> {
     store
@@ -72,48 +82,46 @@ fn delete_template(id: u32, store: State<Arc<TemplateStore>>) -> Json<bool> {
     Json(true)
 }
 
-#[get("/api/v1/template/save")]
-fn save_template() -> &'static str {
-    // TODO: Pass data into this method, then save it to the template file
-    "hello, world"
-}
-
 #[derive(Serialize, Deserialize)]
 struct TemplateIndexResponse {
     templates: Vec<GestureTemplate>,
 }
 
 #[get("/api/v1/state")]
-fn record(gesture_controller: State<Arc<GestureController>>) -> Json<RecordResponse> {
-    Json(RecordResponse {
+fn state(gesture_controller: State<Arc<GestureController>>) -> Json<StateResponse> {
+    Json(StateResponse {
         state: gesture_controller.state().id(),
     })
 }
 
 #[get("/api/v1/state/<state>")]
-fn set_record(
-    state: u8,
-    gesture_controller: State<Arc<GestureController>>,
-) -> Json<RecordResponse> {
+fn set_state(state: u8, gesture_controller: State<Arc<GestureController>>) -> Json<StateResponse> {
     // Parse the state
     let state = GestureState::from_id(state).expect("failed to parse state ID");
 
     // Set the state
     gesture_controller.set_state(state);
 
+    // Reset the gesture data if setting the state to normal
+    if let GestureState::Normal = state {
+        gesture_controller.clear();
+    }
+
     // Respond with the state
-    Json(RecordResponse { state: state.id() })
+    Json(StateResponse { state: state.id() })
 }
 
 #[derive(Serialize, Deserialize)]
-struct RecordResponse {
+struct StateResponse {
     state: u8,
 }
 
-#[get("/api/v1/visualizer/points")]
-fn visualizer_points(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
+// TODO: input trim values when saving
+// TODO: trim trace before outputting when saving
+#[get("/api/v1/visualizer")]
+fn visualizer(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
     // Get the live data models
-    let models = gesture_controller.get_live_trace();
+    let models = gesture_controller.live_trace();
 
     // Respond with the state
     Json(LiveTraceResponse { models })

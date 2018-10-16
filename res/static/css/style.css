@@ -6,9 +6,13 @@
     border: 1px solid lightgray;
 }
 
-#save_recording,
+.trim-panel,
 #clear_visual {
     display: none;
+}
+
+#trim-slider {
+    width: 800px;
 }
 
 .row {

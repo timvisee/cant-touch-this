@@ -4,7 +4,7 @@ use std::sync::{Arc, Mutex};
 use leap::HandList as SensorHandList;
 
 use super::Hand;
-use fragment::FragmentManager;
+use gesture::GestureController;
 use types::Model;
 
 /// A hand manager.
@@ -45,18 +45,55 @@ impl HandManager {
             .cloned()
     }
 
+    /// Find the longest model from the hand list.
+    /// If no model exists, `None` is returned instead.
+    pub fn longest_model(&self) -> Option<Model> {
+        self.hands
+            .lock()
+            .expect("failed to lock hands in fragment manager, for obtaining longest model")
+            .values()
+            .filter_map(|h| {
+                h.lock()
+                    .expect("failed to lock hand to find longest model")
+                    .longest_model()
+            })
+            .max_by_key(|m| m.len())
+    }
+
+    /// Add a hand with the given hand ID.
+    ///
+    /// Note: if a hand with the given ID already exists, it is returned instead.
+    pub fn create_hand(
+        &self,
+        id: i32,
+        gesture_controller: &Arc<GestureController>,
+    ) -> Arc<Mutex<Hand>> {
+        self.hands
+            .lock()
+            .expect("failed to lock hands manager to add a new hand")
+            .entry(id)
+            .or_insert_with(|| Arc::new(Mutex::new(Hand::new(gesture_controller.clone()))))
+            .clone()
+    }
+
     /// Process a hand list frame from the sensor.
+    #[inline]
     pub fn process_sensor_hand_list(
         &self,
         hand_list: SensorHandList,
-        fragment_manager: &Arc<FragmentManager>,
+        guesture_controller: &Arc<GestureController>,
     ) {
+        // Do not process any data when saving
+        if !guesture_controller.state().should_track() {
+            return;
+        }
+
         // Loop through all hands
         for sensor_hand in hand_list.iter() {
             // Obtain our hand or create a new one
             let hand = self.get(sensor_hand.id()).unwrap_or_else(|| {
                 // Create hand in global fragment manager, add it to this manager
-                let hand = fragment_manager.create_hand(sensor_hand.id());
+                let hand = self.create_hand(sensor_hand.id(), guesture_controller);
                 self.add(sensor_hand.id(), hand.clone());
                 hand
             });
@@ -69,13 +106,6 @@ impl HandManager {
 
         // Retain hands from the hands map that aren't in view anymore
         self.retain_hands(&hand_list);
-        fragment_manager.hand_manager().retain_hands(&hand_list);
-    }
-
-    /// Get the mutex holding the raw hands.
-    /// This may be useful for externally managing the hands hashmap.
-    pub fn raw_mutex<'a>(&'a self) -> &'a Mutex<HashMap<i32, Arc<Mutex<Hand>>>> {
-        &self.hands
     }
 
     /// Only retain hands in this hand manager that are part of the given `hand_list`.
@@ -95,5 +125,13 @@ impl HandManager {
             .values()
             .filter_map(|hand| hand.lock().expect("failed to lock hand").get_live_model())
             .collect()
+    }
+
+    /// Clear the hands.
+    pub fn clear(&self) {
+        self.hands
+            .lock()
+            .expect("failed to lock hands manager list to clear hands")
+            .clear();
     }
 }

@@ -132,6 +132,11 @@ impl PointTrace {
         }
     }
 
+    /// Clear the whole trace.
+    pub fn clear(&mut self) {
+        self.points.clear();
+    }
+
     /// Clear most of the trace, except for the last few (newest) points as
     /// specified in `config::recognition::KEEP_POINTS`.
     ///
@@ -165,6 +170,24 @@ impl RotTrace {
     /// Get a reference to the rotation points in this trace.
     pub fn points(&self) -> &Vec<RotPoint> {
         &self.points
+    }
+
+    /// Get the number of points in this trace.
+    pub fn len(&self) -> usize {
+        self.points.len()
+    }
+
+    /// Trim the trace to the given bounds `[from, to]`.
+    ///
+    /// The bounds may be greater than the actual trace itself.
+    pub fn trim(&mut self, from: usize, to: usize) {
+        self.points = self
+            .points
+            .iter()
+            .skip(from)
+            .take(to - from)
+            .cloned()
+            .collect();
     }
 
     /// Clear the trace.

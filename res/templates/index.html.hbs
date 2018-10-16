@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
+    <!-- jQuery and bootstrap CSS -->
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 
@@ -26,7 +27,6 @@
         <div class="col">
           <p>
             <button id="toggle_record" type="button" class="btn btn-outline-success">Start recording</button>
-            <button id="save_recording" type="button" class="btn btn-outline-primary">Save recording</button>
             <button id="toggle_visualize" type="button" class="btn btn-outline-success">Visualize</button>
             <button id="clear_visual" type="button" class="btn btn-outline-warning">Clear Visual</button>
           </p>
@@ -35,6 +35,25 @@
       <div class="row">
         <div class="col">
           <h5>Visual</h5>
+
+          <div class="trim-panel">
+            <form>
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input id="name" name="name" type="text" placeholder="My template" />
+              </div>
+              <div class="form-group">
+                <label for="amount">Trace:</label>
+                <input type="text" id="trim" name="trim" readonly style="border: 0;">
+                <div id="trim-slider"></div>
+              </div>
+              <div class="form-group">
+                <button id="save_recording" type="button" class="btn btn-success">Save</button>
+                <button id="discard_recording" type="button" class="btn btn-outline-danger">Discard</button>
+              </div>
+            </form>
+          </div>
+
           <canvas id="visualizer" width="800" height="400"/>
         </div>
       </div>
@@ -47,11 +66,8 @@
     </div>
 
     <!-- JavaScript -->
-    <!-- <script src="js/jquery.min.js"></script> -->
-    <!-- <script src="js/popper.min.js"></script> -->
-    <!-- <script src="js/bootstrap.min.js"></script> -->
-    <!-- <script src="js/axios.min.js"></script> -->
     <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://unpkg.com/popper.js@1.14.4/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>

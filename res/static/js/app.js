@@ -28,61 +28,119 @@ const STATE_RECORDING = 1;
  */
 const STATE_SAVING = 2;
 
+/**
+ * The current gesture controller state.
+ */
+var state = STATE_NORMAL;
+
+/**
+ * The trim values.
+ */
+var trim = [0, 0];
+
 $('#toggle_record').on('click', function() {
     let recording = $(this).hasClass("btn-danger");
-    let state = recording ? STATE_SAVING : STATE_RECORDING;
+    let new_state = recording ? (models.length > 0 ? STATE_SAVING : STATE_NORMAL) : STATE_RECORDING;
 
-    // Update the state on the server
-    axios.get('/api/v1/state/' + state)
-        .then(function(response) {
-            console.log(response);
-            setState(response.data.state);
-        })
-        .catch(function(error) {
-            console.log(error);
-        });
-});
-
-$('#save_recording').on('click', function() {
-    axios.get('/api/v1/template/save')
-        .then(function(response) {
-            console.log(response);
-        })
-        .catch(function(error) {
-            console.log(error);
-        })
+    // Send the new state
+    sendState(new_state);
 });
 
 $('#clear_visual').on('click', function() {
     // Render the visualizer with no model data
-    renderVisualizer([]);
+    models = [];
+    renderVisualizer(models);
 
     // Hide the button
     setShowClearVisualize(false);
 });
 
+$('#save_recording').on('click', function() {
+    // Get the name
+    let name = $('#name').val();
+
+    // Validate the name and trim data
+    if(name.length <= 0) {
+        alert("Please provide a template name");
+        return;
+    }
+    if(trim === undefined || trim[0] < 0 || trim[0] > trim[1]) {
+        alert("Incorrect trim data");
+        console.error(trim);
+        return;
+    }
+    if(trim[1] - trim[0] < 5) {
+        alert("The trace must be at least 5 frames long");
+        return;
+    }
+
+    // Send the create request
+    axios.get('/api/v1/template/create/' + encodeURIComponent(name) + '/' + trim[0] + '/' + trim[1])
+        .then(function(response) {
+            updateTemplateList();
+            sendState(STATE_NORMAL);
+        })
+        .catch(function(error) {
+            alert("An error occurred while saving your template");
+            console.log(error);
+        });
+});
+
+$('#discard_recording').on('click', function() {
+    // Render the visualizer with no model data
+    models = [];
+    renderVisualizer(models);
+
+    // Hide the trim panel
+    setShowTrimPanel(false);
+
+    // Send the new state to the server
+    sendState(STATE_NORMAL);
+});
+
 // Fetch the current status from the server
 $(document).ready(function() {
-    // TODO: comment-out function that is not yet available
-    // hideSaveButton();
-
     fetchState();
 
     // Updat the list of templates
     updateTemplateList();
 
     initVisualizer();
+
+    // Build the trim slider
+    buildTrimSlider();
 });
 
 /**
+ * Send a new state to the server.
+ *
+ * @param {int} new_state The new state to send.
+ */
+function sendState(new_state) {
+    // Update the state on the server
+    axios.get('/api/v1/state/' + new_state)
+        .then(function(response) {
+            console.log("State: " + new_state);
+            state = response.data.state;
+            setState(state);
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+}
+
+/**
  * Set the state.
+ *
+ * @param {int} state The state.
  */
 function setState(state) {
     let button = $('#toggle_record');
     let recording = state == STATE_RECORDING;
+    let saving = state == STATE_SAVING;
 
     if(recording) {
-        button.text("Cancel recording");
+        button.text("Recording...");
         button.removeClass("btn-outline-success");
         button.addClass("btn-danger");
 
@@ -93,7 +151,40 @@ function setState(state) {
         button.addClass("btn-outline-success");
     }
 
-    setShowSaveRecording(recording);
+    setShowTrimPanel(saving);
+    setShowVisualize(!recording && !saving);
+}
+
+/**
+ * Build the trim slider.
+ */
+function buildTrimSlider() {
+    // Configure the trim range slider
+    $("#trim-slider").slider({
+        range: true,
+        min: 0,
+        max: 100,
+        values: [0, 100],
+        slide: function(event, ui) {
+            // Update the trim values
+            trim = ui.values;
+
+            // Update the range label
+            $("#trim").val(ui.values[0] + " - " + ui.values[1] + " frames");
+
+            // Rerender the trimmed visuals
+            if(models !== undefined)
+                renderVisualizer(models);
+        }
+    });
+
+    // Set the initial trim value
+    $("#trim").val(
+        $("#trim-slider").slider("values", 0) +
+        " - " +
+        $("#trim-slider").slider("values", 100) +
+        " frames"
+    );
 }
 
 /**
@@ -103,7 +194,9 @@ function setState(state) {
 function fetchState() {
     axios.get('/api/v1/state')
         .then(function(response) {
-            setState(response.data.recording);
+            // Update the state
+            state = response.data.recording;
+            setState(state);
         })
         .catch(function(error) {
             console.log(error);
@@ -148,6 +241,10 @@ function updateTemplateList() {
                     .append($('<span class="id"></span>').text('id: ' + id))
                     .appendTo(list);
             });
+
+            // Show a message if there are no templates
+            if(templates.length === 0)
+                list.html("<i>No templates configured, create one!</i>");
         });
 }
 
@@ -201,17 +298,37 @@ function setShowButton(button, show) {
  *
  * @param {boolean} show True to show, false to hide.
  */
+function setShowVisualize(show) {
+    setShowButton($('#toggle_visualize'), show);
+}
+
+/**
+ * Set whehter to show the `Clear Visualize` button.
+ *
+ * @param {boolean} show True to show, false to hide.
+ */
 function setShowClearVisualize(show) {
     setShowButton($('#clear_visual'), show);
 }
 
 /**
- * Set whehter to show the `Save Recording` button.
+ * Set whether to show the trim panel.
  *
  * @param {boolean} show True to show, false to hide.
  */
-function setShowSaveRecording(show) {
-    setShowButton($('#save_recording'), show);
+function setShowTrimPanel(show) {
+    $('.trim-panel').css('display', show ? 'inline' : 'none');
+
+    // If the slider is shown, update it seeded by the last data
+    if(show) {
+        // Count the frames the recording has
+        trim = [0, models[0].trace.points.length];
+
+        // Update the slider bounds and default value
+        let slider = $("#trim-slider");
+        slider.slider("option", "max", trim[1]);
+        slider.slider("option", "values", trim);
+    }
 }
 
 
@@ -226,6 +343,11 @@ var visualizer = null;
  * The timer that is used for requesting visualizer data.
  */
 var visualizerTimer = null;
+
+/**
+ * The last model data we received.
+ */
+var models = [];
 
 $('#toggle_visualize').on('click', function() {
     let visualizing = $(this).hasClass("btn-danger");
@@ -257,10 +379,10 @@ function initVisualizer() {
  */
 function fetchVisualizer() {
     return new Promise(function(resolve, reject) {
-        axios.get('/api/v1/visualizer/points')
+        axios.get('/api/v1/visualizer')
             .then(function(response) {
                 // Get the models
-                let models = response.data.models;
+                models = response.data.models;
 
                 // Visualize and resolve
                 renderVisualizer(models);
@@ -326,7 +448,13 @@ function renderVisualizer(models) {
 
     // Render each model
     models.forEach(function(model, i) {
-        _renderVisualizerTrace(context, model.trace.points, i);
+        // Trim the points in the save state
+        let points = model.trace.points;
+        if(state === STATE_SAVING)
+            points = points.slice(trim[0], trim[1]);
+
+        // Render the trace
+        _renderVisualizerTrace(context, points, i);
     });
 }
 

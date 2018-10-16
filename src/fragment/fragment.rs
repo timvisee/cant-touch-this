@@ -64,6 +64,12 @@ impl Fragment {
         }
     }
 
+    /// Clear the whole trace.
+    pub fn clear(&mut self) {
+        self.raw.clear();
+        self.model.clear();
+    }
+
     /// Clear most of the trace, except for the last few (newest) points as
     /// specified in `config::recognition::KEEP_POINTS`.
     ///

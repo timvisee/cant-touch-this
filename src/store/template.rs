@@ -369,6 +369,18 @@ impl TemplateStore {
         }
     }
 
+    /// Add the given template.
+    pub fn add(&self, template: Template) -> Result<()> {
+        // Add the template
+        self.templates
+            .lock()
+            .expect("failed to lock templates list to remove item")
+            .push(template);
+
+        // Save the results
+        self.save()
+    }
+
     /// Delete the template with the given `id`.
     /// Nothing happends if no template exists with the specified `id`.
     ///
