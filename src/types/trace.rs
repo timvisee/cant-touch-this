@@ -181,7 +181,13 @@ impl RotTrace {
     ///
     /// The bounds may be greater than the actual trace itself.
     pub fn trim(&mut self, from: usize, to: usize) {
-        self.points = self.points.iter().skip(from).take(to - from).cloned().collect();
+        self.points = self
+            .points
+            .iter()
+            .skip(from)
+            .take(to - from)
+            .cloned()
+            .collect();
     }
 
     /// Clear the trace.

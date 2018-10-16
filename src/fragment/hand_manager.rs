@@ -4,8 +4,8 @@ use std::sync::{Arc, Mutex};
 use leap::HandList as SensorHandList;
 
 use super::Hand;
-use types::Model;
 use gesture::GestureController;
+use types::Model;
 
 /// A hand manager.
 #[derive(Debug)]
@@ -52,14 +52,22 @@ impl HandManager {
             .lock()
             .expect("failed to lock hands in fragment manager, for obtaining longest model")
             .values()
-            .filter_map(|h| h.lock().expect("failed to lock hand to find longest model").longest_model())
+            .filter_map(|h| {
+                h.lock()
+                    .expect("failed to lock hand to find longest model")
+                    .longest_model()
+            })
             .max_by_key(|m| m.len())
     }
 
     /// Add a hand with the given hand ID.
     ///
     /// Note: if a hand with the given ID already exists, it is returned instead.
-    pub fn create_hand(&self, id: i32, gesture_controller: &Arc<GestureController>) -> Arc<Mutex<Hand>> {
+    pub fn create_hand(
+        &self,
+        id: i32,
+        gesture_controller: &Arc<GestureController>,
+    ) -> Arc<Mutex<Hand>> {
         self.hands
             .lock()
             .expect("failed to lock hands manager to add a new hand")
@@ -70,7 +78,11 @@ impl HandManager {
 
     /// Process a hand list frame from the sensor.
     #[inline]
-    pub fn process_sensor_hand_list(&self, hand_list: SensorHandList, guesture_controller: &Arc<GestureController>) {
+    pub fn process_sensor_hand_list(
+        &self,
+        hand_list: SensorHandList,
+        guesture_controller: &Arc<GestureController>,
+    ) {
         // Loop through all hands
         for sensor_hand in hand_list.iter() {
             // Obtain our hand or create a new one

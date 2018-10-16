@@ -45,7 +45,8 @@ impl FragmentManager {
     /// Process a hand list frame from the sensor.
     #[inline]
     pub fn process_sensor_hand_list(&self, hand_list: SensorHandList) {
-        self.hand.process_sensor_hand_list(hand_list, &self.gesture_controller);
+        self.hand
+            .process_sensor_hand_list(hand_list, &self.gesture_controller);
     }
 
     // TODO: create a method for garbage collecting hands that haven't been updated in a while

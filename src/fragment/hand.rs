@@ -30,7 +30,11 @@ impl Hand {
     ///
     /// If there is no model, `None` is returned instead.
     pub fn longest_model(&self) -> Option<Model> {
-        self.fingers.values().map(|f| f.model()).max_by_key(|m| m.len()).cloned()
+        self.fingers
+            .values()
+            .map(|f| f.model())
+            .max_by_key(|m| m.len())
+            .cloned()
     }
 
     /// Process a sensor hand frame from the sensor.

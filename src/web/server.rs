@@ -65,10 +65,13 @@ fn template_index(store: State<Arc<TemplateStore>>) -> Json<TemplateIndexRespons
 }
 
 #[get("/api/v1/template/create/<name>/<from>/<to>")]
-fn create_template(name: String, from: usize, to: usize, gesture_controller: State<Arc<GestureController>>) -> Json<bool> {
-    Json(
-        gesture_controller.create(name, from, to).is_ok(),
-    )
+fn create_template(
+    name: String,
+    from: usize,
+    to: usize,
+    gesture_controller: State<Arc<GestureController>>,
+) -> Json<bool> {
+    Json(gesture_controller.create(name, from, to).is_ok())
 }
 
 #[get("/api/v1/template/<id>/delete")]
