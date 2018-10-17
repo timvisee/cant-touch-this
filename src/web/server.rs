@@ -83,10 +83,7 @@ fn add_builtin_templates(template_store: State<Arc<TemplateStore>>) -> Json<bool
 
 #[get("/api/v1/template/<id>/delete")]
 fn delete_template(id: u32, store: State<Arc<TemplateStore>>) -> Json<bool> {
-    store
-        .delete(id)
-        .expect("failed to delete template and save list");
-    Json(true)
+    Json(store.delete(id).is_ok())
 }
 
 #[get("/api/v1/template/delete_all")]
