@@ -37,6 +37,7 @@ impl Server {
                     template_index,
                     create_template,
                     add_builtin_templates,
+                    delete_all_templates,
                     delete_template,
                     state,
                     set_state,
@@ -86,6 +87,11 @@ fn delete_template(id: u32, store: State<Arc<TemplateStore>>) -> Json<bool> {
         .delete(id)
         .expect("failed to delete template and save list");
     Json(true)
+}
+
+#[get("/api/v1/template/delete_all")]
+fn delete_all_templates(template_store: State<Arc<TemplateStore>>) -> Json<bool> {
+    Json(template_store.delete_all().is_ok())
 }
 
 #[derive(Serialize, Deserialize)]

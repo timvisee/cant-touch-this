@@ -66,6 +66,18 @@ impl TemplateStore {
         self.save()
     }
 
+    /// Delete all templates.
+    pub fn delete_all(&self) -> Result<()> {
+        // Remove the template
+        self.templates
+            .lock()
+            .expect("failed to lock templates list to delete all")
+            .clear();
+
+        // Save the results
+        self.save()
+    }
+
     /// Get a list of templates available in this store.
     ///
     /// This method is expensive, as it clones the list of templates.

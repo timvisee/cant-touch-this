@@ -129,6 +129,18 @@ $('#add_builtin_templates').on('click', function() {
         });
 });
 
+$('#delete_all_templates').on('click', function() {
+    // Update the state on the server
+    axios.get('/api/v1/template/delete_all')
+        .then(function() {
+            updateTemplateList();
+        })
+        .catch(function(error) {
+            alert('Failed to reset templates');
+            console.log(error);
+        });
+});
+
 // Fetch the current status from the server
 $(document).ready(function() {
     fetchState();
