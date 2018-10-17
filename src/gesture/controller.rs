@@ -95,8 +95,7 @@ impl GestureController {
         println!("# Detected: {}", template.name());
 
         // TODO: do not clone here
-        self
-            .detected
+        self.detected
             .lock()
             .expect("failed to lock list of detected gestures")
             .push(template);
@@ -109,10 +108,13 @@ impl GestureController {
         let mut detected = Vec::new();
 
         // Swap the current list with the empty list
-        mem::swap(&mut *self
-            .detected
-            .lock()
-            .expect("failed to lock list of detected gestures"), &mut detected);
+        mem::swap(
+            &mut *self
+                .detected
+                .lock()
+                .expect("failed to lock list of detected gestures"),
+            &mut detected,
+        );
 
         detected
     }
