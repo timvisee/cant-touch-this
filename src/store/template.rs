@@ -18,7 +18,7 @@ impl TemplateStore {
     /// Construct a new empty template store
     pub fn new() -> Self {
         Self {
-            templates: Mutex::new(builtin_templates()),
+            templates: Mutex::new(Vec::new()),
         }
     }
 
@@ -27,11 +27,28 @@ impl TemplateStore {
         // Add the template
         self.templates
             .lock()
-            .expect("failed to lock templates list to remove item")
+            .expect("failed to lock templates list to add item")
             .push(template);
 
         // Save the results
         self.save()
+    }
+
+    /// Add a list of templates.
+    pub fn add_list(&self, mut templates: Vec<Template>) -> Result<()> {
+        // Add the template
+        self.templates
+            .lock()
+            .expect("failed to lock templates list to add items")
+            .append(&mut templates);
+
+        // Save the results
+        self.save()
+    }
+
+    /// Add the built-in list of templates to the store.
+    pub fn add_builtin(&self) -> Result<()> {
+        self.add_list(builtin_templates())
     }
 
     /// Delete the template with the given `id`.

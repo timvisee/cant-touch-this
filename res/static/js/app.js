@@ -117,6 +117,18 @@ $('#discard_recording').on('click', function() {
     sendState(STATE_NORMAL);
 });
 
+$('#add_builtin_templates').on('click', function() {
+    // Update the state on the server
+    axios.get('/api/v1/template/add_builtin')
+        .then(function() {
+            updateTemplateList();
+        })
+        .catch(function(error) {
+            alert('Failed to add built-in templates');
+            console.log(error);
+        });
+});
+
 // Fetch the current status from the server
 $(document).ready(function() {
     fetchState();
@@ -262,7 +274,7 @@ function updateTemplateList() {
 
             // Show a message if there are no templates
             if(templates.length === 0)
-                list.html("<i>No templates configured, create one!</i>");
+                list.html("<i>No templates configured, create one or add built-in templates using the button below!</i>");
         });
 }
 

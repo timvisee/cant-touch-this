@@ -36,6 +36,7 @@ impl Server {
                     index,
                     template_index,
                     create_template,
+                    add_builtin_templates,
                     delete_template,
                     state,
                     set_state,
@@ -72,6 +73,11 @@ fn create_template(
     gesture_controller: State<Arc<GestureController>>,
 ) -> Json<bool> {
     Json(gesture_controller.create(name, from, to).is_ok())
+}
+
+#[get("/api/v1/template/add_builtin")]
+fn add_builtin_templates(template_store: State<Arc<TemplateStore>>) -> Json<bool> {
+    Json(template_store.add_builtin().is_ok())
 }
 
 #[get("/api/v1/template/<id>/delete")]
