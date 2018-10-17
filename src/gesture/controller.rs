@@ -214,6 +214,16 @@ impl State {
             _ => false,
         }
     }
+
+    /// Determine whether we should clean up hand/trace data for hands that aren't in view of the
+    /// sensor anymore.
+    #[inline]
+    pub fn should_cleanup(&self) -> bool {
+        match self {
+            State::Saving => false,
+            _ => true,
+        }
+    }
 }
 
 impl Default for State {

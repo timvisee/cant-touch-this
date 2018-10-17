@@ -83,8 +83,11 @@ impl HandManager {
         hand_list: SensorHandList,
         guesture_controller: &Arc<GestureController>,
     ) {
+        // Get the gesture controller state
+        let state = guesture_controller.state();
+
         // Do not process any data when saving
-        if !guesture_controller.state().should_track() {
+        if !state.should_track() {
             return;
         }
 
@@ -105,7 +108,9 @@ impl HandManager {
         }
 
         // Retain hands from the hands map that aren't in view anymore
-        self.retain_hands(&hand_list);
+        if state.should_cleanup() {
+            self.retain_hands(&hand_list);
+        }
     }
 
     /// Only retain hands in this hand manager that are part of the given `hand_list`.
