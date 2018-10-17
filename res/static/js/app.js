@@ -29,6 +29,25 @@ const STATE_RECORDING = 1;
 const STATE_SAVING = 2;
 
 /**
+ * Notify library settings.
+ */
+const NOTIFY_SETTINGS = {
+    type: 'info',
+    allow_dismiss: true,
+    placement: {
+        from: 'top',
+        align: 'center'
+    },
+    timer: 1000,
+    delay: 1000,
+};
+
+/**
+ * The polling rate/interval of the visualizer in milliseconds.
+ */
+const VISUALIZER_INTERVAL = 50;
+
+/**
  * The current gesture controller state.
  */
 var state = STATE_NORMAL;
@@ -120,7 +139,6 @@ function sendState(new_state) {
     // Update the state on the server
     axios.get('/api/v1/state/' + new_state)
         .then(function(response) {
-            console.log("State: " + new_state);
             state = response.data.state;
             setState(state);
         })
@@ -381,8 +399,17 @@ function fetchVisualizer() {
     return new Promise(function(resolve, reject) {
         axios.get('/api/v1/visualizer')
             .then(function(response) {
-                // Get the models
+                // Get the models and detected gestures
                 models = response.data.models;
+                let detected = response.data.detected;
+
+                // Render a notification showing the detected gesture
+                if(detected !== undefined)
+                    detected.forEach((gesture) =>
+                        $.notify({
+                            message: 'Detected: ' + gesture.name,
+                        }, NOTIFY_SETTINGS)
+                    );
 
                 // Visualize and resolve
                 renderVisualizer(models);
@@ -413,7 +440,7 @@ function setLiveVisualize(enabled) {
 
     // Build a new visualization timer
     if(enabled)
-        visualizerTimer = setInterval(fetchVisualizer, 50);
+        visualizerTimer = setInterval(fetchVisualizer, VISUALIZER_INTERVAL);
 
     // Set the button state
     let button = $('#toggle_visualize');
