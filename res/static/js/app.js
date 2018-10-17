@@ -213,7 +213,7 @@ function fetchState() {
     axios.get('/api/v1/state')
         .then(function(response) {
             // Update the state
-            state = response.data.recording;
+            state = response.data.state;
             setState(state);
         })
         .catch(function(error) {
