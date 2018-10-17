@@ -120,14 +120,16 @@ struct StateResponse {
 // TODO: trim trace before outputting when saving
 #[get("/api/v1/visualizer")]
 fn visualizer(gesture_controller: State<Arc<GestureController>>) -> Json<LiveTraceResponse> {
-    // Get the live data models
+    // Get the live data models and detected gestures
     let models = gesture_controller.live_trace();
+    let detected = gesture_controller.flush_detected();
 
     // Respond with the state
-    Json(LiveTraceResponse { models })
+    Json(LiveTraceResponse { models, detected })
 }
 
 #[derive(Serialize, Deserialize)]
 struct LiveTraceResponse {
     models: Vec<Model>,
+    detected: Vec<GestureTemplate>,
 }

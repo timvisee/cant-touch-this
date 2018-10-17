@@ -1,6 +1,7 @@
 use std::{
     fmt::{self, Display},
     io::Result,
+    mem,
     sync::{Arc, Mutex},
 };
 
@@ -17,6 +18,9 @@ pub struct GestureController {
     /// The state.
     state: Mutex<State>,
 
+    /// A list of detected templates.
+    detected: Mutex<Vec<Template>>,
+
     /// The fragment manager.
     pub fragment_manager: Mutex<Option<Arc<FragmentManager>>>,
 }
@@ -27,6 +31,7 @@ impl GestureController {
         Self {
             store,
             state: Mutex::new(State::default()),
+            detected: Mutex::new(Vec::new()),
             fragment_manager: Mutex::new(None),
         }
     }
@@ -61,8 +66,8 @@ impl GestureController {
             // Clear the history to prevent overlapping detections
             fragment.clear_most();
 
-            // Report
-            println!("### HIT: {}", template.name());
+            // Add the template as detected
+            self.add_detected(template);
         }
     }
 
@@ -81,6 +86,35 @@ impl GestureController {
             .state
             .lock()
             .expect("failed to lock gesture controller state") = state;
+    }
+
+    /// Add the given template to the list of detected templates.
+    /// This function also reports the detected gesture to the console.
+    fn add_detected(&self, template: Template) {
+        // Report
+        println!("# Detected: {}", template.name());
+
+        // TODO: do not clone here
+        self
+            .detected
+            .lock()
+            .expect("failed to lock list of detected gestures")
+            .push(template);
+    }
+
+    /// Flush the list of detected gestures.
+    /// The flushed list is returned.
+    pub fn flush_detected(&self) -> Vec<Template> {
+        // Create a new empty list
+        let mut detected = Vec::new();
+
+        // Swap the current list with the empty list
+        mem::swap(&mut *self
+            .detected
+            .lock()
+            .expect("failed to lock list of detected gestures"), &mut detected);
+
+        detected
     }
 
     /// Return live trace data, for visualisation.
