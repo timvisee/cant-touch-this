@@ -64,9 +64,4 @@ impl Hand {
             .get(&FingerType::Index)
             .map(|fragment| fragment.model().clone())
     }
-
-    /// Clear the hand fragments/traces.
-    pub fn clear(&mut self) {
-        self.fingers.clear();
-    }
 }
