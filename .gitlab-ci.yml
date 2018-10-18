@@ -10,7 +10,7 @@ before_script:
   - apt-get install -yqq --no-install-recommends curl build-essential cmake pkg-config
 
   # Use Rust nightly
-  - rustup default nightly
+  - rustup default nightly-2018-10-16
   - rustc --version && cargo --version
 
   # Install the Leap Motion SDK
@@ -20,7 +20,7 @@ fmt:
   stage: lint
   before_script:
     # Install Rust nightly with rustfmt
-    - rustup default nightly
+    - rustup default nightly-2018-10-16
     - rustup component add rustfmt-preview
     - rustc --version && cargo --version
   script:
