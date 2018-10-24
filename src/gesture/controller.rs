@@ -92,7 +92,7 @@ impl GestureController {
     /// This function also reports the detected gesture to the console.
     fn add_detected(&self, template: Template) {
         // Report
-        println!("# Detected: {}", template.name());
+        println!("-> Detected: {}", template.name());
 
         // TODO: do not clone here
         self.detected

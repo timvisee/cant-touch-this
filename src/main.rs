@@ -1,10 +1,4 @@
-#![feature(
-    decl_macro,
-    plugin,
-    proc_macro_hygiene,
-    test,
-    euclidean_division
-)]
+#![feature(decl_macro, plugin, proc_macro_hygiene, test, euclidean_division)]
 
 #[macro_use]
 extern crate clap;
