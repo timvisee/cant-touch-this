@@ -2,7 +2,7 @@ image: rust
 
 stages:
   - lint
-  - test
+  - build
 
 before_script:
   # Update and install dependencies
@@ -31,13 +31,10 @@ clippy:
   script:
     - rustup component add clippy-preview
     - cargo clippy --all
-    - cargo clippy --all --features web
 
 # Build and test the project
 build:
-  stage: test
+  stage: build
   script:
     - cargo build --all --verbose
-    - cargo build --all --features web --verbose
     - cargo test --all --verbose
-    - cargo test --all --features web --verbose
