@@ -26,12 +26,12 @@ fmt:
   script:
     - cargo fmt --all -- --check
 
-# clippy:
-#   stage: lint
-#   script:
-#     - rustup component add clippy-preview
-#     - cargo clippy --all
-#     - cargo clippy --all --features web
+clippy:
+  stage: lint
+  script:
+    - rustup component add clippy-preview
+    - cargo clippy --all
+    - cargo clippy --all --features web
 
 # Build and test the project
 build:
