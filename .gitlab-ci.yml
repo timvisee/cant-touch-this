@@ -35,6 +35,16 @@ clippy:
 # Build and test the project
 build:
   stage: build
+  artifacts:
+    paths:
+      - bin/*
+    name: 'linux-dynamic'
+    when: on_success
+    expire_in: '1 month'
   script:
     - cargo build --all --verbose
     - cargo test --all --verbose
+    - cargo build --all --verbose --release
+    - mkdir -p ./bin
+    - mv ./target/debug/cant-touch-this ./bin/
+    - mv ./target/release/cant-touch-this ./bin/
