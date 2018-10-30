@@ -47,4 +47,4 @@ build:
     - cargo build --all --verbose --release
     - mkdir -p ./bin
     - mv ./target/debug/cant-touch-this ./bin/cant-touch-this-debug
-    - mv ./target/release/cant-touch-this ./bin/-cant-touch-this-release
+    - mv ./target/release/cant-touch-this ./bin/cant-touch-this
