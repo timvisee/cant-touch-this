@@ -2,36 +2,43 @@
 
 set -e
 
-echo "Installing Leap Motion SDK..."
+echo "Starting LeapMotion SDK installation..."
 
-# Change the working directory to the script path
-cd "$( cd "$(dirname "$0")" ; pwd -P )"
+# Determine the directory of this script
+DIR=$( cd "$(dirname "$0")" ; pwd -P )
 
 # Download Leap Motion SDK from self hosted server
-curl https://u.visee.me/dl/leap-motion/Leap_Motion_SDK_Linux_2.3.1.tgz -o LeapMotionSDK.tgz
+echo "Downloading SDK files..."
+mkdir -p /tmp/leap/
+cd /tmp/leap
+curl https://u.visee.me/dl/leap-motion/Leap_Motion_SDK_Linux_2.3.1.tgz -o /tmp/leap/LeapMotionSDK.tgz
 
 # Extract the SDK, prepare the SDK directory
+echo "Extracting SDK files..."
 tar -zxf LeapMotionSDK.tgz
 mv ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK ./LeapSDK
 rm -rf ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK
 
 # Install SDK library files on system for Linux or macOS
+echo "Installing SDK files on system..."
 if [[ $(uname) == "Linux" ]]; then
     echo "Installing SDK files for Linux..."
     cp ./LeapSDK/include/Leap*.h /usr/include/
     cp ./LeapSDK/lib/x64/libLeap.so /usr/lib/
-    cp ./libleap.pc /usr/lib/pkgconfig/
+    cp $DIR/libleap.pc /usr/lib/pkgconfig/
 elif [[ $(uname) == "Darwin" ]]; then
     echo "Installing SDK files for macOS..."
     cp ./LeapSDK/include/Leap*.h /usr/local/include/
     cp ./LeapSDK/lib/x64/libLeap.so /usr/local/lib/
-    cp ./libleap.macOS.pc /usr/local/lib/pkgconfig/
+    cp $DIR/libleap.macOS.pc /usr/local/lib/pkgconfig/
 else
     echo "Failed to install, unsupported system."
     exit 1
 fi
 
 # Remove the extracted SDK
-rm -rf ./LeapSDK
+echo "Remove temporary downloaded files..."
+cd
+rm -rf /tmp/leap
 
 echo "Successfully installed Leap Motion SDK!"
