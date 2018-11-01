@@ -25,11 +25,13 @@ if [[ $(uname) == "Linux" ]]; then
     echo "Installing SDK files for Linux..."
     cp ./LeapSDK/include/Leap*.h /usr/include/
     cp ./LeapSDK/lib/x64/libLeap.so /usr/lib/
+    mkdir -p /usr/lib/pkgconfig
     cp $DIR/libleap.pc /usr/lib/pkgconfig/
 elif [[ $(uname) == "Darwin" ]]; then
     echo "Installing SDK files for macOS..."
     cp ./LeapSDK/include/Leap*.h /usr/local/include/
     cp ./LeapSDK/lib/x64/libLeap.so /usr/local/lib/
+    mkdir -p /usr/local/lib/pkgconfig
     cp $DIR/libleap.macOS.pc /usr/local/lib/pkgconfig/
 else
     echo "Failed to install, unsupported system."
