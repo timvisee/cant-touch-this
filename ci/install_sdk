@@ -15,10 +15,21 @@ tar -zxf LeapMotionSDK.tgz
 mv ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK ./LeapSDK
 rm -rf ./LeapDeveloperKit_2.3.1+31549_linux/LeapSDK
 
-# Install SDK library files on system
-cp ./LeapSDK/include/Leap*.h /usr/include/
-cp ./LeapSDK/lib/x64/libLeap.so /usr/lib/
-cp ./libleap.pc /usr/lib/pkgconfig/
+# Install SDK library files on system for Linux or macOS
+if [[ $(uname) == "Linux" ]]; then
+    echo "Installing SDK files for Linux..."
+    cp ./LeapSDK/include/Leap*.h /usr/include/
+    cp ./LeapSDK/lib/x64/libLeap.so /usr/lib/
+    cp ./libleap.pc /usr/lib/pkgconfig/
+elif [[ $(uname) == "Darwin" ]]; then
+    echo "Installing SDK files for macOS..."
+    cp ./LeapSDK/include/Leap*.h /usr/local/include/
+    cp ./LeapSDK/lib/x64/libLeap.so /usr/local/lib/
+    cp ./libleap.macOS.pc /usr/local/lib/pkgconfig/
+else
+    echo "Failed to install, unsupported system."
+    exit 1
+fi
 
 # Remove the extracted SDK
 rm -rf ./LeapSDK
