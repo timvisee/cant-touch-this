@@ -2,6 +2,7 @@ image: rust
 
 stages:
   - lint
+  - test
   - build
 
 before_script:
@@ -32,18 +33,23 @@ clippy:
     - rustup component add clippy-preview
     - cargo clippy --all
 
-# Build and test the project
-build:
+# Test the project
+test:
+  stage: test
+  script:
+    - cargo test --all --verbose
+
+# Build a dynamic Linux library for x86_64 architectures
+linux-x86_64-dynamic:
   stage: build
   artifacts:
     paths:
       - bin/*
-    name: 'linux-dynamic'
+    name: 'linux-x86_64-dynamic'
     when: on_success
     expire_in: '1 month'
   script:
     - cargo build --all --verbose
-    - cargo test --all --verbose
     - cargo build --all --verbose --release
     - mkdir -p ./bin
     - mv ./target/debug/cant-touch-this ./bin/cant-touch-this-debug
